@@ -1,0 +1,17 @@
+#compiled class file 
+*.class
+
+#log file
+*.log
+
+#package files
+*.jar
+*.war
+*.ear
+*.zip
+
+#user defined
+*.[oa]
+nbproject/private/
+build/
+dist/
