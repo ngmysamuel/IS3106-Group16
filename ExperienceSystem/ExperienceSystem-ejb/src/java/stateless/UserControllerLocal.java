@@ -5,8 +5,13 @@
  */
 package stateless;
 
+import entity.Experience;
+import entity.ExperienceDate;
 import entity.User;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.InvalidLoginCredentialException;
+import util.exception.UserNotFoundException;
 
 /**
  *
@@ -15,4 +20,16 @@ import javax.ejb.Local;
 @Local
 public interface UserControllerLocal {
     public User register(User user);
+    public User login(String username, String password) throws InvalidLoginCredentialException;
+    public void followExperience(Long id, User user);
+    public void unfollowExperience(Long id, User user);
+    public User retrieveUserByUsername(String username) throws UserNotFoundException;
+    public User retrieveUserById(Long id) throws UserNotFoundException;
+    public List<Experience> retrieveAllExperience(Long id);
+    public List<Experience> retrieveAllUpcomingExperienceDates(Long id);
+    public List<ExperienceDate> retrieveAllHostExperience(Long id);
+    public List<ExperienceDate> retrieveAllUpcomingHostExperienceDates(Long id);
+    public void createHostExperience(Experience exp, Long id);
+    public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException;
+    public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException;
 }

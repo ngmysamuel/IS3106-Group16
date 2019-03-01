@@ -5,15 +5,10 @@
  */
 package stateless;
 
-import com.sun.mail.imap.YoungerTerm;
 import entity.Booking;
-import entity.Category;
 import entity.Experience;
 import entity.ExperienceDate;
-import entity.Language;
-import entity.Location;
 import entity.User;
-import entity.Type;
 import enumerated.StatusEnum;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,7 +21,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.InvalidLoginCredentialException;
-import util.exception.StaffNotFoundException;
+import util.exception.UserNotFoundException;
 
 /**
  *
@@ -63,7 +58,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
             } else {
                 throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
             }
-        } catch (StaffNotFoundException ex) {
+        } catch (UserNotFoundException ex) {
             throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
         }
     }
@@ -80,24 +75,24 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         user.getFollowedExperiences().remove(exp);
     }
 
-    public User retrieveUserByUsername(String username) throws StaffNotFoundException {
+    public User retrieveUserByUsername(String username) throws UserNotFoundException {
         Query q = em.createQuery("SELECT u FROM User WHERE u.username = :name");
         q.setParameter("name", username);
         User user = new User();
         try {
             user = (User) q.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
-            throw new StaffNotFoundException("No such staff");
+            throw new UserNotFoundException("No such user");
         }
         return user;
     }
 
-    public User retrieveUserById(Long id) throws StaffNotFoundException {
+    public User retrieveUserById(Long id) throws UserNotFoundException {
         User user = em.find(User.class, id);
         if (user != null) {
             return user;
         } else {
-            throw new StaffNotFoundException("Staff ID " + id + " does not exist!");
+            throw new UserNotFoundException("Staff ID " + id + " does not exist!");
         }
     }
     

@@ -15,8 +15,11 @@ import javax.ejb.Local;
  */
 @Local
 public interface ExperienceControllerLocal {
+    public Experience createNewExperience(Experience exp);
+    public void updateExperienceInformation(Experience exp);
     public void deleteExperience(Long id, String r);
     public Boolean removeFollowerFromExperience(Long id, User user);
     public Boolean addFollowerToExperience(Long id, User user);
-    public Experience createNewExperience(Experience exp);
+    public Experience retrieveExperienceById(Long id);
+    
 }

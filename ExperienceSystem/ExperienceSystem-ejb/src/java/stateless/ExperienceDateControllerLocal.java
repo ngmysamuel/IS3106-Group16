@@ -5,6 +5,8 @@
  */
 package stateless;
 
+import entity.Experience;
+import entity.ExperienceDate;
 import javax.ejb.Local;
 
 /**
@@ -13,5 +15,8 @@ import javax.ejb.Local;
  */
 @Local
 public interface ExperienceDateControllerLocal {
+    public ExperienceDate createExperienceDate(ExperienceDate expDate, Experience exp);
+    public void updateExperienceDate(ExperienceDate expDate);
+    public ExperienceDate retrieveExperienceDateByDateId(Long id);
     public void deleteExperienceDate(Long id, String r);
 }
