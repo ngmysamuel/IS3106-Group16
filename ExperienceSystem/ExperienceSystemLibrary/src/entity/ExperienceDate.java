@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -27,21 +28,40 @@ public class ExperienceDate implements Serializable {
 
     @OneToOne(mappedBy = "experienceDate")
     private ExperienceDateCancellationReport experienceDateCancellationReport;
-
     @OneToMany(mappedBy = "experienceDate")
     private List<Booking> bookings;
-
     @ManyToOne
     private Experience experience;
-
     @OneToOne
     private ExperienceDatePaymentReport experienceDatePaymentReport;
-
+    
+    
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long experienceDateId;
-
+        @NotNull
+    private LocalDate startDate;
+    @NotNull
+    private LocalDate endDate;
+    @NotNull
+    private Integer capacity;
+    @NotNull
+    private Integer spotsAvailable;
+    @NotNull
+    private BigDecimal price;
+    @NotNull
+    private boolean active;
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public ExperienceDateCancellationReport getExperienceDateCancellationReport() {
         return experienceDateCancellationReport;
     }
@@ -74,19 +94,19 @@ public class ExperienceDate implements Serializable {
         this.experienceDatePaymentReport = experienceDatePaymentReport;
     }
 
-    public Date getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -121,18 +141,7 @@ public class ExperienceDate implements Serializable {
     public void setActive(boolean active) {
         this.active = active;
     }
-    @NotNull
-    private Date startDate;
-    @NotNull
-    private Date endDate;
-    @NotNull
-    private Integer capacity;
-    @NotNull
-    private Integer spotsAvailable;
-    @NotNull
-    private BigDecimal price;
-    @NotNull
-    private boolean active;
+
 
     public Long getExperienceDateId() {
         return experienceDateId;

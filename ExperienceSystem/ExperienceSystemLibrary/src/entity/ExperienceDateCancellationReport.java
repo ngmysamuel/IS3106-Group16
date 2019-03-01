@@ -19,19 +19,29 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 public class ExperienceDateCancellationReport implements Serializable {
-
-    @OneToOne(mappedBy = "cancellationReport")
-    private Booking booking;
-
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long cancellationReportId;
+    
+    
+    
+    
+    @OneToOne(mappedBy = "cancellationReport")
+    private Booking booking;
+  
+    
+    
+    
     @NotNull
     private String cancellationReason;
-    
     @OneToOne
     private ExperienceDate experienceDate;
+    
+    
+    
+    
 
     public Booking getBooking() {
         return booking;

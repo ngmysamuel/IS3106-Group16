@@ -9,6 +9,7 @@ package entity;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -69,7 +70,7 @@ public class User implements Serializable {
     @NotNull
     private String gender;
     @NotNull
-    private Date birthday;
+    private LocalDate birthday;
     @NotNull
     private String email;
     @NotNull
@@ -79,9 +80,7 @@ public class User implements Serializable {
     private String prefferedCurrency;
     @NotNull
     private List<String> creditCardDetails;
-    @NotNull
     private BigDecimal averageHostScore;
-    @NotNull
     private BigDecimal averageAttendScore;
     @NotNull
     private Boolean premium;
@@ -94,7 +93,7 @@ public class User implements Serializable {
     private List<User> follows; // Follow other users
     @OneToMany(mappedBy = "user")
     private List<Evaluation> evaluations;
-    @ManyToMany
+    @OneToMany (mappedBy = "user")
     private List<Booking> bookings;
 
     public List<User> getFollowers() {
@@ -201,11 +200,11 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
-    public Date getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

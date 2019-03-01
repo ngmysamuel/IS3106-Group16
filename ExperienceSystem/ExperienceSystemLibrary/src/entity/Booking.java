@@ -28,9 +28,8 @@ public class Booking implements Serializable {
 
     @OneToOne(mappedBy = "booking")
     private Evaluation evaluation;
-
-    @ManyToMany(mappedBy = "bookings")
-    private List<User> users;
+    @ManyToOne
+    private User user;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -49,6 +48,16 @@ public class Booking implements Serializable {
     @OneToOne
     private ExperienceDateCancellationReport cancellationReport;
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public ExperienceDateCancellationReport getCancellationReport() {
         return cancellationReport;
     }
@@ -101,14 +110,6 @@ public class Booking implements Serializable {
         this.evaluation = evaluation;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
     public Date getBookingDate() {
         return bookingDate;
     }
@@ -144,6 +145,14 @@ public class Booking implements Serializable {
     @Override
     public String toString() {
         return "entity.Booking[ id=" + bookingId + " ]";
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     
 }

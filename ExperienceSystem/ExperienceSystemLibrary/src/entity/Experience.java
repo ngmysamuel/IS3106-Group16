@@ -43,6 +43,9 @@ public class Experience implements Serializable {
     @NotNull
     private boolean active;
     
+    
+    
+    
     @ManyToOne
     private Type type;
     @ManyToOne
@@ -55,10 +58,19 @@ public class Experience implements Serializable {
     private List<User> followers;
     @ManyToOne
     private User host;
-    
     @ManyToOne
     private Category category;
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public Long getExperienceId() {
         return experienceId;
     }
