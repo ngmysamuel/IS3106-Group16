@@ -5,6 +5,7 @@
  */
 package stateless;
 
+import entity.Appeal;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.User;
@@ -32,4 +33,14 @@ public interface UserControllerLocal {
     public void createHostExperience(Experience exp, Long id);
     public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException;
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException;
+
+    List<User> retrieveAllFollowingUsers(Long guestId) throws UserNotFoundException;
+
+    boolean isFollowingUser(Long userId, Long followingId) throws UserNotFoundException;
+
+    User unfollowUser(Long userId, Long unfollowId) throws UserNotFoundException;
+
+    Appeal createAppeal(Long userId, Appeal appeal) throws UserNotFoundException;
+
+    User updatePersonalInformation(User user);
 }

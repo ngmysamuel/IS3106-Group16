@@ -5,6 +5,7 @@
  */
 package stateless;
 
+import entity.Appeal;
 import entity.Booking;
 import entity.Experience;
 import entity.ExperienceDate;
@@ -181,6 +182,64 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
         experienceDateController.deleteExperienceDate(expId, r);
     }
+
+    @Override
+    public List<User> retrieveAllFollowingUsers(Long userId) throws UserNotFoundException {
+        User user = em.find(User.class, userId);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        List<User> following = user.getFollows();
+        for(User u: following){
+            u.getUserId();
+        }
+        return following;
+    }
+
+    @Override
+    public boolean isFollowingUser(Long userId, Long followingId) throws UserNotFoundException{
+        List<User> following = retrieveAllFollowingUsers(userId);
+        for(User u: following){
+            if(u.getUserId() == followingId){
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    @Override
+    public User unfollowUser(Long userId, Long unfollowId) throws UserNotFoundException {
+        User unfollow = em.find(User.class, unfollowId);
+        if(unfollow == null){
+            throw new UserNotFoundException();
+        }
+        if(isFollowingUser(userId, unfollowId)){
+            User user = em.find(User.class, userId);
+            user.getFollows().remove(unfollow);
+            unfollow.getFollowers().remove(user);
+        }
+        return unfollow;
+    }
+
+    @Override
+    public Appeal createAppeal(Long userId, Appeal appeal) throws UserNotFoundException {
+        User user = em.find(User.class, userId);
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+        appeal.setUser(user);
+        user.getAppeals().add(appeal);
+        em.persist(appeal);
+        return appeal;
+    }
+
+    @Override
+    public User updatePersonalInformation(User user){
+        em.merge(user);
+        return user;
+    }
+    
     
     
     
