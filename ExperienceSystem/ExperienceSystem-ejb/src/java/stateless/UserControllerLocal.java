@@ -11,6 +11,7 @@ import entity.ExperienceDate;
 import entity.User;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.ExperienceNotActiveException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UserNotFoundException;
 
@@ -31,7 +32,7 @@ public interface UserControllerLocal {
     public List<ExperienceDate> retrieveAllHostExperience(Long id);
     public List<ExperienceDate> retrieveAllUpcomingHostExperienceDates(Long id);
     public void createHostExperience(Experience exp, Long id);
-    public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException;
+    public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException, ExperienceNotActiveException;
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException;
 
     List<User> retrieveAllFollowingUsers(Long guestId) throws UserNotFoundException;

@@ -50,8 +50,8 @@ public class Experience implements Serializable {
     private Type type;
     @ManyToOne
     private Location location;
-    @ManyToMany
-    private List<Language> languages;
+    @ManyToOne
+    private Language language;
     @OneToMany(mappedBy = "experience")
     private List<ExperienceDate> experienceDates;
     @ManyToMany
@@ -158,12 +158,12 @@ public class Experience implements Serializable {
         this.location = location;
     }
 
-    public List<Language> getLanguages() {
-        return languages;
+    public Language getLanguage() {
+        return language;
     }
 
-    public void setLanguages(List<Language> languages) {
-        this.languages = languages;
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 
     public List<ExperienceDate> getExperienceDates() {

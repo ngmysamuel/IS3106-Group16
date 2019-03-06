@@ -14,6 +14,8 @@ import enumerated.StatusEnum;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,6 +23,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.CreateNewExperienceException;
+import util.exception.ExperienceNotActiveException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.UserNotFoundException;
 
@@ -97,6 +102,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
     }
     
+    @Override
     public List<Experience> retrieveAllExperience(Long id) { //completed exp
         User user = em.find(User.class, id);
         LocalDate currentDate = LocalDate.now();
@@ -110,6 +116,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         return lsExperiences;
     }
     
+    @Override
     public List<Experience> retrieveAllUpcomingExperienceDates(Long id) { //not yet comepltered
         User user = em.find(User.class, id);
         LocalDate currentDate = LocalDate.now();
@@ -123,6 +130,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         return lsExperiences;
     }
     
+    @Override
     public List<ExperienceDate> retrieveAllHostExperience(Long id) { //completed
         User user = em.find(User.class, id);
         LocalDate currentDate = LocalDate.now();
@@ -141,6 +149,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         return lsExperiences;
     }
     
+    @Override
     public List<ExperienceDate> retrieveAllUpcomingHostExperienceDates(Long id) { //not yet compelted host
         User user = em.find(User.class, id);
         LocalDate currentDate = LocalDate.now();
@@ -159,13 +168,22 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         return lsExperiences;
     }
     
+    @Override
     public void createHostExperience(Experience exp, Long id) {
         User user = em.find(User.class, id);
-        exp = experienceController.createNewExperience(exp);
+        try {
+            exp = experienceController.createNewExperience(exp);
+        } catch (CreateNewExperienceException ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InputDataValidationException ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         user.getExperienceHosted().add(exp);
     }
     
-    public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException {
+   
+    @Override
+    public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException, ExperienceNotActiveException {
         Experience exp = em.find(Experience.class, expId);
         User user = em.find(User.class, id);
         if (user.getUserId() != exp.getHost().getUserId()) {
@@ -174,6 +192,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         experienceController.deleteExperience(expId, r);
     }
     
+    @Override
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException {
         ExperienceDate expDate = em.find(ExperienceDate.class, expId);
         User user = em.find(User.class, id);

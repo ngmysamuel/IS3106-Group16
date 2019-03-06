@@ -7,7 +7,15 @@ package stateless;
 
 import entity.Experience;
 import entity.ExperienceDate;
+import entity.ExperienceDateCancellationReport;
+import entity.ExperienceDatePaymentReport;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.CreateNewExperienceDateException;
+import util.exception.ExperienceDateNotActiveException;
+import util.exception.ExperienceDateNotFoundException;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -15,8 +23,17 @@ import javax.ejb.Local;
  */
 @Local
 public interface ExperienceDateControllerLocal {
-    public ExperienceDate createExperienceDate(ExperienceDate expDate, Experience exp);
     public void updateExperienceDate(ExperienceDate expDate);
     public ExperienceDate retrieveExperienceDateByDateId(Long id);
-    public void deleteExperienceDate(Long id, String r);
+    
+
+    public ExperienceDate createNewExperienceDate(ExperienceDate newExperienceDate) throws CreateNewExperienceDateException, InputDataValidationException;
+
+    public ExperienceDate retrieveExperienceDateByDate(Experience experience, Date startDate) throws ExperienceDateNotFoundException;
+
+    public void deleteExperienceDate(Long id, String r) throws ExperienceDateNotActiveException;
+
+    public ExperienceDatePaymentReport retrieveExperienceDatePaymentReport(ExperienceDate experienceDate);
+
+    public List<ExperienceDateCancellationReport> retrieveAllExperienceDateCancellationReports();
 }

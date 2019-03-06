@@ -6,8 +6,19 @@
 package stateless;
 
 import entity.Experience;
+import entity.ExperienceDate;
+import entity.Language;
+import entity.Location;
+import entity.Type;
 import entity.User;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.CreateNewExperienceException;
+import util.exception.ExperienceNotActiveException;
+import util.exception.ExperienceNotFoundException;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -15,11 +26,36 @@ import javax.ejb.Local;
  */
 @Local
 public interface ExperienceControllerLocal {
-    public Experience createNewExperience(Experience exp);
-    public void updateExperienceInformation(Experience exp);
-    public void deleteExperience(Long id, String r);
+
+    
     public Boolean removeFollowerFromExperience(Long id, User user);
     public Boolean addFollowerToExperience(Long id, User user);
     public Experience retrieveExperienceById(Long id);
+
+    public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
+
+    public void updateExperienceInformation(Experience experience) throws InputDataValidationException, ExperienceNotFoundException;
+
+    public void deleteExperience(Long id, String r) throws ExperienceNotActiveException;
+
+    public List<Experience> retrieveAllExperiences();
+
+    public Experience retrieveExperienceByTitle(String title) throws ExperienceNotFoundException;
+
+    public List<Experience> retrieveTopRatedExperience();
+
+    public List<Experience> retrieveExperienceByLocation(Location location);
+
+    public BigDecimal getAveragePrice(Experience experience);
+
+    public List<Experience> retrieveExperienceByPrice(BigDecimal minPrice, BigDecimal maxPrice);
+
+    public List<Experience> retrieveExperienceByType(Type type);
+
+    public List<Experience> retrieveExperienceByLanguage(Language language);
+
+    public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
+
+    public List<Experience> retrieveExperienceByDate(Date startDate, Date endDate);
     
 }
