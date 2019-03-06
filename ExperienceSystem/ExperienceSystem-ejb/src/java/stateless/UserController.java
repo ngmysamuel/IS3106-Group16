@@ -24,6 +24,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CreateNewExperienceException;
+import util.exception.ExperienceDateNotActiveException;
 import util.exception.ExperienceNotActiveException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
@@ -199,7 +200,11 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         if (user.getUserId() != expDate.getExperience().getHost().getUserId()) {
             throw new InvalidLoginCredentialException("You are not the host");
         }
-        experienceDateController.deleteExperienceDate(expId, r);
+        try {
+            experienceDateController.deleteExperienceDate(expId, r);
+        } catch (ExperienceDateNotActiveException ex) {
+            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
