@@ -18,23 +18,31 @@
           float: left;
         }
 
-        .header_menu_item {
+        #footer_info {
           display: block;
           color: black;
-          text-align: center;
-          padding: 14px 16px;
-          text-decoration: none;
-          font-size: 13px;
-        }
 
+          text-decoration: none;
+          font-size: 11px;
+        }
+        
+        p {
+          font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+        }
+        
     </style>
     
-    <div style="margin: auto; height: 180px; width: 65%; display: flex; justify-content: space-between; align-items: center;">
-        <span>
-            <img src="https://cdn1.imggmi.com/uploads/2019/3/17/d9fddbec023eea252355b8ebf188c042-full.png" alt="ExperLife" />
-        </span>
-        <span style="display: flex; justify-content: flex-end; align-items: center;">
-          
-        </span> 
+    <div style="margin: auto; height: 180px; width: 65%;">
+        <hr />
+        <div style="margin: auto; display: flex; justify-content: space-between; align-items: center;">
+            <span id="footer_info">
+                <p><br />NUS School of Computing,<br />COM1, 13 Computing Drive, 117417</p>
+                <br />
+                <p style="color: grey;">© 2019 by IS3106 Group 16. Proudly created!</p>
+            </span>
+            <span style="display: flex; justify-content: flex-start;">
+
+            </span> 
+        </div>
     </div>
 </ui:composition>
