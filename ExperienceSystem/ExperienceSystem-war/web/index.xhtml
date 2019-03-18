@@ -5,11 +5,75 @@
 
 
     <ui:define name="content">
-        <div style="display:inline-block; width:100%;">
-            <img src="https://i.imgur.com/R6wtAtN.jpg" />
-            <img src="https://i.imgur.com/2hocHvd.jpg" />
-            <img src="https://i.imgur.com/6FSFZNj.jpg" />
-        </div>
+        <style>
+            #slider{
+                overflow: hidden;
+                height: 100%; 
+            }
+            #sliderBox{
+                position: relative;
+                width: 500%;
+                height: 100%;
+                margin: 0;
+                left: 0;
+                animation: 20s slider infinite;
+                display: i
+            }
+            .slide{
+                width: 100%;
+                height: 100%;
+                float: left;
+                display: inline-block;
+            }
+            @keyframes slider{
+                0% {
+                    left: 0;
+                }
+                20% {
+                    left: 0;
+                }
+                25% {
+                    left: -100%;
+                }
+                45% {
+                    left: -100%;
+                }
+                50% {
+                    left: -200%;
+                }
+                75% {
+                    left: -200%;
+                }
+                75% {
+                    left: -300%;
+                }
+                95% {
+                    left: -300%;
+                }
+                100% {
+                    left: -400%;
+                }
+            }
+        </style>
+            <div id="slider">
+                <div id="sliderBox">
+                    <span class="slide">
+                        <img style="width: 100vw;" src="https://i.imgur.com/2hocHvd.jpg" />
+                    </span>
+                    <span class="slide">
+                        <img style="width: 100vw;" src="https://i.imgur.com/R6wtAtN.jpg" />
+                    </span>
+                    <span class="slide">
+                        <img style="width: 100vw;" src="https://i.imgur.com/slbHL1Z.jpg" />
+                    </span>
+                    <span class="slide">
+                        <img style="width: 100vw;" src="https://i.imgur.com/6FSFZNj.jpg" />
+                    </span>
+                    <span class="slide">
+                        <img style="width: 100vw;" src="https://i.imgur.com/R6wtAtN.jpg" />
+                    </span>  
+                </div>
+            </div>
     </ui:define>
 
 
