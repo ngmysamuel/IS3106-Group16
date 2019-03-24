@@ -1,10 +1,110 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./../templates/defaultTemplate.xhtml">
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        register as a host
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+        </style>
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 18px;">REGISTER AS HOST</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <div style="width: 65%; margin: auto;">
+
+            <p:tabView>
+                <p:tab title="My Host Experiences">
+
+                    <h:form id="formAllHostExperiences">
+                        <p:dataGrid var="experience" value="#{hostExperiencesManagementManagedBean.hostExperiences}" columns="3" layout="grid"
+                                    rows="12" paginator="true" id="cars"
+                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rowsPerPageTemplate="6,12,16">
+
+                            <f:facet name="header">
+                                All My Host Experiences
+                            </f:facet>
+
+                            <p:panel header="title" style="text-align:center">
+                                <h:panelGrid columns="1" style="width:100%">
+                                    <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/SQiLyd4.jpg"/> 
+
+                                    <h:outputText value="des" />
+
+                                    <p:commandButton update="formExperienceDetails" oncomplete="PF('dialogExperienceDetail').show()" value="View Detail">
+                                        <f:setPropertyActionListener value="#{experience}" target="#{hostExperiencesManagementManagedBean.experienceToView}" />
+                                    </p:commandButton>
+                                </h:panelGrid>
+                            </p:panel>
+
+                        </p:dataGrid>
+                    </h:form>
+
+                    
+
+                </p:tab>
+
+                <p:tab title="Host New Experience">
+
+                </p:tab>
+
+                <p:tab title="Guest Communication">
+
+                </p:tab>
+            </p:tabView>
+            
+            <h:form id="formExperienceDetails">
+                        <p:dialog header="Experience Info" id="dialogExperienceDetail" widgetVar="dialogExperienceDetail" showEffect="fade" hideEffect="fade" resizable="false" closable="true">
+
+                            <p:panelGrid  columns="2">
+                                <f:facet name="header">
+                                    <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/SQiLyd4.jpg"/> 
+                                </f:facet>
+
+                                <h:outputText value="Title:" />
+                                <h:outputText value="Title:" />
+
+                                <h:outputText value="Description:" />
+                                <h:outputText value="Description:" />
+
+                                <h:outputText value="Experience Dates:" />
+                                <h:outputText value="dates" />
+
+                                <h:outputText value="Price" />
+                                <h:outputText value="$" />
+                            </p:panelGrid>
+
+                        </p:dialog>
+                    </h:form>
+        </div>
+
     </ui:define>
 
 </ui:composition>

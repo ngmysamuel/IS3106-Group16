@@ -27,10 +27,13 @@ public class Location implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long locationId;
     @NotNull
     private String location;
+
+    public Location() {
+    }
     
     public List<Experience> getExperiences() {
         return experiences;
