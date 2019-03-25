@@ -24,7 +24,7 @@ public class ExperienceDatePaymentReport implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentReportId;
     @NotNull
     private Date paymentDate;
@@ -33,6 +33,10 @@ public class ExperienceDatePaymentReport implements Serializable {
     @OneToOne(mappedBy = "experienceDatePaymentReport")
     private ExperienceDate experienceDate;
 
+    public ExperienceDatePaymentReport() {
+    }
+
+    
     public Date getPaymentDate() {
         return paymentDate;
     }

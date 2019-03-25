@@ -24,7 +24,7 @@ public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
     @NotNull
     private String content;
@@ -34,6 +34,9 @@ public class Message implements Serializable {
     private User sender;
     @ManyToOne
     private User replier;
+
+    public Message() {
+    }
 
     public String getContent() {
         return content;

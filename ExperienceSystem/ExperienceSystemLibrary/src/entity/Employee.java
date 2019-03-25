@@ -28,7 +28,7 @@ public class Employee implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
     
     @NotNull
@@ -39,6 +39,11 @@ public class Employee implements Serializable {
     @NotNull
     private JobRoleEnum jobRole;
 
+    public Employee() {
+    }
+
+    
+    
     public Long getEmployeeId() {
         return employeeId;
     }

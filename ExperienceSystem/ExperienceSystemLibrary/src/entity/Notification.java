@@ -24,7 +24,7 @@ public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationId;
     @NotNull
     private String notificationMessage;
@@ -34,6 +34,9 @@ public class Notification implements Serializable {
     private boolean isSeen;
     @ManyToMany
     private List<User> users;
+
+    public Notification() {
+    }
 
     public String getNotificationMessage() {
         return notificationMessage;

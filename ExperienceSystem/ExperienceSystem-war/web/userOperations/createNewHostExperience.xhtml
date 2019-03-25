@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #titleHeader{
+                position: relative;
+                width: 65%;
+                height: 100px;
+                margin: auto;
+                display: flex; 
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            #detailsBox{
+                position: relative;
+                width: 65%;
+                margin: auto;
+            }
+            .detailTitleClass{
+                width:20%;
+            }
+            .detailTitleContent{
+                width:80%;
+            }
+            .ui-picklist {
+                display: table;
+            }
+            .ui-picklist .ui-picklist-list {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: auto;
+                height: 200px;
+                width: 200px;
+            }
+            .ui-picklist>div {
+                float: none;
+                display: table-cell;
+                vertical-align: top;
+            }
+            body .ui-picklist .ui-picklist-list {
+                border: 1px solid #c8c8c8;
+                background-color: #fff;
+                color: #333;
+                padding: 0;
+            }
+            body .ui-picklist .ui-picklist-list .ui-picklist-item {
+                padding: .429em .857em;
+                border: 0 none;
+                margin: 0;
+                color: #333;
+                -moz-border-radius: 0;
+                -webkit-border-radius: 0;
+                border-radius: 0;
+            }
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 15px;">Host New Experience</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <div id="titleHeader">
+
+            <p:outputLabel value="Host New Experience" style="font-size: 30px;"/>
+
+        </div>
+
+        <div id="detailsBox">
+            <h:form>
+                <p:growl id="msg" showDetail="true" escape="false" />
+
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Title" /> 
+                    <p:inputText value="Title" /> 
+                    
+                    <h:outputText value="Category" /> 
+                    <p:selectOneMenu id="category" value="category" style="width:140px;">
+                        <f:selectItem itemLabel="Select Category" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="Sports" itemValue="Sports" />
+                        <f:selectItem itemLabel="Food" itemValue="Food" />
+                        <f:selectItem itemLabel="Site-seeing" itemValue="Site-seeing" />
+                    </p:selectOneMenu>
+                    
+                    <h:outputText value="Type" /> 
+                    <p:selectOneMenu id="type" value="type" style="width:140px;">
+                        <f:selectItem itemLabel="Select Type" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="Workshop" itemValue="Sports" />
+                        <f:selectItem itemLabel="Sharing Session" itemValue="Food" />
+                        <f:selectItem itemLabel="Hangout" itemValue="Site-seeing" />
+                    </p:selectOneMenu> 
+                    
+                    <h:outputText value="Location" /> 
+                    <p:selectOneMenu id="city" value="city" style="width:100px;">
+                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="Singapore" itemValue="Singapore" />
+                        <f:selectItem itemLabel="Shanghai" itemValue="Shanghai" />
+                        <f:selectItem itemLabel="Jakarta" itemValue="Jakarta" />
+                    </p:selectOneMenu>
+                    
+                    <h:outputText value="Address" /> 
+                    <p:inputText value="Address" /> 
+                    
+                    <h:outputText value="Language" />  
+                    <p:selectOneMenu id="language" value="language" style="width:100px;">
+                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="English" itemValue="English" />
+                        <f:selectItem itemLabel="Malaysian" itemValue="Malaysian" />
+                        <f:selectItem itemLabel="Chinese" itemValue="Chinese" />
+                        <f:selectItem itemLabel="Hindu" itemValue="Hindu" />
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Description" /> 
+                    <p:inputTextarea row="10" columns="100" value="Content" />
+                    
+                    <p:outputLabel for="itemsProvided" value="Items Provided (press Enter to add a new one): " />
+                    <p:chips id="itemsProvided" value="#{createNewHostExperienceManagedBean.itemsProvided}" />
+                    
+                    <p:outputLabel for="itemsRequired" value="Items Required (press Enter to add a new one):" />
+                    <p:chips id="itemsRequired" value="#{createNewHostExperienceManagedBean.itemsRequired}" />
+                    
+                </p:panelGrid>
+                <br />
+                
+                <p:commandButton value="Create New Experience" action="#"/>
+            </h:form>    
+        </div>   
+
+
+    </ui:define>
+
+</ui:composition>

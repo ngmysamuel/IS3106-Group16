@@ -33,7 +33,7 @@ public class Booking implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
     @NotNull
     private Date bookingDate;
@@ -48,16 +48,11 @@ public class Booking implements Serializable {
     @OneToOne
     private ExperienceDateCancellationReport cancellationReport;
 
+    public Booking() {
+    }
+
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+   
     public ExperienceDateCancellationReport getCancellationReport() {
         return cancellationReport;
     }

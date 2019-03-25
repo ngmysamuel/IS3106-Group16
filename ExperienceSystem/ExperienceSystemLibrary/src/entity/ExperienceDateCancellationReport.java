@@ -22,25 +22,17 @@ public class ExperienceDateCancellationReport implements Serializable {
     
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cancellationReportId;
-    
-    
-    
-    
     @OneToOne(mappedBy = "cancellationReport")
     private Booking booking;
-  
-    
-    
-    
     @NotNull
     private String cancellationReason;
     @OneToOne
     private ExperienceDate experienceDate;
-    
-    
-    
+
+    public ExperienceDateCancellationReport() {
+    }
     
 
     public Booking getBooking() {
