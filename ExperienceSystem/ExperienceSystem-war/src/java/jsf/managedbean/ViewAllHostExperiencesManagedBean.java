@@ -12,14 +12,14 @@ import java.util.List;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 
-@Named(value = "hostExperiencesManagementManagedBean")
+@Named(value = "viewAllHostExperiencesManagedBean")
 @ViewScoped
-public class HostExperiencesManagementManagedBean implements Serializable {
+public class ViewAllHostExperiencesManagedBean implements Serializable {
 
     private List<Experience> hostExperiences;
     private Experience experienceToView;
     
-    public HostExperiencesManagementManagedBean() {
+    public ViewAllHostExperiencesManagedBean() {
         // generate dummy Experiences
         hostExperiences = new ArrayList();
         hostExperiences.add(new Experience("Experience one", "Desc1"));

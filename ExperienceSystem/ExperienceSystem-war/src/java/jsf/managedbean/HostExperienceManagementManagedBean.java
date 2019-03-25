@@ -15,17 +15,19 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 
 
-@Named(value = "viewExperienceDetailsManagedBean")
+@Named(value = "hostExperienceManagementManagedBean")
 @ViewScoped
-public class ViewExperienceDetailsManagedBean implements Serializable {
+public class HostExperienceManagementManagedBean implements Serializable {
 
     private Experience experienceToView;
     private List<String> images;
     
-    private Date bookDate;
-    private Integer bookNumOfTickets;
+    private List<String> itemsProvided;
+    private List<String> itemsRequired;
     
-    public ViewExperienceDetailsManagedBean() {
+    private Date updateExperienceDate;
+    
+    public HostExperienceManagementManagedBean() {
         experienceToView = new Experience("Experience one", "Desc1");
         images = new ArrayList();
         images.add("https://i.imgur.com/2hocHvd.jpg");
@@ -54,20 +56,28 @@ public class ViewExperienceDetailsManagedBean implements Serializable {
         this.images = images;
     }
 
-    public Date getBookDate() {
-        return bookDate;
+    public List<String> getItemsProvided() {
+        return itemsProvided;
     }
 
-    public void setBookDate(Date bookDate) {
-        this.bookDate = bookDate;
+    public void setItemsProvided(List<String> itemsProvided) {
+        this.itemsProvided = itemsProvided;
     }
 
-    public Integer getBookNumOfTickets() {
-        return bookNumOfTickets;
+    public List<String> getItemsRequired() {
+        return itemsRequired;
     }
 
-    public void setBookNumOfTickets(Integer bookNumOfTickets) {
-        this.bookNumOfTickets = bookNumOfTickets;
+    public void setItemsRequired(List<String> itemsRequired) {
+        this.itemsRequired = itemsRequired;
     }
-    
+
+    public Date getUpdateExperienceDate() {
+        return updateExperienceDate;
+    }
+
+    public void setUpdateExperienceDate(Date updateExperienceDate) {
+        this.updateExperienceDate = updateExperienceDate;
+    }
+
 }
