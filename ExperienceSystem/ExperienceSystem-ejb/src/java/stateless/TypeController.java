@@ -18,6 +18,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import static jdk.nashorn.internal.runtime.Debug.id;
 import util.exception.CreateNewTypeException;
 import util.exception.DeleteTypeException;
 import util.exception.InputDataValidationException;
@@ -70,6 +71,11 @@ public class TypeController implements TypeControllerRemote, TypeControllerLocal
     public List<Type> retrieveAllTypes() {
         Query query = em.createQuery("SELECT t FROM Type t ORDER BY t.typeId ASC");
         return query.getResultList();
+    }
+    
+    @Override
+    public Type retrieveTypeById (Long typeId){
+        return em.find(Type.class, typeId);
     }
     
     @Override

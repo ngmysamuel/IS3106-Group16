@@ -73,6 +73,10 @@ public class LanguageController implements LanguageControllerRemote, LanguageCon
     }
     
     @Override
+    public Language retrieveLanguageById (Long languageId){
+        return em.find(Language.class, languageId);
+    }
+    @Override
     public void updateLanguage(Language language) throws InputDataValidationException, LanguageNotFoundException {
         if(language.getLanguageId() == null || language.getLanguageId() == new Long(0)) {
             throw new InputDataValidationException("Invalid language ID!");

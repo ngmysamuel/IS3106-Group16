@@ -26,4 +26,6 @@ public interface LanguageControllerLocal {
     public void updateLanguage(Language language) throws InputDataValidationException, LanguageNotFoundException;
     
     public void deleteLanguage(Long languageId) throws LanguageNotFoundException, DeleteLanguageException;;
+
+    public Language retrieveLanguageById(Long languageId);
 }
