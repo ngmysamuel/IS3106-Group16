@@ -26,4 +26,6 @@ public interface TypeControllerLocal {
     public void updateType(Type type) throws InputDataValidationException, TypeNotFoundException;
     
     public void deleteType(Long typeId) throws TypeNotFoundException, DeleteTypeException;
+
+    public Type retrieveTypeById(Long typeId);
 }

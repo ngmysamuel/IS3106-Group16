@@ -92,6 +92,11 @@ public class EmployeeController implements EmployeeControllerRemote, EmployeeCon
         return query.getResultList();
     }
     
+    @Override
+    public Appeal retrieveAppealById(Long appealId){
+        return em.find(Appeal.class, appealId);
+    }
+    
     public void processAppeal(Long appealId, String reply, Long employeeId) throws AppealNotFoundException, EmployeeNotFoundException {
         Appeal appeal = em.find(Appeal.class, appealId);
         if (appeal == null) {

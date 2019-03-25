@@ -6,6 +6,7 @@
 package stateless;
 
 import entity.Location;
+import entity.Type;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -70,6 +71,11 @@ public class LocationController implements LocationControllerRemote, LocationCon
     public List<Location> retrieveAllLocations() {
         Query query = em.createQuery("SELECT l FROM Location l ORDER BY l.locationId ASC");
         return query.getResultList();
+    }
+    
+    @Override
+    public Location retrieveLocationById (Long locationId){
+        return em.find(Location.class, locationId);
     }
     
     @Override
