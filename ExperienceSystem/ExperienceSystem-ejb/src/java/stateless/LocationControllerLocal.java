@@ -26,4 +26,6 @@ public interface LocationControllerLocal {
     public void updateLocation(Location location) throws InputDataValidationException, LocationNotFoundException;
     
     public void deleteLocation(Long locationId) throws LocationNotFoundException, DeleteLocationException;;
+
+    public Location retrieveLocationById(Long locationId);
 }

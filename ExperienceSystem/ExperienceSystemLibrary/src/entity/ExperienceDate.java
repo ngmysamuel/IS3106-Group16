@@ -39,7 +39,7 @@ public class ExperienceDate implements Serializable {
     
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long experienceDateId;
         @NotNull
     private LocalDate startDate;
@@ -53,15 +53,11 @@ public class ExperienceDate implements Serializable {
     private BigDecimal price;
     @NotNull
     private boolean active;
+
+    public ExperienceDate() {
+    }
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     public ExperienceDateCancellationReport getExperienceDateCancellationReport() {
         return experienceDateCancellationReport;
     }

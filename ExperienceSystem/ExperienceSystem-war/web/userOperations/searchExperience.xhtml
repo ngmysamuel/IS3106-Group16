@@ -1,10 +1,173 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="./../templates/defaultTemplate.xhtml">
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
-        content
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #searchArea{
+                width: 65%;
+                margin: auto;
+            }
+            #searchInputBox, #searchResultsArea {
+                width: 90%;
+                margin: auto;
+            }
+            #searchInputRow{
+                width: 100%;
+                margin: auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            #ui-inputgroup-addon{
+                display: inline-block;
+                text-align: center;
+                min-width: 1.5em;
+                border-width: 1px;
+                border-style: solid;
+            }
+            #numOfPeopleBox{
+                display:inline;
+            }
+            table {
+                display: table;
+                border-collapse: separate;
+                border-spacing: 2px;
+                border-color: grey;
+            }
+            .ui-dataview-list .ui-dataview-list-container {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            .ui-dataview-list .ui-dataview-row {
+                border-bottom: 1px solid #A8A8A8;
+                padding: 25px 10px;
+            }
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">EXPERIENCES</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <div id="searchArea">
+
+            <div id="searchInputBox">
+                <br />
+                <hr style="border-top: 1px solid black;"/>
+                <br />
+                <h:form id="seachInputRow">
+
+                    <span class="ui-inputgroup-addon"><i class="pi pi-calendar"></i></span>
+                    <p:calendar id="searchDate" value="#{searchExperienceManagedBean.searchDate}" placeholder="Experience Date" showOn="button" inputStyle="width:140px;" />
+
+                    <span class="ui-inputgroup-addon"><i class="pi pi-tag"></i></span>
+                    <p:selectOneMenu id="category" value="#{searchExperienceManagedBean.category}" style="width:140px;">
+                        <f:selectItem itemLabel="Select Category" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="Sports" itemValue="Sports" />
+                        <f:selectItem itemLabel="Food" itemValue="Food" />
+                        <f:selectItem itemLabel="Site-seeing" itemValue="Site-seeing" />
+                    </p:selectOneMenu>
+
+                    <span class="ui-inputgroup-addon"><i class="pi pi-map-marker"></i></span>
+                    <p:selectOneMenu id="city" value="#{searchExperienceManagedBean.city}" style="width:100px;">
+                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="Singapore" itemValue="Singapore" />
+                        <f:selectItem itemLabel="Shanghai" itemValue="Shanghai" />
+                        <f:selectItem itemLabel="Jakarta" itemValue="Jakarta" />
+                    </p:selectOneMenu>
+
+                    <span class="ui-inputgroup-addon"><i class="pi pi-users"></i></span>
+                    <h:outputLabel value=" People " />
+                    <p:spinner id="numOfPeople" value="#{searchExperienceManagedBean.numOfPeople}" min="0" max="10" size="2"/>  
+
+                    <h:outputLabel value="  " />                   
+                    <p:commandButton type="submit" value="Search" actionListener="#{searchExperienceManagedBean.searchExperience}" update="@form" />
+
+                </h:form>
+
+                <hr style="border-top: 1px solid black;"/>
+            </div>
+
+            <div id="searchResultsArea">
+                <h:form id="searchResultsform">
+                    <p:dataView var="experience" value="#{searchExperienceManagedBean.searchResults}" rows="10" paginator="true" rowsPerPageTemplate="10,20,30"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                gridIcon="pi pi-th-large" listIcon="pi pi-bars">
+
+                        <p:dataViewGridItem>
+                            <p:panel header="#{experience.title}" style="text-align:center">
+
+                                <h:panelGrid columns="1" style="width:100%">
+                                    <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/SQiLyd4.jpg"/> 
+
+                                    <h:outputText value="#{experience.description}" />
+
+                                    <p:commandLink action="#{searchExperienceManagedBean.viewExperienceDetails}" title="View Details">
+                                        <h:outputText styleClass="ui-icon pi pi-search" style="margin:0 auto;" />
+                                        <f:setPropertyActionListener value="#{experience}" target="#{searchExperienceManagedBean.selectedExperienceToView}" />
+                                    </p:commandLink>
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:dataViewGridItem>
+
+                        <p:dataViewListItem style="margin:auto; width:100%;">
+                            <h:panelGrid columns="3" style="margin:auto; width:100%;" >
+                                <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/SQiLyd4.jpg" /> 
+
+                                <p:outputPanel>
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="Title:" />
+                                        <h:outputText value="#{experience.title}" style="font-weight: bold"/>
+
+                                        <h:outputText value="Category:" />
+                                        <h:outputText value="Category:" style="font-weight: bold"/>
+
+                                        <h:outputText value="Description" />
+                                        <h:outputText value="#{experience.description}" style="font-weight: bold"/>
+                                    </h:panelGrid>
+                                </p:outputPanel>
+
+                                <p:commandLink action="#{experience.viewExperienceDetails}" title="View Details">
+                                    <h:outputText styleClass="ui-icon pi pi-search" style="margin:0 auto;" />
+                                    <f:setPropertyActionListener value="#{experience}" target="#{dataGridView.selectedExperienceToView}" />
+                                </p:commandLink>
+                            </h:panelGrid>
+                        </p:dataViewListItem>
+                    </p:dataView>
+
+                </h:form>
+            </div>
+        </div>
     </ui:define>
 
 </ui:composition>

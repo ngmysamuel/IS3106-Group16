@@ -45,6 +45,8 @@ public class ViewExperienceDetailsManagedBean {
     private List<User> experienceFollowers;
     private Booking newBooking;
     private Boolean isFollowed;
+
+    private List<String> images;
     /**
      * Creates a new instance of ViewExperienceDetailsManagedBean
      */
@@ -94,6 +96,23 @@ public class ViewExperienceDetailsManagedBean {
     public void removeFavoriteExperience(){
         experienceController.removeFollowerFromExperience(experienceIdToView, (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
         this.isFollowed = false;
+    }
+    
+    
+    public ViewExperienceDetailsManagedBean() {
+        images = new ArrayList();
+        images.add("https://i.imgur.com/2hocHvd.jpg");
+        images.add("https://i.imgur.com/R6wtAtN.jpg");
+        images.add("https://i.imgur.com/slbHL1Z.jpg");
+        images.add("https://i.imgur.com/SQiLyd4.jpg");
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
     
 }

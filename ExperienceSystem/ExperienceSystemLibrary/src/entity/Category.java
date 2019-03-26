@@ -26,13 +26,17 @@ public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
     @NotNull
     private String category;
     @NotNull
     private String description;
 
+    public Category() {
+    }
+
+    
     public List<Experience> getExperiences() {
         return experiences;
     }

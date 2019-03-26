@@ -1,0 +1,563 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #titleHeader{
+                position: relative;
+                width: 65%;
+                height: 100px;
+                margin: auto;
+                display: flex; 
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            #detailsBox{
+                position: relative;
+                width: 65%;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+
+            }
+
+
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 15px;">HOST EXPERIENCE</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <div id="titleHeader">
+            <span>
+                <p:commandLink action="#{hostExperienceManagementManagedBean.back}" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
+            </span>
+            <span>
+                <p:outputLabel value=" |    " style="font-size: 30px;"/>
+            </span>
+            <span>
+                <p:outputLabel value=" #{hostExperienceManagementManagedBean.experienceToView.title}" style="font-size: 30px;"/>
+            </span>
+        </div>
+
+        <div style="width:65%; margin: auto; position: relative;">
+            <h:form id="formViewHostExperienceDetails">
+
+                <p:tabView>
+                    <p:tab title="Host Experience Details">
+                        <h:form id="formHostExperienceDetails">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Title" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Title" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Creation Date" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="03/25/2019" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Category" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Category" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Type" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Type" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Location" />
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <p:outputLabel value="city + location" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Description" />
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <p:outputLabel value="Description" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Items Provided" />
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <p:outputLabel value="Items Provided" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Items Required" />
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <p:outputLabel value="Items Required" />
+                                    </p:column>
+                                </p:row>
+
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Average Price" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="$50.00" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="Average Score" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:rating disabled="true" value="4" />
+                                    </p:column>
+                                </p:row>
+
+                            </p:panelGrid>
+                            <br />
+                            <!--TO DO: Redirect after deletion -->
+                            <p:panelGrid columns="2" style="border: none; width:100%;">
+                                <p:commandButton style="width: 100%;" value="Update Experience Info" oncomplete="PF('dialogUpdateHostExperienceDetails').show()"  />
+                                <p:commandButton style="width: 100%;" value="Delete Experience" action="#" >
+                                    <p:confirm header="Confirmation" message="Are you sure you want to delete this experience?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:panelGrid>
+
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+                        </h:form>
+                    </p:tab>
+
+                    <p:tab title="Experience Dates">
+                        <h:form id="formViewAllExperienceDates">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column headerText="Date">
+                                        <p:outputLabel value="25/03/2019" />
+                                    </p:column>
+
+                                    <p:column headerText="Action" >
+                                        <p:commandButton update="formViewExperienceDateDetails" oncomplete="PF('dialogViewExperienceDateDetails').show()" icon="ui-icon-document" title="View" />
+                                        <!--                                <f:setPropertyActionListener value="#" target="#" />
+                                                                    </p:commandButton>-->
+                                        <p:commandButton actionListener="#{hostExperienceManagementManagedBean.back}" update="formUpdateExperienceDateDetails" oncomplete="PF('dialogUpdateExperienceDateDetails').show()" icon="ui-icon-pencil" title="Update" />
+    <!--                                        <f:attribute name="productEntityToUpdate" value="#{productEntity}" />
+                                        </p:commandButton>-->
+                                        <p:commandButton actionListener="#{hostExperienceManagementManagedBean.back}" update="formSendNotification" oncomplete="PF('dialogSendNotification').show()" icon="ui-icon-pencil" title="Send Notification" />
+    <!--                                        <f:attribute name="productEntityToUpdate" value="#{productEntity}" />
+                                        </p:commandButton>-->
+                                        <p:commandButton icon="ui-icon-trash" actionListener="#{hostExperienceManagementManagedBean.back}" update="formViewAllExperienceDates">
+    <!--                                        <f:attribute name="productEntityToDelete" value="#{productEntity}" />-->
+                                            <p:confirm header="Confirmation" message="Are you sure you want to delete this experience date?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+                                    </p:column>
+                                </p:row>
+
+                            </p:panelGrid>
+                            <br />
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                            <p:commandButton style="width: 100%; text-align: center;" value="Create New Experience Date" update="formCreateNewExperienceDate" oncomplete="PF('dialogCreateNewExperienceDate').show()" />
+                        </h:form>
+                    </p:tab>
+
+                    <p:tab title="Guest Evaluation">
+                        <h:form id="formGuestEvaluation">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column headerText="Date">
+                                        <p:outputLabel value="25/03/2019" />
+                                    </p:column>
+
+                                    <p:column headerText="Action" >
+                                        <p:commandButton update="formViewAllGuests" oncomplete="PF('dialogViewAllGuests').show()" icon="ui-icon-document" title="View" />
+                                        <!--                                <f:setPropertyActionListener value="#" target="#" />
+                                                                    </p:commandButton>-->
+                                        <p:commandButton actionListener="#{hostExperienceManagementManagedBean.back}" update="formEvaluateGuests" oncomplete="PF('dialogEvaluateGuests').show()" icon="ui-icon-pencil" title="Update" />
+    <!--                                        <f:attribute name="productEntityToUpdate" value="#{productEntity}" />
+                                        </p:commandButton>-->
+                                    </p:column>
+                                </p:row>
+
+                            </p:panelGrid>
+                            <br />
+                            
+                        </h:form>
+                    </p:tab>
+
+                </p:tabView>
+
+            </h:form>
+        </div>
+
+        <h:form id="formUpdateHostExperienceDetails">
+            <p:dialog id="dialogUpdateHostExperienceDetails" widgetVar="dialogUpdateHostExperienceDetails" closable="true" position="center center" header="Update Host Experience Details" resizable="false">
+                <p:growl id="msgUpdateHostExperienceDetails" showDetail="true" escape="false" />
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Title" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="Title" /> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Category" /> 
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="category" value="category" style="width:140px;">
+                                <f:selectItem itemLabel="Select Category" itemValue="" noselectoption="true"/>
+                                <f:selectItem itemLabel="Sports" itemValue="Sports" />
+                                <f:selectItem itemLabel="Food" itemValue="Food" />
+                                <f:selectItem itemLabel="Site-seeing" itemValue="Site-seeing" />
+                            </p:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Type" /> 
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="type" value="type" style="width:140px;">
+                        <f:selectItem itemLabel="Select Type" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="Workshop" itemValue="Sports" />
+                        <f:selectItem itemLabel="Sharing Session" itemValue="Food" />
+                        <f:selectItem itemLabel="Hangout" itemValue="Site-seeing" />
+                    </p:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    
+                     <p:row>
+                        <p:column>
+                            <h:outputText value="Location" /> 
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="city" value="city" style="width:100px;">
+                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="Singapore" itemValue="Singapore" />
+                        <f:selectItem itemLabel="Shanghai" itemValue="Shanghai" />
+                        <f:selectItem itemLabel="Jakarta" itemValue="Jakarta" />
+                    </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                     
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Address" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="Address" /> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Language" />
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu id="language" value="language" style="width:100px;">
+                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
+                        <f:selectItem itemLabel="English" itemValue="English" />
+                        <f:selectItem itemLabel="Malaysian" itemValue="Malaysian" />
+                        <f:selectItem itemLabel="Chinese" itemValue="Chinese" />
+                        <f:selectItem itemLabel="Hindu" itemValue="Hindu" />
+                    </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Description" /> 
+                        </p:column>
+                        <p:column>
+                           <p:inputTextarea row="10" columns="100" value="Content" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel for="itemsProvided" value="Items Provided (press Enter to add a new one): " />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                           <p:chips id="itemsProvided" value="#{hostExperienceManagementManagedBean.itemsProvided}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel for="itemsRequired" value="Items Required (press Enter to add a new one):" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                           <p:chips id="itemsRequired" value="#{hostExperienceManagementManagedBean.itemsRequired}" />
+                        </p:column>
+                    </p:row>
+                    
+                <p:commandButton style="width: 100%;" value="Update Experience Info" action="#" />  
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formViewExperienceDateDetails">
+            <p:dialog id="dialogViewExperienceDateDetails" widgetVar="dialogViewExperienceDateDetails" closable="true" position="center center" header="View Experience Date Details" resizable="false">
+                <p:growl id="msg" showDetail="true" escape="false" />
+
+                <p:panelGrid style="width:100%;" columns="2" layout="grid">
+                    <p:outputLabel value="Date" /> 
+                    <p:outputLabel value="Date" />
+
+                    <p:outputLabel value="Capacity" /> 
+                    <p:outputLabel value="Capacity" />
+
+                    <p:outputLabel value="Spots Available" /> 
+                    <p:outputLabel value="Spots Available" />
+
+                    <p:outputLabel value="Price" /> 
+                    <p:outputLabel value="Price" />
+
+                    <p:outputLabel value="Guests Attending" /> 
+                    <p:outputLabel value="Guests" />
+
+                </p:panelGrid>
+                <br />
+
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formUpdateExperienceDateDetails">
+            <p:dialog id="dialogUpdateExperienceDateDetails" widgetVar="dialogUpdateExperienceDateDetails" closable="true" position="center center" header="Update Experience Date Details" resizable="false">
+                <p:growl id="msg" showDetail="true" escape="false" />
+
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Date" />
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{hostExperienceManagementManagedBean.updateExperienceDate}"  mode="inline" />
+                        </p:column>
+                    </p:row>
+                     
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Capacity" />
+                        </p:column>
+                        <p:column>
+                            <p:spinner value="10" min="1" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:commandButton value="Update" action="#" />
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+                <br />
+
+            </p:dialog>
+        </h:form>
+        
+        <h:form id="formCreateNewExperienceDate">
+            <p:dialog id="dialogCreateNewExperienceDate" widgetVar="dialogCreateNewExperienceDate" closable="true" position="center center" header="Create New Experience Date" resizable="false">
+                <p:growl id="msg" showDetail="true" escape="false" />
+
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Date" />
+                        </p:column>
+                        <p:column>
+                            <p:calendar mode="inline" value="#{hostExperienceManagementManagedBean.updateExperienceDate}" />
+                        </p:column>
+                    </p:row>
+                     
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Capacity" />
+                        </p:column>
+                        <p:column>
+                            <p:spinner value="10" min="1" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Price" /> 
+                        </p:column>
+                        <p:column>
+                            <h:inputText value="Price" /> 
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column colspan="2" >
+                            <p:commandButton value="Create" action="#" />
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                <br />
+
+            </p:dialog>
+        </h:form>
+        
+        <h:form id="formSendNotification">
+            <p:dialog id="dialogSendNotification" widgetVar="dialogSendNotification" closable="true" position="center center" header="Send Notification" resizable="false">
+                <p:growl id="msgSendNotification" showDetail="true" escape="false" />
+
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Write a notification for your guests:" /> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:inputTextarea value="Write a notification for your guests" /> 
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:commandButton value="Send" action="#" /> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br />
+
+            </p:dialog>
+        </h:form>
+        
+        <h:form id="formViewAllGuests">
+            <p:dialog id="dialogViewAllGuests" widgetVar="dialogViewAllGuests" closable="true" position="center center" header="View All Guests" resizable="false">
+
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="AVATAR" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="username" />
+                        </p:column>
+                        <p:column>
+                            <p:rating value="3" disabled="true" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="nice guest" />
+                        </p:column>
+                    </p:row>
+                     
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="AVATAR" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="username" />
+                        </p:column>
+                        <p:column>
+                            <p:rating value="3" disabled="true" />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="nice guest" />
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <br />
+
+            </p:dialog>
+        </h:form>
+        
+        <h:form id="formEvaluateGuests">
+            <p:dialog id="dialogEvaluateGuests" widgetVar="dialogEvaluateGuests" closable="true" position="center center" header="Evaluate Guests" resizable="false">
+
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="AVATAR" />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="username" />
+                        </p:column>
+                        <p:column>
+                            <p:rating value="3" />
+                        </p:column>
+                        <p:column>
+                            <p:inputTextarea rows="3" value="nice guest" />
+                        </p:column>
+                        <p:column>
+                            <p:commandButton value="Save" action="#" />
+                        </p:column>
+                    </p:row>
+                     
+                </p:panelGrid>
+                <br />
+
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

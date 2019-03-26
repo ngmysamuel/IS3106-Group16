@@ -28,10 +28,11 @@ public class Experience implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long experienceId;
     @NotNull
     private String title;
+    private String description;
     private List<String> providingItems;
     private List<String> requiringItems;
     private String supportingDocument;
@@ -42,10 +43,7 @@ public class Experience implements Serializable {
     private List<String> reminders;
     @NotNull
     private boolean active;
-    
-    
-    
-    
+
     @ManyToOne
     private Type type;
     @ManyToOne
@@ -61,15 +59,13 @@ public class Experience implements Serializable {
     @ManyToOne
     private Category category;
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public Experience() {
+    }
+
+    public Experience(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
     
     public Long getExperienceId() {
         return experienceId;
@@ -92,6 +88,22 @@ public class Experience implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getSupportingDocument() {
+        return supportingDocument;
+    }
+
+    public void setSupportingDocument(String supportingDocument) {
+        this.supportingDocument = supportingDocument;
     }
 
     public List<String> getProvidingItems() {

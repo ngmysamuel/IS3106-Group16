@@ -54,7 +54,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     
     @NotNull
@@ -95,6 +95,9 @@ public class User implements Serializable {
     private List<Evaluation> evaluations;
     @OneToMany (mappedBy = "user")
     private List<Booking> bookings;
+
+    public User() {
+    }
 
     public List<User> getFollowers() {
         return followers;

@@ -1,50 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-    
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
     <style>
-        
+
         #header_top {
-          margin-buttom: 40px;
+            margin-buttom: 40px;
         }
-        
+
         ul {
-          list-style-type: none;
-          margin: 0;
-          padding: 0;
-          overflow: hidden;
-          background-color: white;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: white;
         }
 
         li {
-          float: left;
+            float: left;
         }
 
         .header_menu_item {
-          display: block;
-          color: black;
-          text-align: center;
-          padding: 14px 16px;
-          text-decoration: none;
-          font-size: 13px;
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 13px;
+            border: 0 none;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
         }
 
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 15px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
     </style>
-    
+
     <div id="header_top" style="margin: auto; height: 100px; width: 65%; display: flex; justify-content: space-between; align-items: center;">
         <span>
             <img src="https://cdn1.imggmi.com/uploads/2019/3/17/d9fddbec023eea252355b8ebf188c042-full.png" alt="ExperLife" />
         </span>
         <span style="display: flex; justify-content: flex-end; align-items: center;">
-           <ul>
-                <li><h:link styleClass="header_menu_item" outcome="/index">Home</h:link></li>
-                <li><h:link styleClass="header_menu_item" outcome="/userOperations/aboutUs.xhtml">About Us</h:link></li>
-                <li><h:link styleClass="header_menu_item" outcome="#">Explore</h:link></li>
-                <li><h:link styleClass="header_menu_item" outcome="/userOperations/registerHost.xhtml">Be a Host</h:link></li>
-                <li><h:link styleClass="header_menu_item" outcome="#">Register</h:link></li>
-            </ul> 
+            
+            <h:button styleClass="header_menu_item" value="Home" outcome="/index" />
+            <h:button styleClass="header_menu_item" value="About Us" outcome="/userOperations/aboutUs.xhtml" />
+            <h:button styleClass="header_menu_item" value="Explore" outcome="/userOperations/searchExperience.xhtml" />
+            <div class="dropdown">
+                <h:button styleClass="header_menu_item" value="Hosting" />
+                <div class="dropdown-content">
+                    <p:link outcome="/userOperations/createNewHostExperience.xhtml" value="Create New Experience" />
+                    <p:link outcome="/userOperations/viewAllHostExperiences.xhtml" value="Manage Host Experiences" />
+                    <p:link outcome="/userOperations/searchExperience.xhtml" value="Guest Management" />
+                    <p:link outcome="/userOperations/searchExperience.xhtml" value="Finances" />
+                </div>
+            </div>
+            <h:button styleClass="header_menu_item" value="Register" />
+            
         </span> 
     </div>
     <br />

@@ -26,10 +26,13 @@ public class Type implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long typeId;
     @NotNull
     private String type;
+
+    public Type() {
+    }
     
 
     public List<Experience> getExperiences() {
