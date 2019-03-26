@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">FINANCES</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+        <br />
+        <br />
+        <div style="position: relative; width: 65%; margin: auto;">
+            <p:panelGrid style="width:100%;">
+                <p:row>
+                    <p:column>
+                        <p:panel id="experience" header="Experience">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="5" />
+                        </p:panel>
+                    </p:column>
+
+                    <p:column>
+                        <p:panel id="experienceListings" header="Experience Listings">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="12" />
+                        </p:panel>
+                    </p:column>
+
+                    <p:column>
+                        <p:panel id="totalGuests" header="Total Guests">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="103" />
+                        </p:panel>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <p:panel id="averageHostRating" header="Average Host Rating">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="4.7/5.0" />
+                        </p:panel>
+                    </p:column>
+
+                    <p:column>
+                        <p:panel id="totalEarnings" header="Total Earnings">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="$4567" />
+                        </p:panel>
+                    </p:column>
+
+                    <p:column>
+                        <p:panel id="averageExperienceScore" header="Average Experience Score">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="4.8/5.0" />
+                        </p:panel>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+
+            <br />
+            <br />
+
+            <div>
+
+                <h:form id="formManageHostFinances">
+
+                    <p:tabView>
+                        <p:tab title="Earnings Dashboard">
+                            <p:chart type="line" model="#{hostFinancesManagedBean.lineModel1}" style="width:100%; height:300px;"/>
+                        </p:tab>
+
+                        <!-- in practice, should use a dataList here to iterate through all the reports-->
+                        <p:tab title="Experience Date Payment Report">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column headerText="Report ID">
+                                        <p:outputLabel value="Report000001" />
+                                    </p:column>
+
+                                    <p:column headerText="Action" >
+                                        <p:commandButton update="formViewExperienceDatePaymentReportDetails" oncomplete="PF('dialogViewExperienceDatePaymentReportDetails').show()" icon="ui-icon-document" title="View" />
+                                        <!--                                                                        <f:setPropertyActionListener value="#" target="#" />
+                                                                                                            </p:commandButton>-->
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                            <br />
+                        </p:tab>
+
+                        <p:tab title="Payment Appeal">
+                            <p:panelGrid style="width:100%;">
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Enter Appeal Title (include the experience name and listing date):" />
+                                    </p:column>
+                                    
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column>
+                                        <p:inputText value="experience name and listing date" />
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column>
+                                        <p:outputLabel value="Describe the reason for the appeal:" />
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column>
+                                        <p:inputTextarea row="5" value="reason for the appeal" />
+                                    </p:column>
+                                </p:row>
+                                
+                                <p:row>
+                                    <p:column>
+                                        <p:commandButton value="Submit" action="#"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:tab>
+
+                    </p:tabView>
+
+                </h:form>
+
+            </div>
+        </div>
+
+        <h:form id="formViewExperienceDatePaymentReportDetails">
+            <p:dialog id="dialogViewExperienceDatePaymentReportDetails" widgetVar="dialogViewExperienceDatePaymentReportDetails" closable="true" position="center center" header="View Experience Date Payment Report Details" resizable="false">
+                <p:growl id="msgViewExperienceDatePaymentReportDetails" showDetail="true" escape="false" />
+
+                <p:panelGrid style="width:100%;" columns="2" layout="grid">
+                    <p:outputLabel value="Experience ID" /> 
+                    <p:outputLabel value="001" />
+
+                    <p:outputLabel value="Date" /> 
+                    <p:outputLabel value="Date" />
+
+                    <p:outputLabel value="Number of Attendees" /> 
+                    <p:outputLabel value="10" />
+
+                    <p:outputLabel value="Earnings" /> 
+                    <p:outputLabel value="$1000" />
+
+                </p:panelGrid>
+                <br />
+
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

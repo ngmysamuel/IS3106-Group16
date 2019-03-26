@@ -66,28 +66,119 @@
         }
     </style>
 
-    <div id="header_top" style="margin: auto; height: 100px; width: 65%; display: flex; justify-content: space-between; align-items: center;">
-        <span>
-            <img src="https://cdn1.imggmi.com/uploads/2019/3/17/d9fddbec023eea252355b8ebf188c042-full.png" alt="ExperLife" />
-        </span>
-        <span style="display: flex; justify-content: flex-end; align-items: center;">
-            
-            <h:button styleClass="header_menu_item" value="Home" outcome="/index" />
-            <h:button styleClass="header_menu_item" value="About Us" outcome="/userOperations/aboutUs.xhtml" />
-            <h:button styleClass="header_menu_item" value="Explore" outcome="/userOperations/searchExperience.xhtml" />
-            <div class="dropdown">
-                <h:button styleClass="header_menu_item" value="Hosting" />
-                <div class="dropdown-content">
-                    <p:link outcome="/userOperations/createNewHostExperience.xhtml" value="Create New Experience" />
-                    <p:link outcome="/userOperations/viewAllHostExperiences.xhtml" value="Manage Host Experiences" />
-                    <p:link outcome="/userOperations/searchExperience.xhtml" value="Guest Management" />
-                    <p:link outcome="/userOperations/searchExperience.xhtml" value="Finances" />
-                </div>
-            </div>
-            <h:button styleClass="header_menu_item" value="Register" />
-            
-        </span> 
-    </div>
+        <div id="header_top" style="margin: auto; height: 100px; width: 65%; display: flex; justify-content: space-between; align-items: center;">
+            <span>
+                <img src="https://cdn1.imggmi.com/uploads/2019/3/17/d9fddbec023eea252355b8ebf188c042-full.png" alt="ExperLife" />
+            </span>
+            <h:form id="formUserStatus">
+                <span style="display: flex; justify-content: flex-end; align-items: center;">
+
+                    <h:button styleClass="header_menu_item" value="Home" outcome="/index" />
+                    <h:button styleClass="header_menu_item" value="About Us" outcome="/userOperations/aboutUs.xhtml" />
+                    <h:button styleClass="header_menu_item" value="Explore" outcome="/userOperations/searchExperience.xhtml" />
+                    <div class="dropdown">
+                        <h:button styleClass="header_menu_item" value="Hosting" />
+                        <div class="dropdown-content">
+                            <p:link outcome="/userOperations/createNewHostExperience.xhtml" value="Create New Experience" />
+                            <p:link outcome="/userOperations/viewAllHostExperiences.xhtml" value="Manage Host Experiences" />
+                            <p:link outcome="/userOperations/searchExperience.xhtml" value="Guest Management" />
+                            <p:link outcome="/userOperations/hostFinances.xhtml" value="Finances" />
+                        </div>
+                    </div>
+
+                    <span class="dropdown">
+
+                        <h:button styleClass="header_menu_item" value="Register"  />
+                        <div class="dropdown-content">
+                            <p:commandLink oncomplete="PF('dialogSignUp').show()" value="Sign Up" />
+                            <p:commandLink oncomplete="PF('dialogSignIn').show()" value="Sign In" />
+                        </div>
+                    </span>
+
+                </span> 
+            </h:form>
+        </div>
+    
+    <h:form id="formSignUp">
+        <p:dialog id="dialogSignUp" widgetVar="dialogSignUp" closable="true" header="Sign Up" resizable="false">
+            <p:panelGrid>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Email" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="Email" />
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Username" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="Username" />
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Password" />
+                    </p:column>
+                    <p:column> 
+                        <p:password id="pwd1" value="#" match="pwd2" required="true" feedback="true" />
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Re-enter Password" />
+                    </p:column>
+                    <p:column> 
+                        <p:password id="pwd2" value="#" required="true" />
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column colspan="2">
+                        <p:commandButton value="Sign Up" action="#" />
+                    </p:column>
+                </p:row>
+                
+            </p:panelGrid>
+        </p:dialog>
+    </h:form>
+    
+    <h:form id="formSignIn">
+        <p:dialog id="dialogSignIn" widgetVar="dialogSignIn" closable="true" header="Sign In" resizable="false">
+            <p:panelGrid> 
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Username" />
+                    </p:column>
+                    <p:column>
+                        <p:inputText value="Username" />
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Password" />
+                    </p:column>
+                    <p:column> 
+                        <p:password id="pwd1" value="#" match="pwd2" required="true" feedback="true" />
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column colspan="2">
+                        <p:commandButton value="Sign In" action="#" />
+                    </p:column>
+                </p:row>
+                
+            </p:panelGrid>
+        </p:dialog>
+    </h:form>
+    
     <br />
     <br />
 </ui:composition>
