@@ -81,13 +81,13 @@
         
         <div id="titleHeader">
             <span>
-                <p:commandLink action="#{viewExperienceDetailsManagedBean.back}" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
+                <p:commandLink action="#" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
             </span>
             <span>
                 <p:outputLabel value=" |    " style="font-size: 30px;"/>
             </span>
             <span>
-                <p:outputLabel value=" #{viewExperienceDetailsManagedBean.experienceToView.title}" style="font-size: 30px;"/>
+                <p:outputLabel value=" Experience Title" style="font-size: 30px;"/>
             </span>
         </div>
         
@@ -137,13 +137,13 @@
                     <br />
                     <div style="width:85%; margin:auto;">
                         <p:outputLabel for="bookDate" value="Experience Date" />
-                        <p:calendar id="bookDate" value="#{viewExperienceDetailsManagedBean.bookDate}" showOn="button" inputStyle="width:140px;"/>
+                        <p:calendar id="bookDate" value="#" showOn="button" inputStyle="width:140px;"/>
                         <br/>
                         <br/>
                         
                         <p:outputLabel for="bookNumOfTickets" value="Number of People" />
                         <br/>
-                        <p:spinner id="bookNumOfTickets" value="#{viewExperienceDetailsManagedBean.bookNumOfTickets}" min="0" max="10" />
+                        <p:spinner id="bookNumOfTickets" value="#" min="0" max="10" />
                         <br/>
                         <br/>
                         <p:commandButton value="Book Now" actionListner="#" oncomplete="PF('dialogCheckout').show()"/>

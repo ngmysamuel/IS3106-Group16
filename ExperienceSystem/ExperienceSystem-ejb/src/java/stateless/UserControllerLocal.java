@@ -45,4 +45,6 @@ public interface UserControllerLocal {
     Appeal createAppeal(Long userId, Appeal appeal) throws UserNotFoundException;
 
     User updatePersonalInformation(User user);
+
+    public List<User> retrieveAllUsers();
 }

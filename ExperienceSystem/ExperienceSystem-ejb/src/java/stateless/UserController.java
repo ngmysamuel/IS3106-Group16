@@ -85,7 +85,13 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         experienceController.removeFollowerFromExperience(id, user);
         user.getFollowedExperiences().remove(exp);
     }
-
+    
+    @Override
+    public List<User> retrieveAllUsers(){
+        Query query = em.createQuery("SELECT c FROM User c ORDER BY c.userId ASC");
+        return query.getResultList();
+    }
+    
     public User retrieveUserByUsername(String username) throws UserNotFoundException {
         Query q = em.createQuery("SELECT u FROM User WHERE u.username = :name");
         q.setParameter("name", username);

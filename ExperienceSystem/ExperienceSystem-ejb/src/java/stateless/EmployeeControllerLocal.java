@@ -9,6 +9,7 @@ import entity.Appeal;
 import entity.Employee;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.AppealNotFoundException;
 import util.exception.CreateNewEmployeeException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InputDataValidationException;
@@ -25,4 +26,8 @@ public interface EmployeeControllerLocal {
     public Employee createNewEmployee(Employee newEmployee) throws CreateNewEmployeeException, InputDataValidationException;
     
     public List<Appeal> retrieveAllAppeals();
+
+    public Appeal retrieveAppealById(Long appealId);
+
+    public void processAppeal(Long appealId, String reply, Long employeeId) throws AppealNotFoundException, EmployeeNotFoundException;
 }
