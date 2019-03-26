@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class Evaluation implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long evaluationId;
     @NotNull
-    private Date evaluationTime;
+    private LocalDate evaluationTime;
     private String remark;
     @NotNull
     private BigDecimal score;
@@ -50,11 +51,11 @@ public class Evaluation implements Serializable {
         this.user = user;
     }
 
-    public Date getEvaluationTime() {
+    public LocalDate getEvaluationTime() {
         return evaluationTime;
     }
 
-    public void setEvaluationTime(Date evaluationTime) {
+    public void setEvaluationTime(LocalDate evaluationTime) {
         this.evaluationTime = evaluationTime;
     }
 

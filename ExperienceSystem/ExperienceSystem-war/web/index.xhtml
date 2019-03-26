@@ -78,37 +78,37 @@
                 }
             }
         </style>
-            <div id="slider">
-                <div id="sliderBox">
-                    <span class="slide">
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/R6wtAtN.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/slbHL1Z.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/SQiLyd4.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
-                    </span>
-                </div>
-                <div id="searchingBox">
-                    <h:form id="formSearchExperience">
-                        <p:outputLabel value="Book Your Experience"/>
-                        <br/>
-                        <br/>
-                        
-                        <p:outputLabel for="button" value="Date" />
-                        <br/>
-                        <p:calendar id="button" value="#{indexManagedBean.searchDate}" showOn="button" />
-                        <br/>
-                        <br/>
-                        
-                        <p:outputLabel for="minMax" value="Number of People" />
-                        <br/>
-                        <p:spinner id="minMax" value="#{indexManagedBean.searchNumOfPeople}" min="0" max="10" />
-                        <br/>
-                        <br/>
-                        <p:commandButton value="Search" actionListner="#" />
-                    </h:form>
-                </div>
+        <div id="slider">
+            <div id="sliderBox">
+                <span class="slide">
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/R6wtAtN.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/slbHL1Z.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/SQiLyd4.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
+                </span>
             </div>
+            <div id="searchingBox">
+                <h:form id="formSearchExperience">
+                    <p:outputLabel value="Book Your Experience"/>
+                    <br/>
+                    <br/>
+
+                    <p:outputLabel for="button" value="Date" />
+                    <br/>
+                    <p:calendar id="button" value="#{indexManagedBean.searchDate}" showOn="button" />
+                    <br/>
+                    <br/>
+
+                    <p:outputLabel for="minMax" value="Number of People" />
+                    <br/>
+                    <p:spinner id="minMax" value="#{indexManagedBean.searchNumOfPeople}" min="0" max="10" />
+                    <br/>
+                    <br/>
+                    <p:commandButton value="Search" actionListner="#" />
+                </h:form>
+            </div>
+        </div>
     </ui:define>
 
 

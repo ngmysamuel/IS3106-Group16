@@ -34,7 +34,7 @@ public class User implements Serializable {
     @ManyToMany(mappedBy = "blocks")
     private List<User> blockers; // Users who blocked this user.
 
-    @OneToMany(mappedBy = "replier")
+    @OneToMany(mappedBy = "recipient")
     private List<Message> messagesReplied;
 
     @OneToMany(mappedBy = "sender")

@@ -5,6 +5,10 @@
         <param-value>Production</param-value>
     </context-param>
     <context-param>
+        <param-name>primefaces.FONT_AWESOME</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
         <param-name>alternatedocroot_1</param-name>
         <param-value>/glassfish-4.1.1-mediaFiles</param-value>
     </context-param>

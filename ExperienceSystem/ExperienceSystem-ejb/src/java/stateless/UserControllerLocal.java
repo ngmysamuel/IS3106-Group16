@@ -22,6 +22,7 @@ import util.exception.UserNotFoundException;
 @Local
 public interface UserControllerLocal {
     public User register(User user);
+    public void update(User user);
     public User login(String username, String password) throws InvalidLoginCredentialException;
     public void followExperience(Long id, User user);
     public void unfollowExperience(Long id, User user);

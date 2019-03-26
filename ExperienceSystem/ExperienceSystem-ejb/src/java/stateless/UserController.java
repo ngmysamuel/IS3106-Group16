@@ -55,6 +55,10 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         em.flush();
         return user;
     }
+    
+    public void update(User user) {
+        em.merge(user);
+    }
 
     public User login(String username, String password) throws InvalidLoginCredentialException {
         try {

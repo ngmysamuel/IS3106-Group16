@@ -8,13 +8,12 @@ package entity;
 import enumerated.StatusEnum;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -28,6 +27,7 @@ public class Booking implements Serializable {
 
     @OneToOne(mappedBy = "booking")
     private Evaluation evaluation;
+    
     @ManyToOne
     private User user;
 
@@ -36,7 +36,7 @@ public class Booking implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
     @NotNull
-    private Date bookingDate;
+    private LocalDate bookingDate;
     @NotNull
     private Integer numberOfPeople;
     @NotNull
@@ -105,11 +105,11 @@ public class Booking implements Serializable {
         this.evaluation = evaluation;
     }
 
-    public Date getBookingDate() {
+    public LocalDate getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate(Date bookingDate) {
+    public void setBookingDate(LocalDate bookingDate) {
         this.bookingDate = bookingDate;
     }
 
