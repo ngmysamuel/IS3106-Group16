@@ -6,7 +6,7 @@
 package jsf.managedbean;
 
 import entity.Category;
-import entity.Location;
+import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -20,7 +20,7 @@ import stateless.CategoryControllerLocal;
  */
 @Named(value = "createCategoryManagedBean")
 @ViewScoped
-public class CreateCategoryManagedBean {
+public class CreateCategoryManagedBean implements Serializable {
 
     @EJB(name = "CategoryControllerLocal")
     private CategoryControllerLocal categoryControllerLocal;

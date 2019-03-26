@@ -7,6 +7,7 @@ package jsf.managedbean;
 
 import entity.Location;
 import java.io.IOException;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -22,7 +23,7 @@ import stateless.LocationControllerLocal;
  */
 @Named(value = "deleteLocationManagedBean")
 @ViewScoped
-public class DeleteLocationManagedBean {
+public class DeleteLocationManagedBean implements Serializable {
 
     @EJB(name = "LocationControllerLocal")
     private LocationControllerLocal locationControllerLocal;

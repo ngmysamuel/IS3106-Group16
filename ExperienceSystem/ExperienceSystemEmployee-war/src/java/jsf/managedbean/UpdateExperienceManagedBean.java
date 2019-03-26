@@ -11,6 +11,7 @@ import entity.Language;
 import entity.Location;
 import entity.Type;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -31,7 +32,7 @@ import stateless.TypeControllerLocal;
  */
 @Named(value = "updateExperienceManagedBean")
 @ViewScoped
-public class UpdateExperienceManagedBean {
+public class UpdateExperienceManagedBean implements Serializable {
 
     @EJB(name = "ExperienceControllerLocal")
     private ExperienceControllerLocal experienceControllerLocal;

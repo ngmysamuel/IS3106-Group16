@@ -7,6 +7,7 @@ package jsf.managedbean;
 
 import entity.User;
 import java.io.IOException;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -21,7 +22,7 @@ import stateless.UserControllerLocal;
  */
 @Named(value = "searchCustomerByIdManagedBean")
 @ViewScoped
-public class SearchCustomerByIdManagedBean {
+public class SearchCustomerByIdManagedBean implements Serializable {
 
     @EJB(name = "UserControllerLocal")
     private UserControllerLocal userControllerLocal;

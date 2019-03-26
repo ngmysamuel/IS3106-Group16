@@ -7,6 +7,7 @@ package jsf.managedbean;
 
 import entity.Appeal;
 import java.io.IOException;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -22,7 +23,7 @@ import stateless.EmployeeControllerLocal;
  */
 @Named(value = "viewAppealDetailsManagedBean")
 @ViewScoped
-public class ViewAppealDetailsManagedBean {
+public class ViewAppealDetailsManagedBean implements Serializable {
 
     @EJB(name = "EmployeeControllerLocal")
     private EmployeeControllerLocal employeeControllerLocal;

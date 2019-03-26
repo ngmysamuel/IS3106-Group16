@@ -6,6 +6,7 @@
 package jsf.managedbean;
 
 import entity.User;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -20,7 +21,7 @@ import stateless.UserControllerLocal;
  */
 @Named(value = "updateCustomerStatusManagedBean")
 @ViewScoped
-public class UpdateCustomerStatusManagedBean {
+public class UpdateCustomerStatusManagedBean implements Serializable {
 
     @EJB(name = "UserControllerLocal")
     private UserControllerLocal userControllerLocal;

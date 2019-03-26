@@ -7,6 +7,7 @@ package jsf.managedbean;
 
 import entity.Category;
 import java.io.IOException;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -22,7 +23,7 @@ import stateless.CategoryControllerLocal;
  */
 @Named(value = "deleteCategoryManagedBean")
 @ViewScoped
-public class DeleteCategoryManagedBean {
+public class DeleteCategoryManagedBean implements Serializable {
 
     @EJB(name = "CategoryControllerLocal")
     private CategoryControllerLocal categoryControllerLocal;

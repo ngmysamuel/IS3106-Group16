@@ -7,6 +7,7 @@ package jsf.managedbean;
 
 import entity.ExperienceDate;
 import java.io.IOException;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -22,7 +23,7 @@ import stateless.ExperienceDateControllerLocal;
  */
 @Named(value = "viewExperienceDateDetailsManagedBean")
 @ViewScoped
-public class ViewExperienceDateDetailsManagedBean {
+public class ViewExperienceDateDetailsManagedBean implements Serializable {
 
     @EJB(name = "ExperienceDateControllerLocal")
     private ExperienceDateControllerLocal experienceDateControllerLocal;

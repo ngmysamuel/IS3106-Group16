@@ -3,6 +3,7 @@ package jsf.managedbean;
 
 import entity.Experience;
 import java.io.IOException;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -19,7 +20,7 @@ import util.exception.ExperienceNotFoundException;
  */
 @Named(value = "deleteExperienceManagedBean")
 @ViewScoped
-public class DeleteExperienceManagedBean {
+public class DeleteExperienceManagedBean implements Serializable {
 
     @EJB(name = "ExperienceControllerLocal")
     private ExperienceControllerLocal experienceControllerLocal;

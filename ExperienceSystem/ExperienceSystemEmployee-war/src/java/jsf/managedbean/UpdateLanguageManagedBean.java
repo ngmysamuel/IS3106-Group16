@@ -6,6 +6,7 @@
 package jsf.managedbean;
 
 import entity.Language;
+import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -20,7 +21,7 @@ import stateless.LanguageControllerLocal;
  */
 @Named(value = "updateLanguageManagedBean")
 @ViewScoped
-public class UpdateLanguageManagedBean {
+public class UpdateLanguageManagedBean implements Serializable {
 
     @EJB(name = "LanguageControllerLocal")
     private LanguageControllerLocal languageControllerLocal;

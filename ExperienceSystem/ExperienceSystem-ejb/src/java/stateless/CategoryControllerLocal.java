@@ -23,9 +23,10 @@ public interface CategoryControllerLocal {
     
     public List<Category> retrieveAllCategories();
     
+    public Category retrieveCategoryById (Long categoryId);
+    
     public void updateCategory(Category category) throws InputDataValidationException, CategoryNotFoundException;
     
     public void deleteCategory(Long categoryId) throws CategoryNotFoundException, DeleteCategoryException;;
 
-    public Category retrieveCategoryById(Long categoryId);
 }

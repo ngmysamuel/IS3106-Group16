@@ -6,6 +6,7 @@
 package jsf.managedbean;
 
 import entity.Location;
+import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -19,7 +20,7 @@ import stateless.LocationControllerLocal;
  */
 @Named(value = "createLocationManagedBean")
 @ViewScoped
-public class CreateLocationManagedBean {
+public class CreateLocationManagedBean implements Serializable {
 
     @EJB(name = "LocationControllerLocal")
     private LocationControllerLocal locationControllerLocal;
