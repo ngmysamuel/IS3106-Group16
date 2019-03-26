@@ -6,6 +6,7 @@
 package stateless;
 
 import entity.Booking;
+import entity.Category;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.ExperienceDateCancellationReport;
@@ -16,6 +17,7 @@ import entity.User;
 import enumerated.StatusEnum;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -142,8 +144,12 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     }
     
     @Override
-    public Experience retrieveExperienceById(Long id) {
-        return em.find(Experience.class, id);
+    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException{
+        Experience e =  em.find(Experience.class, id);
+        if(e == null){
+            throw new ExperienceNotFoundException();
+        }
+        return e;
     }
     
     @Override
@@ -157,9 +163,21 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }
     }
     
+    public List<Experience> retrieveExperienceByName(String title){
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.title LIKE '%:inExperienceName5'");
+        query.setParameter("inExperienceName", title);
+        return query.getResultList();
+    }
+    
     public List<Experience> retrieveExperienceByType(Type type){
         Query query = em.createQuery("SELECT e FROM Experience e WHERE e.type.typeId = :inTypeId ORDER BY e.experienceId DESC");
         query.setParameter("inTypeId", type.getTypeId());
+        return query.getResultList();
+    }
+    
+    public List<Experience> retrieveExperienceByCategory(Category category){
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.category.categoryId = :inCategoryId ORDER BY e.experienceId DESC");
+        query.setParameter("inCategoryId", category.getCategoryId());
         return query.getResultList();
     }
     

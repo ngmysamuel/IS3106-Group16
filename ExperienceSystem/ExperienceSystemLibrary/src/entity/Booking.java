@@ -48,15 +48,10 @@ public class Booking implements Serializable {
     @OneToOne
     private ExperienceDateCancellationReport cancellationReport;
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public Booking() {
+        this.status = StatusEnum.ACTIVE;
+    }
+
     
     public ExperienceDateCancellationReport getCancellationReport() {
         return cancellationReport;
