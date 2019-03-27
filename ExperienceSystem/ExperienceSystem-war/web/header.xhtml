@@ -88,10 +88,18 @@
 
                     <span class="dropdown">
 
-                        <h:button styleClass="header_menu_item" value="Register"  />
+                        <h:button styleClass="header_menu_item" value="Register" rendered="false" />
+                        <h:button styleClass="header_menu_item" value="My Account" />
                         <div class="dropdown-content">
-                            <p:commandLink oncomplete="PF('dialogSignUp').show()" value="Sign Up" />
-                            <p:commandLink oncomplete="PF('dialogSignIn').show()" value="Sign In" />
+                            <p:commandLink oncomplete="PF('dialogSignUp').show()" value="Sign Up" rendered="false"/>
+                            <p:commandLink oncomplete="PF('dialogSignIn').show()" value="Sign In" rendered="false"/>
+                            
+                            <p:link outcome="/userOperations/viewAllFavouriteExperiences.xhtml" value="My Favourate Experiences" />
+                            <p:link outcome="/userOperations/viewAllReservations.xhtml" value="My Reservations" />
+                            <p:link outcome="/userOperations/viewAllPastExperiences.xhtml" value="My Past Experiences" />
+                            <p:link outcome="/userOperations/viewUserNetwork.xhtml" value="My Network" />
+                            <p:link outcome="/userOperations/accountInfo.xhtml" value="Account Info" />
+                            <p:commandLink oncomplete="PF('dialogLogOut').show()" value="Log Out" />
                         </div>
                     </span>
 
@@ -172,6 +180,28 @@
                 <p:row>
                     <p:column colspan="2">
                         <p:commandButton value="Sign In" action="#" />
+                    </p:column>
+                </p:row>
+                
+            </p:panelGrid>
+        </p:dialog>
+    </h:form>
+    
+    <h:form id="formLogOut">
+        <p:dialog id="dialogLogOut" widgetVar="dialogLogOut" closable="true" header="Log Out" resizable="false">
+            <p:panelGrid> 
+                <p:row>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Are you sure you want to log out?" />
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column>
+                        <p:commandButton value="Yes" action="#" />
+                    </p:column>
+                    <p:column>
+                        <p:commandButton value="No" action="#" />
                     </p:column>
                 </p:row>
                 
