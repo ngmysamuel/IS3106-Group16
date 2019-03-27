@@ -31,8 +31,8 @@
 
         <div id="topBox">
             <div id="blackBox">
-                <p style="overflow:auto; position: absolute; left: 15px; bottom: 32; color: white; font-size: 16px;">MANAGE</p>
-                <p style="overflow:auto; position: absolute; left: 15px; bottom: 16; color: white; font-size: 16px;">HOST</p>
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 32; color: white; font-size: 16px;">MY</p>
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 16; color: white; font-size: 16px;">FAVOURITE</p>
                 <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 16px;">EXPERIENCES</p>
             </div>
 
@@ -45,21 +45,39 @@
         <br />
 
         <div style="width: 65%; position:relative;margin: auto;">
-            <h:form id="formAllHostExperiences">
+            <h:form id="formAllMyFavouriteExperiences">
                 <p:dataList value="#{viewAllHostExperiencesManagedBean.hostExperiences}" var="hostExperience" paginator="true" rows="10" styleClass="paginated">
                     <f:facet name="header">
-                        All My Host Experiences
+                        All My Favourite Experiences
                     </f:facet>
                     <p:panel header="#{hostExperience.title}" style="text-align:center">
-                        <h:panelGrid columns="1" style="width:100%">
-                            <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/2hocHvd.jpg"/> 
+                        <p:panelGrid style="width:100%">
+                             <p:row>
+                                <p:column colspan="2">
+                                    <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/2hocHvd.jpg"/> 
 
-                            <h:outputText value="Created date: 03/25/2019" />
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="Favourite date: 03/25/2019" />
+                                </p:column>
+                            </p:row>    
 
-                            <p:commandButton action="/userOperations/manageHostExperience.xhtml" title="View Details" />
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton action="/userOperations/viewExperienceDetails.xhtml" title="View Details" />
 <!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
                             </p:commandButton>-->
-                        </h:panelGrid>
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton action="#" title="Unfavourite" />
+<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
+                            </p:commandButton>-->
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
                     </p:panel>
                 </p:dataList>
             </h:form>
