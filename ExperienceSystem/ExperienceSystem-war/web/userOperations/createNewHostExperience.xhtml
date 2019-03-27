@@ -98,62 +98,48 @@
         </div>
 
         <div id="detailsBox">
-            <h:form>
-                <p:growl id="msg" showDetail="true" escape="false" />
+            <h:form id="form101">
+                <p:growl id="msg" showDetail="true" escape="false" autoUpdate="true"/>
+                <p:messages id="message"/>
 
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText value="Title" /> 
-                    <p:inputText value="Title" /> 
+                    <p:inputText value="#{createNewExperience.newExperience.title}" /> 
                     
                     <h:outputText value="Category" /> 
-                    <p:selectOneMenu id="category" value="category" style="width:140px;">
-                        <f:selectItem itemLabel="Select Category" itemValue="" noselectoption="true"/>
-                        <f:selectItem itemLabel="Sports" itemValue="Sports" />
-                        <f:selectItem itemLabel="Food" itemValue="Food" />
-                        <f:selectItem itemLabel="Site-seeing" itemValue="Site-seeing" />
+                    <p:selectOneMenu id="category" value="#{createNewExperience.catId}" style="width:140px;">
+                        <f:selectItem itemLabel="Select Category" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperience.lsCat}" var="cat" itemLabel="#{cat.category}" itemValue="#{cat.categoryId}"/>
                     </p:selectOneMenu>
                     
                     <h:outputText value="Type" /> 
-                    <p:selectOneMenu id="type" value="type" style="width:140px;">
-                        <f:selectItem itemLabel="Select Type" itemValue="" noselectoption="true"/>
-                        <f:selectItem itemLabel="Workshop" itemValue="Sports" />
-                        <f:selectItem itemLabel="Sharing Session" itemValue="Food" />
-                        <f:selectItem itemLabel="Hangout" itemValue="Site-seeing" />
+                    <p:selectOneMenu id="type" value="#{createNewExperience.typeId}" style="width:140px;">
+                        <f:selectItem itemLabel="Select Type" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperience.lsType}" var="type" itemLabel="#{type.type}" itemValue="#{type.typeId}"/>
                     </p:selectOneMenu> 
                     
-                    <h:outputText value="Location" /> 
-                    <p:selectOneMenu id="city" value="city" style="width:100px;">
-                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
-                        <f:selectItem itemLabel="Singapore" itemValue="Singapore" />
-                        <f:selectItem itemLabel="Shanghai" itemValue="Shanghai" />
-                        <f:selectItem itemLabel="Jakarta" itemValue="Jakarta" />
-                    </p:selectOneMenu>
-                    
                     <h:outputText value="Address" /> 
-                    <p:inputText value="Address" /> 
+                    <p:inputText value="#{createNewExperience.newExperience.address}" /> 
                     
                     <h:outputText value="Language" />  
-                    <p:selectOneMenu id="language" value="language" style="width:100px;">
-                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
-                        <f:selectItem itemLabel="English" itemValue="English" />
-                        <f:selectItem itemLabel="Malaysian" itemValue="Malaysian" />
-                        <f:selectItem itemLabel="Chinese" itemValue="Chinese" />
-                        <f:selectItem itemLabel="Hindu" itemValue="Hindu" />
+                    <p:selectOneMenu id="language" value="#{createNewExperience.langId}" style="width:100px;">
+                        <f:selectItem itemLabel="Select Language" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperience.lsLang}" var="lang" itemLabel="#{lang.language}" itemValue="#{lang.languageId}"/>
                     </p:selectOneMenu>
 
                     <h:outputText value="Description" /> 
-                    <p:inputTextarea row="10" columns="100" value="Content" />
+                    <p:inputTextarea rows="10" cols="50" value="#{createNewExperience.newExperience.description}" placeholder="Description"/>
                     
-                    <p:outputLabel for="itemsProvided" value="Items Provided (press Enter to add a new one): " />
-                    <p:chips id="itemsProvided" value="#{createNewHostExperienceManagedBean.itemsProvided}" />
+                    <p:outputLabel for="itemsProvided" value="Items I Will Provide (press Enter to add a new one): " />
+                    <p:chips id="itemsProvided" value="#{createNewExperience.newExperience.providingItems}" />
                     
-                    <p:outputLabel for="itemsRequired" value="Items Required (press Enter to add a new one):" />
-                    <p:chips id="itemsRequired" value="#{createNewHostExperienceManagedBean.itemsRequired}" />
+                    <p:outputLabel for="itemsRequired" value="Items I WIll Require (press Enter to add a new one):" />
+                    <p:chips id="itemsRequired" value="#{createNewExperience.newExperience.requiringItems}" />
                     
                 </p:panelGrid>
                 <br />
                 
-                <p:commandButton value="Create New Experience" action="#"/>
+                <p:commandButton value="Create New Experience" action="#{createNewExperience.create}" update="form101:message"/>
             </h:form>    
         </div>   
 

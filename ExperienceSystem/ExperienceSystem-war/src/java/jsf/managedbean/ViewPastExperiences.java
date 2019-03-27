@@ -11,6 +11,8 @@ import entity.Experience;
 import entity.User;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.ejb.EJB;
@@ -78,8 +80,10 @@ public class ViewPastExperiences {
         List<Booking> ls2 = getCurrentUser().getBookings();
         List<Experience> masterLs = new LinkedList<>();
         for (Booking b : ls2) {
-            LocalDate d = b.getExperienceDate().getStartDate();
-            if (d.isBefore(LocalDate.now())) {
+            LocalDate localDate = LocalDate.now();
+            Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date d = b.getExperienceDate().getStartDate();
+            if (d.before(date)) {
                 continue;
             }
             masterLs.add(b.getExperienceDate().getExperience());

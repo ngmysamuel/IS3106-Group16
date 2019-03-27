@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewExperienceDateException;
+import util.exception.CreateNewExperienceException;
 import util.exception.ExperienceDateNotActiveException;
 import util.exception.ExperienceDateNotFoundException;
 import util.exception.InputDataValidationException;
@@ -23,7 +24,7 @@ import util.exception.InputDataValidationException;
  */
 @Local
 public interface ExperienceDateControllerLocal {
-    public void updateExperienceDate(ExperienceDate expDate);
+    public ExperienceDate updateExperienceDate(ExperienceDate expDate)throws InputDataValidationException, CreateNewExperienceException;
     public ExperienceDate retrieveExperienceDateByDateId(Long id);
     
 

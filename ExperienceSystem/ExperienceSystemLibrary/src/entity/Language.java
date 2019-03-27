@@ -35,6 +35,10 @@ public class Language implements Serializable {
     public Language() {
     }
 
+    public Language(String language) {
+        this.language = language;
+    }
+
     public List<Experience> getExperiences() {
         return experiences;
     }

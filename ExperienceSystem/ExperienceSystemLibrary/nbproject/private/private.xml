@@ -2,14 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/samue/Documents/NetBeansProjects/IS3106-Group16/ExperienceSystem/ExperienceSystemLibrary/src/entity/Booking.java</file>
-            <file>file:/C:/Users/samue/Documents/NetBeansProjects/IS3106-Group16/ExperienceSystem/ExperienceSystemLibrary/src/entity/ExperienceDate.java</file>
-            <file>file:/C:/Users/samue/Documents/NetBeansProjects/IS3106-Group16/ExperienceSystem/ExperienceSystemLibrary/src/entity/User.java</file>
-            <file>file:/C:/Users/samue/Documents/NetBeansProjects/IS3106-Group16/ExperienceSystem/ExperienceSystemLibrary/src/entity/Experience.java</file>
-            <file>file:/C:/Users/samue/Documents/NetBeansProjects/IS3106-Group16/ExperienceSystem/ExperienceSystemLibrary/src/entity/Appeal.java</file>
-            <file>file:/C:/Users/samue/Documents/NetBeansProjects/IS3106-Group16/ExperienceSystem/ExperienceSystemLibrary/src/entity/Evaluation.java</file>
-            <file>file:/C:/Users/samue/Documents/NetBeansProjects/IS3106-Group16/ExperienceSystem/ExperienceSystemLibrary/src/entity/Message.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

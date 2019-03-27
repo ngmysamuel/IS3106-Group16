@@ -10,6 +10,7 @@ import entity.ExperienceDate;
 import entity.User;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +20,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.bean.ViewScoped;
 import stateless.ExperienceControllerLocal;
 import stateless.ExperienceDateControllerLocal;
 import stateless.UserControllerLocal;
@@ -49,58 +51,24 @@ public class ViewExperiencesIAmHosting {
     private List<Experience> ls;
     private Experience currentExperience;
     
-    private LocalDate start, end;
-    private Integer capacity;
-    private BigDecimal price;
+    
+
     
     public ViewExperiencesIAmHosting() {
     }
     
-    public void newExpDate(ActionEvent event) {
-        currentExperience = (Experience) event.getComponent().getAttributes().get("exp");
-        ExperienceDate ed = new ExperienceDate();
-        ed.setActive(true);
-        ed.setCapacity(capacity);
-        ed.setExperience(currentExperience);
-        ed.setSpotsAvailable(capacity);
-        ed.setStartDate(start);
-        ed.setEndDate(end);
-        try {
-            experienceDateController.createNewExperienceDate(ed);
-        } catch (CreateNewExperienceDateException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Wrong", null));
-        } catch (InputDataValidationException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Wrong info", null));
-        }
+    
+    public void nextAvailDate() {
+        
     }
 
-    public void deleteExp(ActionEvent event) {
-        Long id = (Long) event.getComponent().getAttributes().get("id");
-        String reason = (String) event.getComponent().getAttributes().get("reason");
-        try {
-            experienceController.deleteExperience(id, reason);
-        } catch (ExperienceNotActiveException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Wrong", null));
-        }
-    }
     
-    public void preUpdateExp(ActionEvent event) {
-        currentExperience = (Experience) event.getComponent().getAttributes().get("expToUpdate");
-    }
     
-    public void updateExp() {
-        try {
-            experienceController.updateExperienceInformation(currentExperience);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Success", null));
-        } catch (InputDataValidationException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Data entered is wrong", null));
-        } catch (ExperienceNotFoundException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Wrong Exp", null));
-        }
-    }
+  
     
     public User getCurrentUser() {
-        User u = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustEntity");
+        User u = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+System.out.println(u+"---------------------------");
         try {
             u = userController.retrieveUserByUsername(u.getUsername());
         } catch (UserNotFoundException e) {
@@ -114,6 +82,13 @@ public class ViewExperiencesIAmHosting {
     }
 
     public List<Experience> getLs() {
+        ls = new ArrayList<>();
+        List<Experience> ls2 = getCurrentUser().getExperienceHosted();
+        for (Experience e : ls2) {
+            if (e.isActive()) {
+                ls.add(e);
+            }
+        }
         return ls;
     }
 
@@ -121,12 +96,13 @@ public class ViewExperiencesIAmHosting {
         this.ls = ls;
     }
 
-    public Experience getCurrenExperience() {
+    public Experience getCurrentExperience() {
         return currentExperience;
     }
 
-    public void setCurrenExperience(Experience currenExperience) {
+    public void setCurrentExperience(Experience currenExperience) {
         this.currentExperience = currenExperience;
     }
-    
+
+   
 }

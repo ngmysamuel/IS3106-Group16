@@ -13,10 +13,14 @@ import enumerated.StatusEnum;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -26,6 +30,8 @@ import javax.faces.event.ActionEvent;
 import stateless.BookingControllerLocal;
 import stateless.ExperienceDateControllerLocal;
 import stateless.UserControllerLocal;
+import util.exception.CreateNewExperienceException;
+import util.exception.InputDataValidationException;
 import util.exception.UserNotFoundException;
 
 /**
@@ -99,14 +105,22 @@ public class ViewAllMyReservations {
                 break;
             }
         }
-        experienceDateController.updateExperienceDate(ed);
+        try {
+            experienceDateController.updateExperienceDate(ed);
+        } catch (InputDataValidationException ex) {
+            Logger.getLogger(ViewAllMyReservations.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CreateNewExperienceException ex) {
+            Logger.getLogger(ViewAllMyReservations.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public List<Booking> getLs() {
         List<Booking> ls = currentUser.getBookings();
         List<Booking> ls2 = new LinkedList<>();
         for (Booking b  : ls) {
-            if (b.getExperienceDate().getStartDate().isAfter(LocalDate.now())) {
+            LocalDate localDate = LocalDate.now();
+            Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            if (b.getExperienceDate().getStartDate().after(date)) {
                 ls2.add(b);
             }
         }
