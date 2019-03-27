@@ -5,6 +5,7 @@
  */
 package stateless;
 
+import entity.Category;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.Language;
@@ -31,7 +32,7 @@ public interface ExperienceControllerLocal {
     
     public Boolean removeFollowerFromExperience(Long id, User user);
     public Boolean addFollowerToExperience(Long id, User user);
-    public Experience retrieveExperienceById(Long id);
+    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
 
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
     public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException;
@@ -59,5 +60,11 @@ public interface ExperienceControllerLocal {
     public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
 
     public List<Experience> retrieveExperienceByDate(Date startDate, Date endDate);
+
+    public List<Experience> retrieveExperienceByCategory(Category category);
+
+    public List<Experience> retrieveExperienceByName(String title);
+
+    List<Experience> retrieveExperienceBySingleDate(Date date);
     
 }

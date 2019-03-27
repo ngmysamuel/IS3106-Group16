@@ -188,12 +188,19 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     @Override
     public List<Experience> retrieveAllExperiences(){
         Query query = em.createQuery("SELECT e FROM Experience e ORDER BY e.experienceId ASC");
-        return query.getResultList();
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
     }
     
     @Override
-    public Experience retrieveExperienceById(Long id) {
+    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException{
         Experience e = em.find(Experience.class, id);
+        if(e == null){
+            throw new ExperienceNotFoundException();
+        }
         for (ExperienceDate ed : e.getExperienceDates()) {
         }
         return e;
@@ -210,23 +217,55 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }
     }
     
+    public List<Experience> retrieveExperienceByName(String title){
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.title LIKE '%:inExperienceName5'");
+        query.setParameter("inExperienceName", title);
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
+    }
+    
     public List<Experience> retrieveExperienceByType(Type type){
         Query query = em.createQuery("SELECT e FROM Experience e WHERE e.type.typeId = :inTypeId ORDER BY e.experienceId DESC");
         query.setParameter("inTypeId", type.getTypeId());
-        return query.getResultList();
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
+    }
+    
+    public List<Experience> retrieveExperienceByCategory(Category category){
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.category.categoryId = :inCategoryId ORDER BY e.experienceId DESC");
+        query.setParameter("inCategoryId", category.getCategoryId());
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
     }
     
     @Override
     public List<Experience> retrieveTopRatedExperience(){
         Query query = em.createQuery("SELECT DISTINCT e FROM Experience e WHERE e.host.premium = true OR e.averageScore >= 7.0 ORDER BY e.experienceId DESC");
-        return query.getResultList();
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
     }
     
     @Override
     public List<Experience> retrieveExperienceByLocation(Location location){
         Query query = em.createQuery("SELECT DISTINCT e FROM Experience e WHERE e.location.locationId = :inLocationId ORDER BY e.experienceId DESC");
         query.setParameter("inLocationId", location.getLocationId());
-        return query.getResultList();
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
     }
     
     @Override
@@ -261,7 +300,23 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     public List<Experience> retrieveExperienceByLanguage(Language language){
         Query query = em.createQuery("SELECT e FROM Experience e WHERE e.language.languageId = :inLanguageId ORDER BY e.experienceId DESC");
         query.setParameter("inLanguageId", language.getLanguageId());
-        return query.getResultList();
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
+    }
+    
+    @Override
+    public List<Experience> retrieveExperienceBySingleDate(Date date) {
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.experienceDates.startDate = :inDate");
+        query.setParameter("inDate", date);
+        List<Experience> experiences = query.getResultList();
+        for(Experience e: experiences){
+            e.getExperienceDates();
+        }
+              
+        return experiences;
     }
     
     @Override
@@ -291,7 +346,11 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     public List<ExperienceDate> retrieveAllExperienceDates(Experience experience){
         Query query = em.createQuery("SELECT d FROM ExperienceDate d WHERE d.experience.experienceId = :inExperienceId");
         query.setParameter("inExperienceId", experience.getExperienceId());
-        return query.getResultList();
+        List<ExperienceDate> expDates = query.getResultList();
+        for(ExperienceDate ed: expDates){
+            ed.getPrice();
+        }
+        return expDates;
     }
     
     
@@ -321,5 +380,7 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         
         return msg;
     }
+
+    
 
 }
