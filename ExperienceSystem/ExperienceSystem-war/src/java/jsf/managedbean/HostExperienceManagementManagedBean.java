@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.faces.bean.ViewScoped;
 
 
 @Named(value = "hostExperienceManagementManagedBean")

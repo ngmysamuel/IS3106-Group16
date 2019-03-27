@@ -15,7 +15,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
-import static org.primefaces.component.confirmdialog.ConfirmDialog.PropertyKeys.message;
 import stateless.UserControllerLocal;
 import util.exception.InvalidLoginCredentialException;
 

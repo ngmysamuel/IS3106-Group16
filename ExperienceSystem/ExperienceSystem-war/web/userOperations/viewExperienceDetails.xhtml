@@ -99,7 +99,7 @@
                 <br />
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText value="Title" /> 
-                    <h:outputText value="Title" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experienceEntityToView}" /> 
                 </p:panelGrid>
                 <br />
                 
@@ -146,7 +146,7 @@
                         <p:spinner id="bookNumOfTickets" value="#" min="0" max="10" />
                         <br/>
                         <br/>
-                        <p:commandButton value="Book Now" actionListner="#" oncomplete="PF('dialogCheckout').show()"/>
+                        <p:commandButton value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.reserveExperienceDate}" oncomplete="PF('dialogCheckout').show()"/>
                     </div>
 
                 </h:form>

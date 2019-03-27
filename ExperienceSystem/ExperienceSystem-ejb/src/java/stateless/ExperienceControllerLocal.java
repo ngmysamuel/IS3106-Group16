@@ -62,5 +62,7 @@ public interface ExperienceControllerLocal {
     public List<Experience> retrieveExperienceByCategory(Category category);
 
     public List<Experience> retrieveExperienceByName(String title);
+
+    List<Experience> retrieveExperienceBySingleDate(Date date);
     
 }

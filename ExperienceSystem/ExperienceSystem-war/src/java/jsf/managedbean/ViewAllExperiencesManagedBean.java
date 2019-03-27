@@ -51,19 +51,124 @@ public class ViewAllExperiencesManagedBean {
     private List<Category> categoryEntities;
     private List<Location> locationEntities;
     
-    private List<SelectItem> categorySelectItems;
-    private List<SelectItem> typeSelectItems;
-    private List<SelectItem> locationSelectItems;
-    
     private Category selectedCategoryEntity;
     private Type selectedTypeEntity;
     private Location selectedLocationEntity;
-    private List<Date> selectedDateEntities;
+    private Date selectedDateEntity;
+    private Experience selectedExperienceToView;
+    private int numOfPeople;
     
     private String searchString;
 
+    /**
+     * Creates a new instance of ViewAllExperiencesManagedBean
+     */
+    public ViewAllExperiencesManagedBean() {
+    }
+    
+    @PostConstruct
+    public void PostConstruct(){
+        experienceEntities = experienceController.retrieveAllExperiences();
+        categoryEntities = categoryController.retrieveAllCategories();
+        Category c = new Category();
+        c.setCategory("Sport");
+        c.setDescription("Sport");
+        Category c1 = new Category();
+        c1.setCategory("cook");
+        c1.setDescription("cook");
+        this.categoryEntities.add(c);
+        this.categoryEntities.add(c1);
+        Experience e = new Experience();
+        e.setTitle("Experience 1");
+        e.setCategory(c);
+        c.getExperiences().add(e);
+        this.experienceEntities.add(e);
+        typeEntities = typeController.retrieveAllTypes();
+        locationEntities = locationController.retrieveAllLocations();
+        
+    }
+    
+    public void filterExperience(ActionEvent event){
+        
+//        experienceEntities.clear();
+        if(searchString != null && searchString.trim().length() > 0){
+            experienceEntities = experienceController.retrieveExperienceByName(searchString);
+        } else {experienceEntities = experienceController.retrieveAllExperiences();}
+        
+        if(selectedDateEntity!=null){
+            List<Experience> filter = experienceController.retrieveExperienceBySingleDate(selectedDateEntity);
+            ListIterator iter = experienceEntities.listIterator();
+            while(iter.hasNext()){
+                if(!filter.contains(iter.next())){
+                    iter.remove();
+                }
+            }
+        }
+        if(selectedTypeEntity!=null){
+            List<Experience> filter = experienceController.retrieveExperienceByType(selectedTypeEntity);
+            ListIterator iter = experienceEntities.listIterator();
+            while(iter.hasNext()){
+                if(!filter.contains(iter.next())){
+                    iter.remove();
+                }
+            }
+        }
+        if(selectedCategoryEntity!=null){
+            List<Experience> filter = experienceController.retrieveExperienceByCategory(selectedCategoryEntity);
+            ListIterator iter = experienceEntities.listIterator();
+            while(iter.hasNext()){
+                if(!filter.contains(iter.next())){
+                    iter.remove();
+                }
+            }
+        }
+        if(selectedLocationEntity!=null){
+            List<Experience> filter = experienceController.retrieveExperienceByLocation(selectedLocationEntity);
+            ListIterator iter = experienceEntities.listIterator();
+            while(iter.hasNext()){
+                if(!filter.contains(iter.next())){
+                    iter.remove();
+                }
+            }
+        }
+    }
+    
+    public void viewExperienceDetails(ActionEvent event) throws IOException{
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("experienceEntityToView", selectedExperienceToView);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("viewExperienceDetails.xhtml");
+    }
+    
+    
+    public Date minDate(List<Date> dates){
+        Date min = dates.get(0);
+        for(Date d: dates){
+            if(min.compareTo(d) > 0){
+                min = d;
+            }
+        }
+        return min;
+    }
+    
+    public Date maxDate(List<Date> dates){
+        Date max = dates.get(0);
+        for(Date d: dates){
+            if(max.compareTo(d) < 0){
+                max = d;
+            }
+        }
+        return max;
+    }
+
     public LocationControllerLocal getLocationController() {
         return locationController;
+    }
+
+    public Experience getSelectedExperienceToView() {
+        return selectedExperienceToView;
+    }
+
+    public void setSelectedExperienceToView(Experience selectedExperienceToView) {
+        this.selectedExperienceToView = selectedExperienceToView;
     }
 
     public void setLocationController(LocationControllerLocal locationController) {
@@ -126,30 +231,7 @@ public class ViewAllExperiencesManagedBean {
         this.locationEntities = locationEntities;
     }
 
-    public List<SelectItem> getCategorySelectItems() {
-        return categorySelectItems;
-    }
-
-    public void setCategorySelectItems(List<SelectItem> categorySelectItems) {
-        this.categorySelectItems = categorySelectItems;
-    }
-
-    public List<SelectItem> getTypeSelectItems() {
-        return typeSelectItems;
-    }
-
-    public void setTypeSelectItems(List<SelectItem> typeSelectItems) {
-        this.typeSelectItems = typeSelectItems;
-    }
-
-    public List<SelectItem> getLocationSelectItems() {
-        return locationSelectItems;
-    }
-
-    public void setLocationSelectItems(List<SelectItem> locationSelectItems) {
-        this.locationSelectItems = locationSelectItems;
-    }
-
+    
     public Category getSelectedCategoryEntity() {
         return selectedCategoryEntity;
     }
@@ -174,12 +256,12 @@ public class ViewAllExperiencesManagedBean {
         this.selectedLocationEntity = selectedLocationEntity;
     }
 
-    public List<Date> getSelectedDateEntities() {
-        return selectedDateEntities;
+    public Date getSelectedDateEntity() {
+        return selectedDateEntity;
     }
 
-    public void setSelectedDateEntities(List<Date> selectedDateEntities) {
-        this.selectedDateEntities = selectedDateEntities;
+    public void setSelectedDateEntity(Date selectedDateEntity) {
+        this.selectedDateEntity = selectedDateEntity;
     }
 
     public String getSearchString() {
@@ -189,108 +271,12 @@ public class ViewAllExperiencesManagedBean {
     public void setSearchString(String searchString) {
         this.searchString = searchString;
     }
-    
-    
 
-    /**
-     * Creates a new instance of ViewAllExperiencesManagedBean
-     */
-    public ViewAllExperiencesManagedBean() {
+    public int getNumOfPeople() {
+        return numOfPeople;
     }
-    
-    @PostConstruct
-    public void PostConstruct(){
-        experienceEntities = experienceController.retrieveAllExperiences();
-        categoryEntities = categoryController.retrieveAllCategories();
-        typeEntities = typeController.retrieveAllTypes();
-        locationEntities = locationController.retrieveAllLocations();
-        
-        locationSelectItems = new ArrayList<>();
-        typeSelectItems = new ArrayList<>();
-        categorySelectItems = new ArrayList<>();
-        
-        for(Type typeEntity:typeEntities)
-        {
-            typeSelectItems.add(new SelectItem(typeEntity, typeEntity.getType(), typeEntity.getType()));
-        }
-        
-        for(Category categoryEntity: categoryEntities){
-            categorySelectItems.add(new SelectItem(categoryEntity, categoryEntity.getCategory(), categoryEntity.getCategory()));
-        }
-        
-        for(Location locationEntity: locationEntities){
-            locationSelectItems.add(new SelectItem(locationEntity, locationEntity.getLocation(), locationEntity.getLocation()));
-        }
-    }
-    
-    public void filterExperience(){
-        
-        if(searchString != null && searchString.trim().length() > 0){
-            experienceEntities = experienceController.retrieveExperienceByName(searchString);
-        } else {experienceEntities = experienceController.retrieveAllExperiences();}
-        
-        if(selectedDateEntities!=null && selectedDateEntities.size()>0){
-            List<Experience> filter = experienceController.retrieveExperienceByDate(minDate(selectedDateEntities), maxDate(selectedDateEntities));
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
-        if(selectedTypeEntity!=null){
-            List<Experience> filter = experienceController.retrieveExperienceByType(selectedTypeEntity);
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
-        if(selectedCategoryEntity!=null){
-            List<Experience> filter = experienceController.retrieveExperienceByCategory(selectedCategoryEntity);
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
-        if(selectedLocationEntity!=null){
-            List<Experience> filter = experienceController.retrieveExperienceByLocation(selectedLocationEntity);
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
-    }
-    
-    public void viewExperienceDetails(ActionEvent event) throws IOException{
-        Long experienceIdToView = (Long)event.getComponent().getAttributes().get("experienceId");
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("experienceIdToView", experienceIdToView);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("viewExperienceDetails.xhtml");
-    }
-    
-    
-    public Date minDate(List<Date> dates){
-        Date min = dates.get(0);
-        for(Date d: dates){
-            if(min.compareTo(d) > 0){
-                min = d;
-            }
-        }
-        return min;
-    }
-    
-    public Date maxDate(List<Date> dates){
-        Date max = dates.get(0);
-        for(Date d: dates){
-            if(max.compareTo(d) < 0){
-                max = d;
-            }
-        }
-        return max;
+
+    public void setNumOfPeople(int numOfPeople) {
+        this.numOfPeople = numOfPeople;
     }
 }

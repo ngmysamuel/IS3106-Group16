@@ -9,12 +9,13 @@ import entity.Booking;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.User;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 import stateless.BookingControllerLocal;
 import stateless.ExperienceControllerLocal;
@@ -28,7 +29,7 @@ import util.exception.InputDataValidationException;
  * @author Asus
  */
 @Named(value = "viewExperienceDetailsManagedBean")
-@ViewScoped
+@RequestScoped
 public class ViewExperienceDetailsManagedBean {
 
     @EJB
@@ -51,28 +52,16 @@ public class ViewExperienceDetailsManagedBean {
      * Creates a new instance of ViewExperienceDetailsManagedBean
      */
     public ViewExperienceDetailsManagedBean() {
+        images = new ArrayList();
+        images.add("https://i.imgur.com/2hocHvd.jpg");
+        images.add("https://i.imgur.com/R6wtAtN.jpg");
+        images.add("https://i.imgur.com/slbHL1Z.jpg");
+        images.add("https://i.imgur.com/SQiLyd4.jpg");
     }
     
     @PostConstruct
     public void postConstruct(){
-        experienceIdToView = (Long)FacesContext.getCurrentInstance().getExternalContext().getFlash().get("productIdToView");
-        try
-        {            
-            experienceEntityToView = experienceController.retrieveExperienceById(experienceIdToView);
-            experienceDateEntities = experienceController.retrieveAllExperienceDates(experienceEntityToView);
-            experienceFollowers = experienceEntityToView.getFollowers();
-            if((boolean)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")){
-                isFollowed = experienceFollowers.contains((User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
-            }
-        }
-        catch(ExperienceNotFoundException ex)
-        {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "No experience with " + experienceIdToView + " found!", null));
-        }
-        catch(Exception ex)
-        {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
-        }
+        experienceEntityToView = (Experience)FacesContext.getCurrentInstance().getExternalContext().getFlash().get("experienceEntityToView");
     }
     
     public void reserveExperienceDate(){
@@ -98,21 +87,60 @@ public class ViewExperienceDetailsManagedBean {
         this.isFollowed = false;
     }
     
-    
-    public ViewExperienceDetailsManagedBean() {
-        images = new ArrayList();
-        images.add("https://i.imgur.com/2hocHvd.jpg");
-        images.add("https://i.imgur.com/R6wtAtN.jpg");
-        images.add("https://i.imgur.com/slbHL1Z.jpg");
-        images.add("https://i.imgur.com/SQiLyd4.jpg");
-    }
-
     public List<String> getImages() {
         return images;
     }
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public Long getExperienceIdToView() {
+        return experienceIdToView;
+    }
+
+    public void setExperienceIdToView(Long experienceIdToView) {
+        this.experienceIdToView = experienceIdToView;
+    }
+
+    public Experience getExperienceEntityToView() {
+        return experienceEntityToView;
+    }
+
+    public void setExperienceEntityToView(Experience experienceEntityToView) {
+        this.experienceEntityToView = experienceEntityToView;
+    }
+
+    public List<ExperienceDate> getExperienceDateEntities() {
+        return experienceDateEntities;
+    }
+
+    public void setExperienceDateEntities(List<ExperienceDate> experienceDateEntities) {
+        this.experienceDateEntities = experienceDateEntities;
+    }
+
+    public List<User> getExperienceFollowers() {
+        return experienceFollowers;
+    }
+
+    public void setExperienceFollowers(List<User> experienceFollowers) {
+        this.experienceFollowers = experienceFollowers;
+    }
+
+    public Booking getNewBooking() {
+        return newBooking;
+    }
+
+    public void setNewBooking(Booking newBooking) {
+        this.newBooking = newBooking;
+    }
+
+    public Boolean getIsFollowed() {
+        return isFollowed;
+    }
+
+    public void setIsFollowed(Boolean isFollowed) {
+        this.isFollowed = isFollowed;
     }
     
 }
