@@ -43,9 +43,12 @@
                 margin: auto;
                 display: flex; 
                 justify-content: space-between;
-
             }
-
+            
+            .dull{
+                background: whitesmoke;
+                color:lightgray;
+            }
 
         </style>
 
@@ -67,7 +70,7 @@
                 <p:outputLabel value=" |    " style="font-size: 30px;"/>
             </span>
             <span>
-                <p:outputLabel value=" #{hostExperienceManagementManagedBean.experienceToView.title}" style="font-size: 30px;"/>
+                <p:outputLabel id="tit" value=" #{manageHostExperienceBean.currentExperience.title}" style="font-size: 30px;"/>
             </span>
         </div>
 
@@ -77,13 +80,14 @@
                 <p:tabView>
                     <p:tab title="Host Experience Details">
                         <h:form id="formHostExperienceDetails">
+                            <p:growl id="message" showDetail="true" />
                             <p:panelGrid style="width:100%;">
                                 <p:row>
                                     <p:column>
                                         <p:outputLabel value="Title" />
                                     </p:column>
                                     <p:column>
-                                        <p:outputLabel value="Title" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.title}" />
                                     </p:column>
                                     <p:column>
                                         <p:outputLabel value="Creation Date" />
@@ -98,13 +102,13 @@
                                         <p:outputLabel value="Category" />
                                     </p:column>
                                     <p:column>
-                                        <p:outputLabel value="Category" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.category.category}" />
                                     </p:column>
                                     <p:column>
                                         <p:outputLabel value="Type" />
                                     </p:column>
                                     <p:column>
-                                        <p:outputLabel value="Type" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.type.type}" />
                                     </p:column>
                                 </p:row>
 
@@ -113,7 +117,7 @@
                                         <p:outputLabel value="Location" />
                                     </p:column>
                                     <p:column colspan="3">
-                                        <p:outputLabel value="city + location" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.address}" />
                                     </p:column>
                                 </p:row>
 
@@ -122,7 +126,7 @@
                                         <p:outputLabel value="Description" />
                                     </p:column>
                                     <p:column colspan="3">
-                                        <p:outputLabel value="Description" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.description}" />
                                     </p:column>
                                 </p:row>
 
@@ -131,7 +135,7 @@
                                         <p:outputLabel value="Items Provided" />
                                     </p:column>
                                     <p:column colspan="3">
-                                        <p:outputLabel value="Items Provided" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.providingItems}" />
                                     </p:column>
                                 </p:row>
 
@@ -140,7 +144,7 @@
                                         <p:outputLabel value="Items Required" />
                                     </p:column>
                                     <p:column colspan="3">
-                                        <p:outputLabel value="Items Required" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.requiringItems}" />
                                     </p:column>
                                 </p:row>
 
@@ -149,7 +153,7 @@
                                         <p:outputLabel value="Average Price" />
                                     </p:column>
                                     <p:column>
-                                        <p:outputLabel value="$50.00" />
+                                        <p:outputLabel value="#{manageHostExperienceBean.currentExperience.avgPrice != null ? manageHostExperienceBean.currentExperience.avgPrice : 'No pricing Avail'}" />
                                     </p:column>
                                     <p:column>
                                         <p:outputLabel value="Average Score" />
@@ -161,15 +165,17 @@
 
                             </p:panelGrid>
                             <br />
-                            <!--TO DO: Redirect after deletion -->
+                            <!--TO DO: Get confirmation to work -->
                             <p:panelGrid columns="2" style="border: none; width:100%;">
-                                <p:commandButton style="width: 100%;" value="Update Experience Info" oncomplete="PF('dialogUpdateHostExperienceDetails').show()"  />
-                                <p:commandButton style="width: 100%;" value="Delete Experience" action="#" >
-                                    <p:confirm header="Confirmation" message="Are you sure you want to delete this experience?" icon="ui-icon-alert" />
+                                <p:commandButton style="width: 100%;" value="Update Experience Info" oncomplete="PF('dialogUpdateHostExperienceDetails').show()" />
+
+
+                                <p:commandButton style="width: 100%;" value="Delete Experience" actionListener="#{manageHostExperienceBean.deleteExp}" update="formHostExperienceDetails:message">
+                                    <p:confirm header="Confirmation" message="Are you sure you want to delete this experience?" icon="pi pi-exclamation-triangle" />
                                 </p:commandButton>
                             </p:panelGrid>
 
-                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:confirmDialog closeOnEscape="true" global="true" showEffect="fade" hideEffect="fade">
                                 <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                                 <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                             </p:confirmDialog>
@@ -177,28 +183,31 @@
                     </p:tab>
 
                     <p:tab title="Experience Dates">
-                        <h:form id="formViewAllExperienceDates">
-                            <p:panelGrid style="width:100%;">
-                                <p:row>
-                                    <p:column headerText="Date">
-                                        <p:outputLabel value="25/03/2019" />
-                                    </p:column>
+                        
+                            <p:dataTable value="#{manageHostExperienceBean.currentExperience.experienceDates}" var="expDate" >
+                                
+                                <p:column headerText="Status">
+                                    <h:outputText value="#{expDate.active ? 'Ongoing':'Hiatus'}"/>
+                                </p:column>
+                                
+                                <p:column headerText="Date">
+                                    <h:outputText value="#{expDate.startDate}"/>
+                                </p:column>
 
-                                    <p:column headerText="Action" >
-                                        <p:commandButton update="formViewExperienceDateDetails" oncomplete="PF('dialogViewExperienceDateDetails').show()" icon="ui-icon-document" title="View" />
-                                        <!--                                <f:setPropertyActionListener value="#" target="#" />
-                                                                    </p:commandButton>-->
-                                        <p:commandButton actionListener="#{hostExperienceManagementManagedBean.back}" update="formSendNotification" oncomplete="PF('dialogSendNotification').show()" icon="ui-icon-mail-closed" title="Send Notification" />
-    <!--                                        <f:attribute name="productEntityToUpdate" value="#{productEntity}" />
-                                        </p:commandButton>-->
-                                        <p:commandButton icon="ui-icon-trash" actionListener="#{hostExperienceManagementManagedBean.back}" update="formViewAllExperienceDates">
-    <!--                                        <f:attribute name="productEntityToDelete" value="#{productEntity}" />-->
-                                            <p:confirm header="Confirmation" message="Are you sure you want to delete this experience date?" icon="ui-icon-alert" />
-                                        </p:commandButton>
-                                    </p:column>
-                                </p:row>
+                                <p:column headerText="Actions">
+                                    <p:commandButton update="formViewExperienceDetails" oncomplete="PF('dialogViewExperienceDateDetails').show()" icon="ui-icon-document" title="View">
+                                        <f:setPropertyActionListener value="#{expDate}" target="#{manageHostExperienceBean.currentExpDate}"/>
+                                    </p:commandButton>
+                                    <p:commandButton actionListener="#{manageHostExperienceBean.updateExpDate}" oncomplete="PF('dialogUpdateExperienceDateDetails').show()" icon="ui-icon-pencil" title="Edit">
+                                        <f:attribute value="#{expDate}" name="d"/>
+                                    </p:commandButton>
+                                    <p:commandButton actionListener="#{manageHostExperienceBean.deleteExpDate}"  icon="ui-icon-trash" title="Edit" rendered="#{expDate.active}">
+                                        <f:attribute value="#{expDate}" name="d"/>
+                                        <p:confirm header="Confirmation" message="Are you sure you want to delete this experience date?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                </p:column>
 
-                            </p:panelGrid>
+                            </p:dataTable>
                             <br />
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                                 <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
@@ -206,31 +215,22 @@
                             </p:confirmDialog>
 
                             <p:commandButton style="width: 100%; text-align: center;" value="Create New Experience Date" update="formCreateNewExperienceDate" oncomplete="PF('dialogCreateNewExperienceDate').show()" />
-                        </h:form>
+                        
                     </p:tab>
 
                     <p:tab title="Guest Evaluation">
-                        <h:form id="formGuestEvaluation">
-                            <p:panelGrid style="width:100%;">
-                                <p:row>
-                                    <p:column headerText="Date">
-                                        <p:outputLabel value="25/03/2019" />
-                                    </p:column>
 
-                                    <p:column headerText="Action" >
-                                        <p:commandButton update="formViewAllGuests" oncomplete="PF('dialogViewAllGuests').show()" icon="ui-icon-document" title="View" />
-                                        <!--                                <f:setPropertyActionListener value="#" target="#" />
-                                                                    </p:commandButton>-->
-                                        <p:commandButton actionListener="#{hostExperienceManagementManagedBean.back}" update="formEvaluateGuests" oncomplete="PF('dialogEvaluateGuests').show()" icon="ui-icon-pencil" title="Update" />
-    <!--                                        <f:attribute name="productEntityToUpdate" value="#{productEntity}" />
-                                        </p:commandButton>-->
-                                    </p:column>
-                                </p:row>
-
-                            </p:panelGrid>
+                        <p:dataTable value="#{manageHostExperienceBean.currentExperience.experienceDates}" var="expDate" rowStyleClass="#{expDate.active ? 'dull':''}">
+                                <p:column headerText="Date">
+                                    <h:outputText value="#{expDate.startDate}"/>
+                                </p:column>
+                                <p:column headerText="Action">
+                                    <p:commandButton oncomplete="PF('dialogViewAllGuests').show()" icon="ui-icon-document" title="View" />
+                                    <p:commandButton actionListener="#{manageHostExperienceBean.evaluate}" update="formEvaluateGuests" oncomplete="PF('dialogEvaluateGuests').show()" icon="ui-icon-pencil" title="Rate Guests" />
+                                </p:column>
+                            </p:dataTable>
                             <br />
-                            
-                        </h:form>
+
                     </p:tab>
 
                 </p:tabView>
@@ -239,81 +239,77 @@
         </div>
 
         <h:form id="formUpdateHostExperienceDetails">
-            <p:dialog id="dialogUpdateHostExperienceDetails" widgetVar="dialogUpdateHostExperienceDetails" closable="true" position="center center" header="Update Host Experience Details" resizable="false">
-                <p:growl id="msgUpdateHostExperienceDetails" showDetail="true" escape="false" />
+            <p:dialog style="overflow-y:auto; top:5px; bottom:5px;" id="dialogUpdateHostExperienceDetails" widgetVar="dialogUpdateHostExperienceDetails" closable="true" position="center center" header="Update Host Experience Details" resizable="false">
+                <p:ajax event="close" update="formViewHostExperienceDetails tit" />
                 <p:panelGrid>
+                    <p:row>
+                        <p:messages id="msg"/>
+                    </p:row>
                     <p:row>
                         <p:column>
                             <h:outputText value="Title" /> 
                         </p:column>
                         <p:column>
-                            <p:inputText value="Title" /> 
+                            <p:inputText value="#{manageHostExperienceBean.currentExperience.title}" /> 
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column>
                             <h:outputText value="Category" /> 
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="category" value="category" style="width:140px;">
-                                <f:selectItem itemLabel="Select Category" itemValue="" noselectoption="true"/>
-                                <f:selectItem itemLabel="Sports" itemValue="Sports" />
-                                <f:selectItem itemLabel="Food" itemValue="Food" />
-                                <f:selectItem itemLabel="Site-seeing" itemValue="Site-seeing" />
+                            <p:selectOneMenu id="category" value="#{manageHostExperienceBean.catId}" style="width:140px;">
+                                <f:selectItem itemLabel="Select Category" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{createNewExperience.lsCat}" var="cat" itemLabel="#{cat.category}" itemValue="#{cat.categoryId}"/>
                             </p:selectOneMenu> 
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column>
                             <h:outputText value="Type" /> 
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="type" value="type" style="width:140px;">
-                        <f:selectItem itemLabel="Select Type" itemValue="" noselectoption="true"/>
-                        <f:selectItem itemLabel="Workshop" itemValue="Sports" />
-                        <f:selectItem itemLabel="Sharing Session" itemValue="Food" />
-                        <f:selectItem itemLabel="Hangout" itemValue="Site-seeing" />
-                    </p:selectOneMenu> 
+                            <p:selectOneMenu id="type" value="#{manageHostExperienceBean.typeId}" style="width:140px;">
+                                <f:selectItem itemLabel="Select Type" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{createNewExperience.lsType}" var="type" itemLabel="#{type.type}" itemValue="#{type.typeId}"/>
+                            </p:selectOneMenu> 
                         </p:column>
                     </p:row>
-                    
-                     <p:row>
+
+                    <p:row>
                         <p:column>
                             <h:outputText value="Location" /> 
                         </p:column>
                         <p:column>
                             <p:selectOneMenu id="city" value="city" style="width:100px;">
-                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
-                        <f:selectItem itemLabel="Singapore" itemValue="Singapore" />
-                        <f:selectItem itemLabel="Shanghai" itemValue="Shanghai" />
-                        <f:selectItem itemLabel="Jakarta" itemValue="Jakarta" />
-                    </p:selectOneMenu>
+                                <f:selectItem itemLabel="Select City" itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Singapore" itemValue="Singapore" />
+                                <f:selectItem itemLabel="Shanghai" itemValue="Shanghai" />
+                                <f:selectItem itemLabel="Jakarta" itemValue="Jakarta" />
+                            </p:selectOneMenu>
                         </p:column>
                     </p:row>
-                     
+
                     <p:row>
                         <p:column>
                             <h:outputText value="Address" /> 
                         </p:column>
                         <p:column>
-                            <p:inputText value="Address" /> 
+                            <p:inputText value="#{manageHostExperienceBean.currentExperience.address}" /> 
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column>
                             <h:outputText value="Language" />
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="language" value="language" style="width:100px;">
-                        <f:selectItem itemLabel="Select City" itemValue="" noselectoption="true"/>
-                        <f:selectItem itemLabel="English" itemValue="English" />
-                        <f:selectItem itemLabel="Malaysian" itemValue="Malaysian" />
-                        <f:selectItem itemLabel="Chinese" itemValue="Chinese" />
-                        <f:selectItem itemLabel="Hindu" itemValue="Hindu" />
-                    </p:selectOneMenu>
+                            <p:selectOneMenu id="language" value="#{manageHostExperienceBean.langId}" style="width:100px;">
+                                <f:selectItem itemLabel="Select City" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{createNewExperience.lsLang}" var="lang" itemLabel="#{lang.language}" itemValue="#{lang.languageId}"/>
+                            </p:selectOneMenu>
                         </p:column>
                     </p:row>
 
@@ -322,101 +318,103 @@
                             <h:outputText value="Description" /> 
                         </p:column>
                         <p:column>
-                           <p:inputTextarea row="10" columns="100" value="Content" />
+                            <p:inputTextarea rows="10" cols="100" value="#{manageHostExperienceBean.currentExperience.description}" />
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column colspan="2">
                             <p:outputLabel for="itemsProvided" value="Items Provided (press Enter to add a new one): " />
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column colspan="2">
-                           <p:chips id="itemsProvided" value="#{hostExperienceManagementManagedBean.itemsProvided}" />
+                            <p:chips id="itemsProvided" value="#{manageHostExperienceBean.currentExperience.providingItems}" />
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column colspan="2">
                             <p:outputLabel for="itemsRequired" value="Items Required (press Enter to add a new one):" />
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column colspan="2">
-                           <p:chips id="itemsRequired" value="#{hostExperienceManagementManagedBean.itemsRequired}" />
+                            <p:chips id="itemsRequired" value="#{manageHostExperienceBean.currentExperience.requiringItems}" />
                         </p:column>
                     </p:row>
-                    
-                <p:commandButton style="width: 100%;" value="Update Experience Info" action="#" />  
+
+                    <p:row>
+                        <p:commandButton value="Update Experience Info" action="#{manageHostExperienceBean.updateExp}" update="formUpdateHostExperienceDetails:msg"/>  
+                    </p:row>
+
                 </p:panelGrid>
             </p:dialog>
         </h:form>
 
-        <h:form id="formViewExperienceDateDetails">
-            <p:dialog id="dialogViewExperienceDateDetails" widgetVar="dialogViewExperienceDateDetails" closable="true" position="center center" header="View Experience Date Details" resizable="false">
-                <p:growl id="msg" showDetail="true" escape="false" />
+        <h:form id="formViewExperienceDetails">
+        <p:dialog id="dialogViewExperienceDateDetails" widgetVar="dialogViewExperienceDateDetails" closable="true" position="center center" header="View Experience Date Details" resizable="false">
+            <p:growl id="msg" showDetail="true" escape="false" />
 
-                <p:panelGrid style="width:100%;" columns="2" layout="grid">
-                    <p:outputLabel value="Date" /> 
-                    <p:outputLabel value="Date" />
+            <p:panelGrid style="width:100%;" columns="2" layout="grid">
+                <p:outputLabel value="Date" /> 
+                <h:outputText value="#{manageHostExperienceBean.currentExpDate.startDate}" />
 
-                    <p:outputLabel value="Capacity" /> 
-                    <p:outputLabel value="Capacity" />
+                <p:outputLabel value="Capacity" /> 
+                <p:outputLabel value="#{manageHostExperienceBean.currentExpDate.capacity}" />
 
-                    <p:outputLabel value="Spots Available" /> 
-                    <p:outputLabel value="Spots Available" />
+                <p:outputLabel value="Spots Available" /> 
+                <p:outputLabel value="#{manageHostExperienceBean.currentExpDate.spotsAvailable}" />
 
-                    <p:outputLabel value="Price" /> 
-                    <p:outputLabel value="Price" />
+                <p:outputLabel value="Price" /> 
+                <p:outputLabel value="#{manageHostExperienceBean.currentExpDate.price}" />
 
-                    <p:outputLabel value="Guests Attending" /> 
-                    <p:outputLabel value="Guests" />
+                <p:outputLabel value="Guests Attending" /> 
+                <p:outputLabel value="#{manageHostExperienceBean.guests!=null ? manageHostExperienceBean.guests:'No one has applied yet '}" />
 
-                </p:panelGrid>
-                <br />
+            </p:panelGrid>
+            <br />
 
-            </p:dialog>
-        </h:form>
-
-        <h:form id="formUpdateExperienceDateDetails">
+        </p:dialog>
+    </h:form>
+        <h:form>
             <p:dialog id="dialogUpdateExperienceDateDetails" widgetVar="dialogUpdateExperienceDateDetails" closable="true" position="center center" header="Update Experience Date Details" resizable="false">
+                <p:ajax event="close" update="formViewHostExperienceDetails" />
                 <p:growl id="msg" showDetail="true" escape="false" />
 
                 <p:panelGrid>
-                    
+
                     <p:row>
                         <p:column>
                             <p:outputLabel value="Date" />
                         </p:column>
                         <p:column>
-                            <p:calendar value="#{hostExperienceManagementManagedBean.updateExperienceDate}"  mode="inline" />
+                            <p:calendar value="#{manageHostExperienceBean.currentExpDate.startDate}"  mode="inline" />
                         </p:column>
                     </p:row>
-                     
+
                     <p:row>
                         <p:column>
                             <p:outputLabel value="Capacity" />
                         </p:column>
                         <p:column>
-                            <p:spinner value="10" min="1" />
+                            <p:spinner value="#{manageHostExperienceBean.currentExpDate.capacity}" min="1" />
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column colspan="2">
-                            <p:commandButton value="Update" action="#" />
+                            <p:commandButton value="Update" actionListener="#{manageHostExperienceBean.updateExpDate}" />
                         </p:column>
                     </p:row>
 
                 </p:panelGrid>
                 <br />
-
             </p:dialog>
-        </h:form>
-        
+       </h:form>
+
         <h:form id="formCreateNewExperienceDate">
             <p:dialog id="dialogCreateNewExperienceDate" widgetVar="dialogCreateNewExperienceDate" closable="true" position="center center" header="Create New Experience Date" resizable="false">
                 <p:growl id="msg" showDetail="true" escape="false" />
@@ -427,40 +425,40 @@
                             <p:outputLabel value="Date" />
                         </p:column>
                         <p:column>
-                            <p:calendar mode="inline" value="#{hostExperienceManagementManagedBean.updateExperienceDate}" />
+                            <p:calendar mode="inline" value="#{manageHostExperienceBean.date}" />
                         </p:column>
                     </p:row>
-                     
+
                     <p:row>
                         <p:column>
                             <p:outputLabel value="Capacity" />
                         </p:column>
                         <p:column>
-                            <p:spinner value="10" min="1" />
+                            <p:spinner value="#{manageHostExperienceBean.capacity}" min="1" />
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column>
                             <p:outputLabel value="Price" /> 
                         </p:column>
                         <p:column>
-                            <h:inputText value="Price" /> 
+                            <h:inputText value="#{manageHostExperienceBean.price}" /> 
                         </p:column>
                     </p:row>
 
                     <p:row>
                         <p:column colspan="2" >
-                            <p:commandButton value="Create" action="#" />
+                            <p:commandButton value="Create" action="#{manageHostExperienceBean.addDate}" />
                         </p:column>
                     </p:row>
-                    
+
                 </p:panelGrid>
                 <br />
 
             </p:dialog>
         </h:form>
-        
+
         <h:form id="formSendNotification">
             <p:dialog id="dialogSendNotification" widgetVar="dialogSendNotification" closable="true" position="center center" header="Send Notification" resizable="false">
                 <p:growl id="msgSendNotification" showDetail="true" escape="false" />
@@ -471,7 +469,7 @@
                             <p:outputLabel value="Write a notification for your guests:" /> 
                         </p:column>
                     </p:row>
-                    
+
                     <p:row>
                         <p:column>
                             <p:inputTextarea value="Write a notification for your guests" /> 
@@ -488,46 +486,29 @@
 
             </p:dialog>
         </h:form>
-        
+
         <h:form id="formViewAllGuests">
             <p:dialog id="dialogViewAllGuests" widgetVar="dialogViewAllGuests" closable="true" position="center center" header="View All Guests" resizable="false">
 
-                <p:panelGrid>
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel value="AVATAR" />
-                        </p:column>
-                        <p:column>
-                            <p:outputLabel value="username" />
-                        </p:column>
-                        <p:column>
-                            <p:rating value="3" disabled="true" />
-                        </p:column>
-                        <p:column>
-                            <h:outputText value="nice guest" />
-                        </p:column>
-                    </p:row>
-                     
-                    <p:row>
-                        <p:column>
-                            <p:outputLabel value="AVATAR" />
-                        </p:column>
-                        <p:column>
-                            <p:outputLabel value="username" />
-                        </p:column>
-                        <p:column>
-                            <p:rating value="3" disabled="true" />
-                        </p:column>
-                        <p:column>
-                            <h:outputText value="nice guest" />
-                        </p:column>
-                    </p:row>
-                </p:panelGrid>
+                <p:dataTable value="#{manageHostExperienceBean.guests}" var="guest">
+                    <p:column headerText="Username">
+                        <h:outputText value="#{guest.username}"/>
+                    </p:column>
+                    <p:column headerText="Name">
+                        <h:outputText value="#{guest.firstName} #{guest.lastName}"/>
+                    </p:column>
+                    <p:column headerText="Rating">
+                        <p:rating value="#{guest.averageAttendScore}" stars="5" cancel="false"/>
+                    </p:column>
+                    <p:column headerText="Description">
+                        <h:outputText value="#{guest.description}"/>
+                    </p:column>
+                </p:dataTable>
                 <br />
 
             </p:dialog>
         </h:form>
-        
+
         <h:form id="formEvaluateGuests">
             <p:dialog id="dialogEvaluateGuests" widgetVar="dialogEvaluateGuests" closable="true" position="center center" header="Evaluate Guests" resizable="false">
 
@@ -549,7 +530,7 @@
                             <p:commandButton value="Save" action="#" />
                         </p:column>
                     </p:row>
-                     
+
                 </p:panelGrid>
                 <br />
 

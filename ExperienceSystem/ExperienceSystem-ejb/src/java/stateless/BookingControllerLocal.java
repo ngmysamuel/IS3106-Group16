@@ -19,6 +19,10 @@ import util.exception.InputDataValidationException;
 public interface BookingControllerLocal {
     public Booking createNewBooking(Booking newBooking) throws CreateNewBookingException, InputDataValidationException;
     
+    public void update(Booking b);
+    
+    public Booking retrieveBookingByBookingId(Long id);
+    
     public List<Booking> retrieveAllBookingsByGuestId(Long userId);
     
     public List<Booking> retrieveAllUpcomingBookingsByGuestId(Long userId);

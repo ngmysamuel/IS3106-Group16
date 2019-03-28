@@ -12,8 +12,12 @@ import entity.ExperienceDate;
 import entity.User;
 import enumerated.StatusEnum;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -23,6 +27,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.CreateNewExperienceException;
 import util.exception.ExperienceDateNotActiveException;
 import util.exception.ExperienceNotActiveException;
@@ -46,6 +55,14 @@ public class UserController implements UserControllerRemote, UserControllerLocal
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
 
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+
+    public UserController() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
     public void persist(Object object) {
         em.persist(object);
     }
@@ -54,6 +71,31 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         em.persist(user);
         em.flush();
         return user;
+    }
+
+    public void update(User user) {
+        try {
+            em.merge(user);
+            em.flush();
+        } catch (ConstraintViolationException e) {
+            Set<ConstraintViolation<?>> s = e.getConstraintViolations();
+            for (Iterator<ConstraintViolation<?>> it = e.getConstraintViolations().iterator(); it.hasNext();) {
+                ConstraintViolation<? extends Object> v = it.next();
+                System.err.println(v);
+                System.err.println("==>>"+v.getMessage());
+            }
+        }
+    }
+
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<User>> constraintViolations) {
+        String msg = "Input data validation error!:";
+
+        for (ConstraintViolation contraints : constraintViolations) {
+            System.out.println(contraints.getRootBeanClass().getSimpleName()
+                    + "." + contraints.getPropertyPath() + " " + contraints.getMessage());
+        }
+
+        return msg;
     }
 
     public User login(String username, String password) throws InvalidLoginCredentialException {
@@ -81,21 +123,24 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         experienceController.removeFollowerFromExperience(id, user);
         user.getFollowedExperiences().remove(exp);
     }
-    
+
     @Override
-    public List<User> retrieveAllUsers(){
+    public List<User> retrieveAllUsers() {
         Query query = em.createQuery("SELECT c FROM User c ORDER BY c.userId ASC");
         return query.getResultList();
     }
-    
+
     public User retrieveUserByUsername(String username) throws UserNotFoundException {
-        Query q = em.createQuery("SELECT u FROM User WHERE u.username = :name");
+        Query q = em.createQuery("SELECT u FROM User u WHERE u.username = :name");
         q.setParameter("name", username);
         User user = new User();
         try {
             user = (User) q.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new UserNotFoundException("No such user");
+        }
+System.out.println("user.getExpHost: "+user.getExperienceHosted());
+        for (Experience e : user.getExperienceHosted()) {
         }
         return user;
     }
@@ -108,11 +153,12 @@ public class UserController implements UserControllerRemote, UserControllerLocal
             throw new UserNotFoundException("Staff ID " + id + " does not exist!");
         }
     }
-    
+
     @Override
     public List<Experience> retrieveAllExperience(Long id) { //completed exp
         User user = em.find(User.class, id);
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate1 = LocalDate.now();
+        Date currentDate = Date.from(currentDate1.atStartOfDay(ZoneId.systemDefault()).toInstant());
         List<Experience> lsExperiences = new ArrayList<>();
         List<Booking> bookings = user.getBookings();
         for (Booking b : bookings) {
@@ -122,11 +168,12 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
         return lsExperiences;
     }
-    
+
     @Override
     public List<Experience> retrieveAllUpcomingExperienceDates(Long id) { //not yet comepltered
         User user = em.find(User.class, id);
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate1 = LocalDate.now();
+        Date currentDate = Date.from(currentDate1.atStartOfDay(ZoneId.systemDefault()).toInstant());
         List<Experience> lsExperiences = new ArrayList<>();
         List<Booking> bookings = user.getBookings();
         for (Booking b : bookings) {
@@ -136,11 +183,12 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
         return lsExperiences;
     }
-    
+
     @Override
     public List<ExperienceDate> retrieveAllHostExperience(Long id) { //completed
         User user = em.find(User.class, id);
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate1 = LocalDate.now();
+        Date currentDate = Date.from(currentDate1.atStartOfDay(ZoneId.systemDefault()).toInstant());
         List<ExperienceDate> lsExperiences = new ArrayList<>();
         List<Experience> exp = user.getExperienceHosted();
         for (Experience e : exp) {
@@ -155,11 +203,12 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
         return lsExperiences;
     }
-    
+
     @Override
     public List<ExperienceDate> retrieveAllUpcomingHostExperienceDates(Long id) { //not yet compelted host
         User user = em.find(User.class, id);
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate1 = LocalDate.now();
+        Date currentDate = Date.from(currentDate1.atStartOfDay(ZoneId.systemDefault()).toInstant());
         List<ExperienceDate> lsExperiences = new ArrayList<>();
         List<Experience> exp = user.getExperienceHosted();
         for (Experience e : exp) {
@@ -174,7 +223,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
         return lsExperiences;
     }
-    
+
     @Override
     public void createHostExperience(Experience exp, Long id) {
         User user = em.find(User.class, id);
@@ -187,8 +236,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
         user.getExperienceHosted().add(exp);
     }
-    
-   
+
     @Override
     public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException, ExperienceNotActiveException {
         Experience exp = em.find(Experience.class, expId);
@@ -198,7 +246,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
         experienceController.deleteExperience(expId, r);
     }
-    
+
     @Override
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException {
         ExperienceDate expDate = em.find(ExperienceDate.class, expId);
@@ -216,35 +264,35 @@ public class UserController implements UserControllerRemote, UserControllerLocal
     @Override
     public List<User> retrieveAllFollowingUsers(Long userId) throws UserNotFoundException {
         User user = em.find(User.class, userId);
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
         List<User> following = user.getFollows();
-        for(User u: following){
+        for (User u : following) {
             u.getUserId();
         }
         return following;
     }
 
     @Override
-    public boolean isFollowingUser(Long userId, Long followingId) throws UserNotFoundException{
+    public boolean isFollowingUser(Long userId, Long followingId) throws UserNotFoundException {
         List<User> following = retrieveAllFollowingUsers(userId);
-        for(User u: following){
-            if(u.getUserId() == followingId){
+        for (User u : following) {
+            if (u.getUserId() == followingId) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     @Override
     public User unfollowUser(Long userId, Long unfollowId) throws UserNotFoundException {
         User unfollow = em.find(User.class, unfollowId);
-        if(unfollow == null){
+        if (unfollow == null) {
             throw new UserNotFoundException();
         }
-        if(isFollowingUser(userId, unfollowId)){
+        if (isFollowingUser(userId, unfollowId)) {
             User user = em.find(User.class, userId);
             user.getFollows().remove(unfollow);
             unfollow.getFollowers().remove(user);
@@ -255,7 +303,7 @@ public class UserController implements UserControllerRemote, UserControllerLocal
     @Override
     public Appeal createAppeal(Long userId, Appeal appeal) throws UserNotFoundException {
         User user = em.find(User.class, userId);
-        if(user == null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
         appeal.setUser(user);
@@ -265,13 +313,10 @@ public class UserController implements UserControllerRemote, UserControllerLocal
     }
 
     @Override
-    public User updatePersonalInformation(User user){
+    public User updatePersonalInformation(User user) {
         em.merge(user);
         return user;
     }
-    
-    
-    
-    
 
 }
+

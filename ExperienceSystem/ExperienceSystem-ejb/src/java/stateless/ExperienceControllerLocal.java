@@ -29,13 +29,15 @@ import util.exception.InputDataValidationException;
 @Local
 public interface ExperienceControllerLocal {
 
+    public List<User> retrieveAllUsers(Experience exp);
     
     public Boolean removeFollowerFromExperience(Long id, User user);
     public Boolean addFollowerToExperience(Long id, User user);
     public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
 
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
-
+    public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException;
+    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId);
     public void updateExperienceInformation(Experience experience) throws InputDataValidationException, ExperienceNotFoundException;
 
     public void deleteExperience(Long id, String r) throws ExperienceNotActiveException;
@@ -65,7 +67,6 @@ public interface ExperienceControllerLocal {
     public List<Experience> retrieveExperienceByName(String title);
 
     List<Experience> retrieveExperienceBySingleDate(Date date);
-
     ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
     
 }

@@ -7,7 +7,6 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -24,7 +23,7 @@ import javax.validation.constraints.NotNull;
  * @author Asus
  */
 @Entity
-public class ExperienceDate implements Serializable {
+public class ExperienceDate implements Serializable, Comparable<ExperienceDate> {
 
     @OneToOne(mappedBy = "experienceDate")
     private ExperienceDateCancellationReport experienceDateCancellationReport;
@@ -42,19 +41,21 @@ public class ExperienceDate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long experienceDateId;
         @NotNull
-    private LocalDate startDate;
-    @NotNull
-    private LocalDate endDate;
+    private Date startDate;
+//    @NotNull
+    private Date endDate;
     @NotNull
     private Integer capacity;
-    @NotNull
+//    @NotNull
     private Integer spotsAvailable;
     @NotNull
     private BigDecimal price;
     @NotNull
     private boolean active;
+    
 
     public ExperienceDate() {
+
     }
     
 
@@ -90,19 +91,20 @@ public class ExperienceDate implements Serializable {
         this.experienceDatePaymentReport = experienceDatePaymentReport;
     }
 
-    public LocalDate getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -170,6 +172,19 @@ public class ExperienceDate implements Serializable {
     @Override
     public String toString() {
         return "entity.ExperienceDate[ id=" + experienceDateId + " ]";
+    }
+
+    @Override
+    public int compareTo(ExperienceDate o) {
+        Date startDate1 = this.startDate;
+        Date startDate2 = o.getStartDate();
+        if (startDate1.compareTo(startDate2) < 0) {
+            return -1;
+        } else if (startDate2.compareTo(startDate1) > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
     
 }

@@ -15,3 +15,5 @@ ExperienceSystem/nbproject/project.properties
 /ExperienceSystem/dist/
 /EmployeeSystem/nbproject/private/
 /ExperienceSystem/ExperienceSystemEmployee-war/nbproject/private/
+/ExperienceSystem/ExperienceSystemEmployee-war/build/
+/ExperienceSystem/ExperienceSystemEmployee-war/dist/

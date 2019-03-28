@@ -17,6 +17,7 @@ import entity.User;
 import enumerated.StatusEnum;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,6 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -33,7 +33,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.CreateNewExperienceException;
-import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
@@ -46,7 +45,17 @@ import util.exception.InputDataValidationException;
 public class ExperienceController implements ExperienceControllerRemote, ExperienceControllerLocal {
 
     @EJB
+    private LanguageControllerLocal languageController;
+
+    @EJB
+    private TypeControllerLocal typeController;
+
+    @EJB
+    private CategoryControllerLocal categoryController;
+
+    @EJB
     private ExperienceDateCancellationReportControllerLocal experienceDateCancellationReportController;
+    
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
@@ -57,6 +66,32 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     public ExperienceController(){
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
+    }
+    
+    public List<User> retrieveAllUsers(Experience exp) {
+        List<User> ls3 = new ArrayList<>();
+        Experience e = em.find(Experience.class, exp.getExperienceId());
+        List<ExperienceDate> ls = e.getExperienceDates();
+        List<Booking> ls2 = new ArrayList<>();
+        for (ExperienceDate ed : ls) {
+            ls2.addAll(ed.getBookings());
+        }
+        for (Booking b : ls2) {
+            ls3.add(b.getUser());
+        }
+        return ls3;
+    }
+    
+    public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException {
+        Category c = categoryController.retrieveCategoryById(catId);
+        Type t = typeController.retrieveTypeById(typeId);
+        Language l = languageController.retrieveLanguageById(langId);
+        exp.setCategory(c);
+        exp.setType(t);
+        exp.setLanguage(l);
+        exp.setActive(true);
+        exp.setAverageScore(BigDecimal.ZERO);
+        return createNewExperience(exp);
     }
     
     @Override
@@ -82,33 +117,44 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
+    
+    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId) {
+        Category c = categoryController.retrieveCategoryById(catId);
+        Type t = typeController.retrieveTypeById(typeId);
+        Language l = languageController.retrieveLanguageById(langId);
+        exp.setCategory(c);
+        exp.setType(t);
+        exp.setLanguage(l);
+        em.merge(exp);
+    }
 
     @Override
     public void updateExperienceInformation(Experience experience) throws InputDataValidationException, ExperienceNotFoundException{
-        if(experience.getExperienceId() == null || experience.getExperienceId() == new Long (0)) {
-            throw new InputDataValidationException("Invalid experience ID");
-        }
-        
-        Experience experienceToUpdate = em.find(Experience.class, experience.getExperienceId());
-        if(experienceToUpdate == null){
-            throw new ExperienceNotFoundException("Experience does not exist!");
-        }
-        
-        // check whether there's another experience with the same title as new experience title 
-        Query query = em.createQuery("SELECT e FROM Experience e where e.experience = :inExperienceName");
-        query.setParameter("inExperienceName", experience.getTitle());
-        
-        try{
-            Experience duplicateExperience = (Experience)query.getSingleResult();
-            // if no same title 
-            if (duplicateExperience.getExperienceId().equals(experience.getExperienceId())) {
-                experienceToUpdate.setTitle(experience.getTitle());
-            } else {
-                throw new InputDataValidationException("Experience with the same title already exists!");
-            }
-        } catch(NoResultException ex) {
-            experienceToUpdate.setTitle(experience.getTitle());
-        }
+        em.merge(experience);
+//        if(experience.getExperienceId() == null || experience.getExperienceId() == new Long (0)) {
+//            throw new InputDataValidationException("Invalid experience ID");
+//        }
+//        
+//        Experience experienceToUpdate = em.find(Experience.class, experience.getExperienceId());
+//        if(experienceToUpdate == null){
+//            throw new ExperienceNotFoundException("Experience does not exist!");
+//        }
+//        
+//        // check whether there's another experience with the same title as new experience title 
+//        Query query = em.createQuery("SELECT e FROM Experience e where e.experience = :inExperienceName");
+//        query.setParameter("inExperienceName", experience.getTitle());
+//        
+//        try{
+//            Experience duplicateExperience = (Experience)query.getSingleResult();
+//            // if no same title 
+//            if (duplicateExperience.getExperienceId().equals(experience.getExperienceId())) {
+//                experienceToUpdate.setTitle(experience.getTitle());
+//            } else {
+//                throw new InputDataValidationException("Experience with the same title already exists!");
+//            }
+//        } catch(NoResultException ex) {
+//            experienceToUpdate.setTitle(experience.getTitle());
+//        }
     }
     
     @Override
@@ -119,7 +165,8 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }else{    
             experience.setActive(false);
         
-            LocalDate current = LocalDate.now();
+            LocalDate current1 = LocalDate.now();
+            Date current = Date.from(current1.atStartOfDay(ZoneId.systemDefault()).toInstant());
             
             List<ExperienceDate> experienceDates = experience.getExperienceDates();
             for (ExperienceDate date : experienceDates) {
@@ -150,9 +197,11 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     
     @Override
     public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException{
-        Experience e =  em.find(Experience.class, id);
+        Experience e = em.find(Experience.class, id);
         if(e == null){
             throw new ExperienceNotFoundException();
+        }
+        for (ExperienceDate ed : e.getExperienceDates()) {
         }
         return e;
     }
@@ -282,8 +331,8 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
             List<ExperienceDate> dates = this.retrieveAllExperienceDates(experience);
             for(ExperienceDate date: dates){
                 
-                Date start = java.sql.Date.valueOf(date.getStartDate());
-                Date end = java.sql.Date.valueOf(date.getEndDate());
+                Date start = date.getStartDate();
+                Date end = date.getEndDate();
                 
                 if(start.after(startDate) && end.before(endDate)){
                     selectedExperiences.add(date.getExperience());

@@ -7,6 +7,11 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,7 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -30,19 +34,21 @@ public class Experience implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long experienceId;
-    @NotNull
+//    @NotNull
     private String title;
     private String description;
     private List<String> providingItems;
     private List<String> requiringItems;
     private String supportingDocument;
-    @NotNull
+//    @NotNull
     private BigDecimal averageScore;
-    @NotNull
+//    @NotNull
     private String address;
     private List<String> reminders;
-    @NotNull
+//    @NotNull
     private boolean active;
+    
+    private BigDecimal avgPrice;
 
     @ManyToOne
     private Type type;
@@ -51,13 +57,15 @@ public class Experience implements Serializable {
     @ManyToOne
     private Language language;
     @OneToMany(mappedBy = "experience")
-    private List<ExperienceDate> experienceDates;
+    private List<ExperienceDate> experienceDates = new ArrayList<>();
     @ManyToMany
     private List<User> followers;
     @ManyToOne
     private User host;
     @ManyToOne
     private Category category;
+    
+    private Date nextAvailDate;
 
     public Experience() {
     }
@@ -179,6 +187,8 @@ public class Experience implements Serializable {
     }
 
     public List<ExperienceDate> getExperienceDates() {
+        for (ExperienceDate ed : experienceDates) {
+        }
         return experienceDates;
     }
 
@@ -226,6 +236,42 @@ public class Experience implements Serializable {
     @Override
     public String toString() {
         return "entity.Experience[ id=" + experienceId + " ]";
+    }
+
+    public Date getNextAvailDate() {
+        if (getExperienceDates() == null) {
+            return null;
+        }
+        Collections.sort(getExperienceDates());
+        for (ExperienceDate ed : getExperienceDates()) {
+            if (ed.isActive()) {
+                nextAvailDate = ed.getStartDate();
+            }
+        }
+        return nextAvailDate;
+    }
+
+    public void setNextAvailDate(Date nextAvailDate) {
+        this.nextAvailDate = nextAvailDate;
+    }
+
+    public BigDecimal getAvgPrice() {
+        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal count = BigDecimal.ZERO;
+        if (!this.experienceDates.isEmpty()) {
+            for (ExperienceDate ed : experienceDates) {
+                count = count.add(BigDecimal.ONE);
+                sum = sum.add(ed.getPrice());
+            }
+System.out.println(sum);
+System.out.println("count: "+count);
+            return sum.divide(count,2,RoundingMode.HALF_UP);
+        }
+        return null;
+    }
+
+    public void setAvgPrice(BigDecimal avgPrice) {
+        this.avgPrice = avgPrice;
     }
     
 }

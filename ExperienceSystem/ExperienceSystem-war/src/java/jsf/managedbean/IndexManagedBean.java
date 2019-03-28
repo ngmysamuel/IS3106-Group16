@@ -24,6 +24,8 @@ public class IndexManagedBean implements Serializable{
     /**
      * Creates a new instance of IndexManagedBean
      */
+    @EJB
+    private UserControllerLocal userController;
     private Date searchDate;
     private int searchNumOfPeople;
     
@@ -31,8 +33,15 @@ public class IndexManagedBean implements Serializable{
     }
     
     @PostConstruct
-    public void postConstruct(){
-        
+    public void kk() {
+        User u = new User();
+        try {
+            u = userController.retrieveUserByUsername("John");
+        } catch (UserNotFoundException ex) {
+            Logger.getLogger(IndexManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+System.out.println(u.getUsername());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", u);
     }
     
     public void searchExperience() throws IOException{

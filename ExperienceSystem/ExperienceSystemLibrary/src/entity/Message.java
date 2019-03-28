@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -29,11 +30,11 @@ public class Message implements Serializable {
     @NotNull
     private String content;
     @NotNull
-    private Date sendDate;
+    private LocalDateTime sendDate;
     @ManyToOne
     private User sender;
     @ManyToOne
-    private User replier;
+    private User recipient;
 
     public Message() {
     }
@@ -46,11 +47,11 @@ public class Message implements Serializable {
         this.content = content;
     }
 
-    public Date getSendDate() {
+    public LocalDateTime getSendDate() {
         return sendDate;
     }
 
-    public void setSendDate(Date sendDate) {
+    public void setSendDate(LocalDateTime sendDate) {
         this.sendDate = sendDate;
     }
 
@@ -62,12 +63,12 @@ public class Message implements Serializable {
         this.sender = sender;
     }
 
-    public User getReplier() {
-        return replier;
+    public User getRecipient() {
+        return recipient;
     }
 
-    public void setReplier(User replier) {
-        this.replier = replier;
+    public void setRecipient(User recipient) {
+        this.recipient = recipient;
     }
 
     public Long getMessageId() {

@@ -38,6 +38,10 @@ public class BookingController implements BookingControllerRemote, BookingContro
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
+    
+    public void update(Booking b) {
+        em.merge(b);
+    }
 
     @Override
     public Booking createNewBooking(Booking newBooking) throws CreateNewBookingException, InputDataValidationException {
@@ -54,6 +58,12 @@ public class BookingController implements BookingControllerRemote, BookingContro
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
+    }
+    
+    public Booking retrieveBookingByBookingId(Long id) {
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.bookingId = :id");
+        query.setParameter("id", id);
+        return (Booking) query.getSingleResult();
     }
     
     @Override

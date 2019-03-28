@@ -46,7 +46,7 @@
 
         <div style="width: 65%; position:relative;margin: auto;">
             <h:form id="formAllHostExperiences">
-                <p:dataList value="#{viewAllHostExperiencesManagedBean.hostExperiences}" var="hostExperience" paginator="true" rows="10" styleClass="paginated">
+                <p:dataList value="#{viewExperiencesIAmHosting.ls}" var="hostExperience" paginator="true" rows="10" styleClass="paginated">
                     <f:facet name="header">
                         All My Host Experiences
                     </f:facet>
@@ -54,11 +54,11 @@
                         <h:panelGrid columns="1" style="width:100%">
                             <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/2hocHvd.jpg"/> 
 
-                            <h:outputText value="Created date: 03/25/2019" />
+                            <h:outputText value="NextAvailDate: #{hostExperience.nextAvailDate!= null ? hostExperience.nextAvailDate : 'No Dates Avail'}" />
 
-                            <p:commandButton action="/userOperations/manageHostExperience.xhtml" title="View Details" />
-<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
-                            </p:commandButton>-->
+                            <p:commandButton actionListener="#{manageHostExperienceBean.redir}" title="View Details" ajax="false">
+                                <f:attribute name="exp" value="#{hostExperience}"/>
+                            </p:commandButton>
                         </h:panelGrid>
                     </p:panel>
                 </p:dataList>

@@ -6,11 +6,10 @@
 package entity;
 
 
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +33,7 @@ public class User implements Serializable {
     @ManyToMany(mappedBy = "blocks")
     private List<User> blockers; // Users who blocked this user.
 
-    @OneToMany(mappedBy = "replier")
+    @OneToMany(mappedBy = "recipient")
     private List<Message> messagesReplied;
 
     @OneToMany(mappedBy = "sender")
@@ -44,7 +43,7 @@ public class User implements Serializable {
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "host")
-    private List<Experience> experienceHosted;
+    private List<Experience> experienceHosted = new ArrayList<Experience>();
 
     @ManyToMany(mappedBy = "followers")
     private List<Experience> followedExperiences;
@@ -57,32 +56,32 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     
-    @NotNull
-    @Size(min=8)
+//    @NotNull
+//    @Size(min=8)
     private String username;
-    @NotNull
-    @Size(min=8)
+//    @NotNull
+//    @Size(min=8)
     private String password;
-    @NotNull
+//    @NotNull
     private String firstName;
-    @NotNull
+//    @NotNull
     private String lastName;
-    @NotNull
+//    @NotNull
     private String gender;
-    @NotNull
+//    @NotNull
     private LocalDate birthday;
-    @NotNull
+//    @NotNull
     private String email;
-    @NotNull
+//    @NotNull
     private Long phoneNumber;
     private String description;
-    @NotNull
+//    @NotNull
     private String prefferedCurrency;
-    @NotNull
+//    @NotNull
     private List<String> creditCardDetails;
     private BigDecimal averageHostScore;
     private BigDecimal averageAttendScore;
-    @NotNull
+//    @NotNull
     private Boolean premium;
     
     @OneToOne
@@ -97,6 +96,10 @@ public class User implements Serializable {
     private List<Booking> bookings;
 
     public User() {
+    }
+
+    public User(String username) {
+        this.username = username;
     }
 
     public List<User> getFollowers() {
