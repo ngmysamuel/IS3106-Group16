@@ -9,19 +9,23 @@ import entity.Booking;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.User;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import stateless.BookingControllerLocal;
 import stateless.ExperienceControllerLocal;
 import stateless.ExperienceDateControllerLocal;
 import util.exception.CreateNewBookingException;
-import util.exception.ExperienceNotFoundException;
+import util.exception.ExperienceDateNotFoundException;
 import util.exception.InputDataValidationException;
 
 /**
@@ -29,8 +33,8 @@ import util.exception.InputDataValidationException;
  * @author Asus
  */
 @Named(value = "viewExperienceDetailsManagedBean")
-@RequestScoped
-public class ViewExperienceDetailsManagedBean {
+@ViewScoped
+public class ViewExperienceDetailsManagedBean implements Serializable{
 
     @EJB
     private BookingControllerLocal bookingController;
@@ -40,14 +44,23 @@ public class ViewExperienceDetailsManagedBean {
 
     @EJB
     private ExperienceControllerLocal experienceController;
-    private Long experienceIdToView;
     private Experience experienceEntityToView;
     private List<ExperienceDate> experienceDateEntities;
     private List<User> experienceFollowers;
+    private ExperienceDate selectedExperienceDate;
     private Booking newBooking;
     private Boolean isFollowed;
-
+    private BigDecimal price;
+    private int numOfPeople;
+    private Date selectedDate;
+    private boolean availability;
+    private BigDecimal subtotal;
+    private BigDecimal tax;
+    private BigDecimal total;
+    private User currentUser;
+    private Boolean isLogin;
     private List<String> images;
+    
     /**
      * Creates a new instance of ViewExperienceDetailsManagedBean
      */
@@ -61,7 +74,12 @@ public class ViewExperienceDetailsManagedBean {
     
     @PostConstruct
     public void postConstruct(){
-        experienceEntityToView = (Experience)FacesContext.getCurrentInstance().getExternalContext().getFlash().get("experienceEntityToView");
+        experienceEntityToView = (Experience)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("experienceEntityToView");
+        price = experienceController.getAveragePrice(experienceEntityToView);
+        isLogin = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
+        if(isLogin != null && isLogin){
+            currentUser = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
+        }
     }
     
     public void reserveExperienceDate(){
@@ -76,14 +94,41 @@ public class ViewExperienceDetailsManagedBean {
         }
     }
     
+    public void checkDateAvailability(ActionEvent event){
+        try
+        {
+            selectedExperienceDate = experienceController.checkExperienceDateAvailability(experienceEntityToView.getExperienceId(), selectedDate, numOfPeople);
+            this.availability = true;
+            this.subtotal = selectedExperienceDate.getPrice().multiply(new BigDecimal(this.numOfPeople));
+            this.tax = subtotal.multiply(new BigDecimal(0.07));
+            this.total = this.subtotal.add(this.tax);
+            newBooking.setTotalPrice(total);
+            newBooking.setExperienceDate(selectedExperienceDate);
+            newBooking.setNumberOfPeople(numOfPeople);
+            newBooking.setUser(currentUser);
+        }
+        catch (ExperienceDateNotFoundException ex){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+            this.availability= false;
+        }
+        catch (Exception ex){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occured: " + ex.getMessage(), null));
+            this.availability = false;
+        }
+    }
+    
+    public int minPrice(){
+        // Calculate the current minPrice for this exp.
+        return 50;
+    }
     
     public void addFavoriteExperience(){
-        experienceController.addFollowerToExperience(experienceIdToView, (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
+        experienceController.addFollowerToExperience(experienceEntityToView.getExperienceId(), (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
         this.isFollowed = true;
     }
     
     public void removeFavoriteExperience(){
-        experienceController.removeFollowerFromExperience(experienceIdToView, (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
+        experienceController.removeFollowerFromExperience(experienceEntityToView.getExperienceId(), (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
         this.isFollowed = false;
     }
     
@@ -93,14 +138,6 @@ public class ViewExperienceDetailsManagedBean {
 
     public void setImages(List<String> images) {
         this.images = images;
-    }
-
-    public Long getExperienceIdToView() {
-        return experienceIdToView;
-    }
-
-    public void setExperienceIdToView(Long experienceIdToView) {
-        this.experienceIdToView = experienceIdToView;
     }
 
     public Experience getExperienceEntityToView() {
@@ -142,5 +179,88 @@ public class ViewExperienceDetailsManagedBean {
     public void setIsFollowed(Boolean isFollowed) {
         this.isFollowed = isFollowed;
     }
+
+    public ExperienceDate getSelectedExperienceDate() {
+        return selectedExperienceDate;
+    }
+
+    public void setSelectedExperienceDate(ExperienceDate selectedExperienceDate) {
+        this.selectedExperienceDate = selectedExperienceDate;
+    }
+
+    public int getNumOfPeople() {
+        return numOfPeople;
+    }
+
+    public void setNumOfPeople(int numOfPeople) {
+        this.numOfPeople = numOfPeople;
+    }
+
+    public boolean isAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(boolean availability) {
+        this.availability = availability;
+    }
+
+    public Date getSelectedDate() {
+        return selectedDate;
+    }
+
+    public void setSelectedDate(Date selectedDate) {
+        this.selectedDate = selectedDate;
+    }
+
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public BigDecimal getTax() {
+        return tax;
+    }
+
+    public void setTax(BigDecimal tax) {
+        this.tax = tax;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+        newBooking.setTotalPrice(total);
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public Boolean getIsLogin() {
+        return isLogin;
+    }
+
+    public void setIsLogin(Boolean isLogin) {
+        this.isLogin = isLogin;
+    }
+    
+    
     
 }

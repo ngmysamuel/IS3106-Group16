@@ -4,7 +4,8 @@
                 template="./../templates/defaultTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:define name="content">
         <style>
@@ -78,7 +79,6 @@
                 <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
             </div>
         </div>
-        
         <div id="titleHeader">
             <span>
                 <p:commandLink action="#" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
@@ -105,13 +105,13 @@
                 <br />
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText value="Title" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experienceEntityToView}" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experienceEntityToView.title}" /> 
                 </p:panelGrid>
                 <br />
                 
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
-                    <h:outputText value="Content" /> 
-                    <h:outputText value="Content" />  
+                    <h:outputText value="Description" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experienceEntityToView.description}" />  
                 </p:panelGrid>
                 <br />
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
@@ -135,7 +135,7 @@
                     <div style="width:85%; margin:auto; border-left: 1px solid black; padding:10px;">
                         <p:outputLabel value="From" style="font-size: 15px;" />
                         <br />
-                        <p:outputLabel value="$250" style="font-size: 30px;" />
+                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.price}" style="font-size: 30px;" />
                         <br />
                         <p:outputLabel value="Per Ticket" style="font-size: 15px;" />
                     </div>
@@ -149,10 +149,12 @@
                         
                         <p:outputLabel for="bookNumOfTickets" value="Number of People" />
                         <br/>
-                        <p:spinner id="bookNumOfTickets" value="#" min="0" max="10" />
+                        <p:spinner id="bookNumOfTickets" value="#{viewExperienceDetailsManagedBean.numOfPeople}" min="1" max="10" />
                         <br/>
                         <br/>
-                        <p:commandButton value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.reserveExperienceDate}" oncomplete="PF('dialogCheckout').show()"/>
+                        
+                        <p:commandButton id="bookNow" update="growl" value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.checkDateAvailability}" oncomplete="if(!#{viewExperienceDetailsManagedBean.availability}){PF('dialogCheckout').show()}"/>
+                        <p:growl id="growl" showDetail="true" life="5000"/>
                     </div>
 
                 </h:form>
@@ -167,52 +169,58 @@
                     <hr />
                     <p:panelGrid columns="2" style="width:100%;" layout="grid">
                         <p:outputLabel value="Experience Title" />
-                        <p:outputLabel value="title" />
+                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.experienceEntityToView.title}" />
                         
                         <p:outputLabel value="Date" />
-                        <p:outputLabel value="date" />
+                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.selectedDate}" />
                         
                         <p:outputLabel value="Guests" />
-                        <p:outputLabel value="2" />
+                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.numOfPeople}" />
                         
                     </p:panelGrid>
                     <hr />
                     <p:panelGrid columns="2" style="width:100%;" layout="grid">
                         <p:outputLabel value="Subtotal" />
-                        <p:outputLabel value="$100" />
+                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.subtotal}" />
                         
                         <p:outputLabel value="Tax(7%)" />
-                        <p:outputLabel value="$7" />
+                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.tax}" />
                         
                     </p:panelGrid>
                     <hr />
                     <p:panelGrid columns="2" style="width:100%;" layout="grid">
                         <p:outputLabel value="Total" />
-                        <p:outputLabel value="$107" />
+                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.total}" />
                     </p:panelGrid>
                     <br />
                     
                     <p:outputLabel value="Guest Details" />
                     <hr />
+         
+                    <c:if test="#{viewExperienceDetailsManagedBean.isLogin}">
+                        <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                            <p:outputLabel value="First Name" />
+                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.firstName}" disabled="true" />
+
+                            <p:outputLabel value="Last Name" />
+                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.lastName}" disabled="true" />
+
+                            <p:outputLabel value="Email Address" />
+                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.email}" disabled="true" />
+
+                            <p:outputLabel value="Phone Number" />
+                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.phoneNumber}" disabled="true" />
+
+                            <p:outputLabel value="Special Requests" />
+                            <p:inputTextarea rows="2"  value=""/>
+                        </p:panelGrid>
                     
-                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
-                        <p:outputLabel value="First Name" />
-                        <p:inputText value="name" />
-                        
-                        <p:outputLabel value="Last Name" />
-                        <p:inputText value="name" />
-                        
-                        <p:outputLabel value="Email Address" />
-                        <p:inputText value="address" />
-                        
-                        <p:outputLabel value="Phone Number" />
-                        <p:inputText value="number" />
-                        
-                        <p:outputLabel value="Special Requests" />
-                        <p:inputTextarea rows="2" />
-                    </p:panelGrid>
  
-                    <p:commandButton value="Book Now" actionListener="#" />
+                    <p:commandButton value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.reserveExperienceDate}" />
+                    </c:if>
+                    <c:if test="#{!viewExperienceDetailsManagedBean.isLogin}">
+                        <p:staticMessage severity="warn" summary="Not Allowed to Book!" detail="To continue please login to your account!" />
+                    </c:if>
                     <br />
                 </div>
             </p:dialog>

@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewExperienceException;
+import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
@@ -64,5 +65,7 @@ public interface ExperienceControllerLocal {
     public List<Experience> retrieveExperienceByName(String title);
 
     List<Experience> retrieveExperienceBySingleDate(Date date);
+
+    ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
     
 }

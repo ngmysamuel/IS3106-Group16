@@ -33,6 +33,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.CreateNewExperienceException;
+import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
@@ -243,6 +244,9 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }
         BigDecimal num = new BigDecimal(count);
         
+        if(num.equals(new BigDecimal(0))){
+            return new BigDecimal(0);
+        }
         return total.divide(num);
     }
     
@@ -329,6 +333,22 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }
         
         return msg;
+    }
+
+    @Override
+    public ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException {
+        Query query = em.createQuery("SELECT ed FROM ExperienceDate ed WHERE ed.experience.experienceId = :inExperienceId AND ed.startDate = :inDate");
+        query.setParameter("inExperienceId", experienceId);
+        query.setParameter("inDate", date);
+        try{
+            ExperienceDate ed = (ExperienceDate) query.getSingleResult();
+            if(ed.getSpotsAvailable() < numOfPeople){
+                throw new ExperienceDateNotFoundException("No slots left for the day");
+            }
+            return ed;
+        } catch(NoResultException ex){
+            throw new ExperienceDateNotFoundException("No Experience for the day");
+        }
     }
 
     

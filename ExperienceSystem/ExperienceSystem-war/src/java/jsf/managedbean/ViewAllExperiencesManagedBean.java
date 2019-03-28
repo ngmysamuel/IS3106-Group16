@@ -10,15 +10,16 @@ import entity.Experience;
 import entity.Location;
 import entity.Type;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.faces.bean.ViewScoped;
 import stateless.CategoryControllerLocal;
@@ -32,7 +33,7 @@ import stateless.TypeControllerLocal;
  */
 @Named(value = "viewAllExperiencesManagedBean")
 @ViewScoped
-public class ViewAllExperiencesManagedBean {
+public class ViewAllExperiencesManagedBean implements Serializable{
 
     @EJB
     private LocationControllerLocal locationController;
@@ -64,6 +65,7 @@ public class ViewAllExperiencesManagedBean {
      * Creates a new instance of ViewAllExperiencesManagedBean
      */
     public ViewAllExperiencesManagedBean() {
+        numOfPeople = 1;
     }
     
     @PostConstruct
@@ -86,55 +88,69 @@ public class ViewAllExperiencesManagedBean {
         typeEntities = typeController.retrieveAllTypes();
         locationEntities = locationController.retrieveAllLocations();
         
+        if(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("searchDate")){
+            selectedDateEntity = (Date) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchDate");
+            numOfPeople = (int) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchNumOfPeople");
+        }
+        
+        
     }
     
-    public void filterExperience(ActionEvent event){
-        
+    @PreDestroy
+    public void preDestroy(){
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("searchDate");
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("searchNumOfPeople");
+    }
+    
+    public void filterExperience(){
+        Experience e = new Experience();
+        e.setTitle("Experience 2");
+        experienceEntities.add(e);
 //        experienceEntities.clear();
-        if(searchString != null && searchString.trim().length() > 0){
-            experienceEntities = experienceController.retrieveExperienceByName(searchString);
-        } else {experienceEntities = experienceController.retrieveAllExperiences();}
-        
-        if(selectedDateEntity!=null){
-            List<Experience> filter = experienceController.retrieveExperienceBySingleDate(selectedDateEntity);
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
-        if(selectedTypeEntity!=null){
-            List<Experience> filter = experienceController.retrieveExperienceByType(selectedTypeEntity);
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
-        if(selectedCategoryEntity!=null){
-            List<Experience> filter = experienceController.retrieveExperienceByCategory(selectedCategoryEntity);
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
-        if(selectedLocationEntity!=null){
-            List<Experience> filter = experienceController.retrieveExperienceByLocation(selectedLocationEntity);
-            ListIterator iter = experienceEntities.listIterator();
-            while(iter.hasNext()){
-                if(!filter.contains(iter.next())){
-                    iter.remove();
-                }
-            }
-        }
+//        if(searchString != null && searchString.trim().length() > 0){
+//            experienceEntities = experienceController.retrieveExperienceByName(searchString);
+//        } else {experienceEntities = experienceController.retrieveAllExperiences();}
+//        
+//        if(selectedDateEntity!=null){
+//            List<Experience> filter = experienceController.retrieveExperienceBySingleDate(selectedDateEntity);
+//            ListIterator iter = experienceEntities.listIterator();
+//            while(iter.hasNext()){
+//                if(!filter.contains(iter.next())){
+//                    iter.remove();
+//                }
+//            }
+//        }
+//        if(selectedTypeEntity!=null){
+//            List<Experience> filter = experienceController.retrieveExperienceByType(selectedTypeEntity);
+//            ListIterator iter = experienceEntities.listIterator();
+//            while(iter.hasNext()){
+//                if(!filter.contains(iter.next())){
+//                    iter.remove();
+//                }
+//            }
+//        }
+//        if(selectedCategoryEntity!=null){
+//            List<Experience> filter = new ArrayList<>();
+//            ListIterator iter = experienceEntities.listIterator();
+//            while(iter.hasNext()){
+//                if(!filter.contains(iter.next())){
+//                    iter.remove();
+//                }
+//            }
+//        }
+//        if(selectedLocationEntity!=null){
+//            List<Experience> filter = experienceController.retrieveExperienceByLocation(selectedLocationEntity);
+//            ListIterator iter = experienceEntities.listIterator();
+//            while(iter.hasNext()){
+//                if(!filter.contains(iter.next())){
+//                    iter.remove();
+//                }
+//            }
+//        }
     }
     
     public void viewExperienceDetails(ActionEvent event) throws IOException{
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("experienceEntityToView", selectedExperienceToView);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceEntityToView", selectedExperienceToView);
         FacesContext.getCurrentInstance().getExternalContext().redirect("viewExperienceDetails.xhtml");
     }
     
@@ -169,6 +185,7 @@ public class ViewAllExperiencesManagedBean {
 
     public void setSelectedExperienceToView(Experience selectedExperienceToView) {
         this.selectedExperienceToView = selectedExperienceToView;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceEntityToView", selectedExperienceToView);
     }
 
     public void setLocationController(LocationControllerLocal locationController) {

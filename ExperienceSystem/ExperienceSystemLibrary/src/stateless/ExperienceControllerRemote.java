@@ -5,7 +5,10 @@
  */
 package stateless;
 
+import entity.ExperienceDate;
+import java.util.Date;
 import javax.ejb.Remote;
+import util.exception.ExperienceDateNotFoundException;
 
 /**
  *
@@ -13,5 +16,7 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface ExperienceControllerRemote {
+
+    ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
     
 }
