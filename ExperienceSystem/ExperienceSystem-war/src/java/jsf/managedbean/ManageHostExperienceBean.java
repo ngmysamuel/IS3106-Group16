@@ -23,7 +23,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.faces.bean.ViewScoped;
 import stateless.ExperienceControllerLocal;
 import stateless.ExperienceDateControllerLocal;
 import util.exception.CreateNewExperienceDateException;

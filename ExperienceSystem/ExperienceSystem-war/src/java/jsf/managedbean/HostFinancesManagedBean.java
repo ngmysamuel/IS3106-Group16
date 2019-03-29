@@ -8,7 +8,7 @@ package jsf.managedbean;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import javax.faces.bean.ViewScoped;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.CategoryAxis;

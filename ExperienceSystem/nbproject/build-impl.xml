@@ -225,9 +225,9 @@ exists or setup the property manually. For example like this:
         </copy>
     </target>
     <target depends="init,deps-jar,pre-pre-compile,pre-compile" name="-do-compile-deps">
-        <copyfiles files="${reference.ExperienceSystem-war.dist-ear}" todir="C:\Users\samue\Documents\NetBeansProjects\IS3106-Group16\ExperienceSystem\ExperienceSystem-war"/>
+        <copyfiles files="${reference.ExperienceSystem-war.dist-ear}" todir="C:\Users\Asus\Documents\NetBeansProjects\IS3106-Group16\ExperienceSystem\ExperienceSystem-war"/>
         <copyfiles files="${reference.ExperienceSystem-ejb.dist-ear}" todir="${build.dir}//"/>
-        <copyfiles files="${reference.ExperienceSystemEmployee-war.dist-ear}" todir="C:\Users\samue\Documents\NetBeansProjects\IS3106-Group16\ExperienceSystem\ExperienceSystemEmployee-war"/>
+        <copyfiles files="${reference.ExperienceSystemEmployee-war.dist-ear}" todir="C:\Users\Asus\Documents\NetBeansProjects\IS3106-Group16\ExperienceSystem\ExperienceSystemEmployee-war"/>
     </target>
     <target name="post-compile">
         <!-- Empty placeholder for easier customization. -->

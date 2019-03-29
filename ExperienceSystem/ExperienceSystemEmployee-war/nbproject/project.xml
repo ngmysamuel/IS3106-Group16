@@ -10,12 +10,12 @@
                     <file>${reference.ExperienceSystemLibrary.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
-                <library dirs="200">
-                    <file>${libs.PrimeFaces_6.2.classpath}</file>
-                    <path-in-war>WEB-INF/lib</path-in-war>
-                </library>
                 <library dirs="100">
                     <file>${reference.ExperienceSystem-ejb.dist}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
+                    <file>${libs.PrimeFaces_7.0.classpath}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>
@@ -47,4 +47,3 @@
         </references>
     </configuration>
 </project>
-

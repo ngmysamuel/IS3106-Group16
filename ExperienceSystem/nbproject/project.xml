@@ -9,7 +9,7 @@
             <web-module-additional-libraries>
                 <library>
                     <file>${reference.ExperienceSystem-war.dist-ear}</file>
-                    <path-in-war>C:\Users\samue\Documents\NetBeansProjects\IS3106-Group16\ExperienceSystem\ExperienceSystem-war</path-in-war>
+                    <path-in-war>/</path-in-war>
                 </library>
                 <library>
                     <file>${reference.ExperienceSystem-ejb.dist-ear}</file>
@@ -17,7 +17,7 @@
                 </library>
                 <library>
                     <file>${reference.ExperienceSystemEmployee-war.dist-ear}</file>
-                    <path-in-war>/C:\Users\samue\Documents\NetBeansProjects\IS3106-Group16\ExperienceSystem\ExperienceSystemEmployee-war</path-in-war>
+                    <path-in-war>/</path-in-war>
                 </library>
             </web-module-additional-libraries>
         </data>

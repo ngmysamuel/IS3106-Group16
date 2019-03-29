@@ -5,13 +5,19 @@
  */
 package jsf.managedbean;
 
+import entity.User;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.bean.ViewScoped;
+import stateless.UserControllerLocal;
+import util.exception.UserNotFoundException;
 
 /**
  *
