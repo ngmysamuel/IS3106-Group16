@@ -101,7 +101,7 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
-
+    
     @Override
     public ExperienceDate retrieveExperienceDateByDateId(Long id) {
         ExperienceDate ed = em.find(ExperienceDate.class, id);

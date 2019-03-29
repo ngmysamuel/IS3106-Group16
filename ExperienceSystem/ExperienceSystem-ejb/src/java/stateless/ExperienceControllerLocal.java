@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
+import javax.validation.ConstraintViolationException;
 import util.exception.CreateNewExperienceException;
 import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
@@ -36,8 +37,8 @@ public interface ExperienceControllerLocal {
 
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
     public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException;
-    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId);
-    public void updateExperienceInformation(Experience experience) throws InputDataValidationException, ExperienceNotFoundException;
+    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId) throws InputDataValidationException;
+    public void updateExperienceInformation(Experience experience) throws ConstraintViolationException, InputDataValidationException, ExperienceNotFoundException;
 
     public void deleteExperience(Long id, String r) throws ExperienceNotActiveException;
 

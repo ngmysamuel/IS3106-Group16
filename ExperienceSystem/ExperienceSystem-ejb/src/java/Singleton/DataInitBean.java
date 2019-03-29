@@ -51,7 +51,9 @@ System.out.println("--------------------gjgjg-----------------------------------
         if (categoryController.retrieveAllCategories() == null || categoryController.retrieveAllCategories().isEmpty()) {
             try {
 System.out.println("IAMTRYINGTOINIT");
-                userController.register(new User("John"));
+                userController.register(new User("john","john"));
+                userController.register(new User("jack","jack"));
+                userController.register(new User("jane","jane"));
                 categoryController.createNewCategory(new Category("FFF", "FFF"));
                 categoryController.createNewCategory(new Category("fff", "fff"));
                 typeController.createNewType(new Type("www"));

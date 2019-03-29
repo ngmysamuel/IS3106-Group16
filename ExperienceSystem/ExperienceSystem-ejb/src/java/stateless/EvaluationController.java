@@ -24,8 +24,10 @@ public class EvaluationController implements EvaluationControllerRemote, Evaluat
         em.persist(object);
     }
 
-    public void create(Evaluation e) {
+    public Evaluation create(Evaluation e) {
         em.persist(e);
+        em.flush();
+        return e;
     }
     
     public void update(Evaluation e) {

@@ -65,7 +65,7 @@ public class ViewPastExperiences {
                     eval.setEvaluationTime(LocalDate.now());
                     eval.setRemark(remark);
                     eval.setScore(score);
-                    eval.setUser(currentUser);
+                    eval.setUserEvaluating(currentUser);
                     evaluationController.create(eval);
                     b.setEvaluation(eval);
                     bookingController.update(b);

@@ -31,12 +31,15 @@ public class Booking implements Serializable {
     @ManyToOne
     private User user;
 
+    private boolean userEvaluated;
+    private boolean hostEvaluated;
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
     @NotNull
-    private LocalDate bookingDate;
+    private Date bookingDate;
     @NotNull
     private Integer numberOfPeople;
     @NotNull
@@ -105,11 +108,11 @@ public class Booking implements Serializable {
         this.evaluation = evaluation;
     }
 
-    public LocalDate getBookingDate() {
+    public Date getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate(LocalDate bookingDate) {
+    public void setBookingDate(Date bookingDate) {
         this.bookingDate = bookingDate;
     }
 
@@ -149,5 +152,23 @@ public class Booking implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public boolean isUserEvaluated() {
+        return userEvaluated;
+    }
+
+    public void setUserEvaluated(boolean userEvaluated) {
+        this.userEvaluated = userEvaluated;
+    }
+
+    public boolean isHostEvaluated() {
+        return hostEvaluated;
+    }
+
+    public void setHostEvaluated(boolean hostEvaluated) {
+        this.hostEvaluated = hostEvaluated;
+    }
+
+   
     
 }

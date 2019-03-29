@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -29,6 +30,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -83,6 +85,9 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     }
     
     public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException {
+        if (catId == null || typeId == null || langId == null) {
+            throw new InputDataValidationException();
+        }
         Category c = categoryController.retrieveCategoryById(catId);
         Type t = typeController.retrieveTypeById(typeId);
         Language l = languageController.retrieveLanguageById(langId);
@@ -118,7 +123,10 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }
     }
     
-    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId) {
+    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId) throws InputDataValidationException {
+        if (catId == null || typeId == null || langId == null) {
+            throw new InputDataValidationException();
+        }
         Category c = categoryController.retrieveCategoryById(catId);
         Type t = typeController.retrieveTypeById(typeId);
         Language l = languageController.retrieveLanguageById(langId);
@@ -129,8 +137,9 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     }
 
     @Override
-    public void updateExperienceInformation(Experience experience) throws InputDataValidationException, ExperienceNotFoundException{
+    public void updateExperienceInformation(Experience experience) throws ConstraintViolationException, InputDataValidationException, ExperienceNotFoundException{
         em.merge(experience);
+        em.flush();
 //        if(experience.getExperienceId() == null || experience.getExperienceId() == new Long (0)) {
 //            throw new InputDataValidationException("Invalid experience ID");
 //        }

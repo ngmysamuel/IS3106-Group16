@@ -14,6 +14,6 @@ import javax.ejb.Local;
  */
 @Local
 public interface EvaluationControllerLocal {
-    public void create(Evaluation e);
+    public Evaluation create(Evaluation e);
     public void update(Evaluation e);
 }
