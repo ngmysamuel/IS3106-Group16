@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+            
+            #titleHeader{
+                position: relative;
+                width: 65%;
+                height: 100px;
+                margin: auto;
+                display: flex; 
+                justify-content: flex-start;
+                align-items: center;
+            }
+            
+            #detailsBox{
+                position: relative;
+                width: 65%;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                
+            }
+            #leftColumn{
+                width:65%;
+
+            }
+            .detailTitleClass{
+                width:20%;
+            }
+            .detailTitleContent{
+                width:80%;
+            }
+            #rightColumn{
+                width:30%;
+            }
+            
+            #bookExperienceForm{
+                border: 1px solid black;
+                padding: 15px;
+                position: sticky;
+                top: 0;
+            }
+            
+            
+        </style>
+            
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">EXPERIENCES</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+        
+        <div id="titleHeader">
+            <span>
+                <p:commandLink action="#" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
+            </span>
+            <span>
+                <p:outputLabel value=" |    " style="font-size: 30px;"/>
+            </span>
+            <span>
+                <p:outputLabel value=" Experience Title" style="font-size: 30px;"/>
+            </span>
+            <span style="margin-left: 10px;">
+                <p:button title="Favourite this experience" icon="ui-icon-heart"/>
+            </span>
+            <span style="margin-left: 10px;">
+                <p:button title="Unfavourite this experience" icon="ui-icon-closethick"/>
+            </span>
+        </div>
+        
+        <div id="detailsBox">
+            <div id="leftColumn">
+                <p:galleria value="#{viewExperienceDetailsManagedBean.images}" var="image" panelWidth="545" panelHeight="313" showCaption="false">
+                    <p:graphicImage style="width:100%; height: 100%; object-fit: cover;" url="#{image}" alt="Image Description" title="image"/>
+                </p:galleria>
+                <br />
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Title" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experienceEntityToView}" /> 
+                </p:panelGrid>
+                <br />
+                
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Content" /> 
+                    <h:outputText value="Content" />  
+                </p:panelGrid>
+                <br />
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Content" /> 
+                    <h:outputText value="Content" />  
+                </p:panelGrid>
+                <br />
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Content" /> 
+                    <h:outputText value="Content" />  
+                </p:panelGrid>
+                <br />
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Content" /> 
+                    <h:outputText value="Content" />  
+                </p:panelGrid>
+                <br />
+            </div>
+            <div id="rightColumn">
+                <h:form id="bookExperienceForm">
+                    <div style="width:85%; margin:auto; border-left: 1px solid black; padding:10px;">
+                        <p:outputLabel value="From" style="font-size: 15px;" />
+                        <br />
+                        <p:outputLabel value="$250" style="font-size: 30px;" />
+                        <br />
+                        <p:outputLabel value="Per Ticket" style="font-size: 15px;" />
+                    </div>
+                    <br />
+                    <br />
+                    <div style="width:85%; margin:auto;">
+                        <p:outputLabel for="bookDate" value="Experience Date" />
+                        <p:calendar id="bookDate" value="#" showOn="button" inputStyle="width:140px;"/>
+                        <br/>
+                        <br/>
+                        
+                        <p:outputLabel for="bookNumOfTickets" value="Number of People" />
+                        <br/>
+                        <p:spinner id="bookNumOfTickets" value="#" min="0" max="10" />
+                        <br/>
+                        <br/>
+                        <p:commandButton value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.reserveExperienceDate}" oncomplete="PF('dialogCheckout').show()"/>
+                    </div>
+
+                </h:form>
+            </div>
+        </div>
+        
+        <h:form id="formCheckout">
+            <p:dialog id="dialogCheckout" widgetVar="dialogCheckout" header="Checkout" closable="true" width="500" blockScroll="true">
+                <p:messages id="messagesCheckout" redisplay="false" />
+                <div style="overflow: scroll; max-height: 100%;">
+                    <p:outputLabel value="Order Summary" />
+                    <hr />
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                        <p:outputLabel value="Experience Title" />
+                        <p:outputLabel value="title" />
+                        
+                        <p:outputLabel value="Date" />
+                        <p:outputLabel value="date" />
+                        
+                        <p:outputLabel value="Guests" />
+                        <p:outputLabel value="2" />
+                        
+                    </p:panelGrid>
+                    <hr />
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                        <p:outputLabel value="Subtotal" />
+                        <p:outputLabel value="$100" />
+                        
+                        <p:outputLabel value="Tax(7%)" />
+                        <p:outputLabel value="$7" />
+                        
+                    </p:panelGrid>
+                    <hr />
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                        <p:outputLabel value="Total" />
+                        <p:outputLabel value="$107" />
+                    </p:panelGrid>
+                    <br />
+                    
+                    <p:outputLabel value="Guest Details" />
+                    <hr />
+                    
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                        <p:outputLabel value="First Name" />
+                        <p:inputText value="name" />
+                        
+                        <p:outputLabel value="Last Name" />
+                        <p:inputText value="name" />
+                        
+                        <p:outputLabel value="Email Address" />
+                        <p:inputText value="address" />
+                        
+                        <p:outputLabel value="Phone Number" />
+                        <p:inputText value="number" />
+                        
+                        <p:outputLabel value="Special Requests" />
+                        <p:inputTextarea rows="2" />
+                    </p:panelGrid>
+ 
+                    <p:commandButton value="Book Now" actionListener="#" />
+                    <br />
+                </div>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
