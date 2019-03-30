@@ -72,19 +72,6 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     public void PostConstruct(){
         experienceEntities = experienceController.retrieveAllExperiences();
         categoryEntities = categoryController.retrieveAllCategories();
-        Category c = new Category();
-        c.setCategory("Sport");
-        c.setDescription("Sport");
-        Category c1 = new Category();
-        c1.setCategory("cook");
-        c1.setDescription("cook");
-        this.categoryEntities.add(c);
-        this.categoryEntities.add(c1);
-        Experience e = new Experience();
-        e.setTitle("Experience 1");
-        e.setCategory(c);
-        c.getExperiences().add(e);
-        this.experienceEntities.add(e);
         typeEntities = typeController.retrieveAllTypes();
         locationEntities = locationController.retrieveAllLocations();
         

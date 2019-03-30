@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #titleHeader{
+                position: relative;
+                width: 65%;
+                height: 100px;
+                margin: auto;
+                display: flex; 
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            #detailsBox{
+                position: relative;
+                width: 65%;
+                margin: auto;
+            }
+            .detailTitleClass{
+                width:20%;
+            }
+            .detailTitleContent{
+                width:80%;
+            }
+            .ui-picklist {
+                display: table;
+            }
+            .ui-picklist .ui-picklist-list {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: auto;
+                height: 200px;
+                width: 200px;
+            }
+            .ui-picklist>div {
+                float: none;
+                display: table-cell;
+                vertical-align: top;
+            }
+            body .ui-picklist .ui-picklist-list {
+                border: 1px solid #c8c8c8;
+                background-color: #fff;
+                color: #333;
+                padding: 0;
+            }
+            body .ui-picklist .ui-picklist-list .ui-picklist-item {
+                padding: .429em .857em;
+                border: 0 none;
+                margin: 0;
+                color: #333;
+                -moz-border-radius: 0;
+                -webkit-border-radius: 0;
+                border-radius: 0;
+            }
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 15px;">Host New Experience</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <div id="titleHeader">
+
+            <p:outputLabel value="Host New Experience" style="font-size: 30px;"/>
+
+        </div>
+
+        <div id="detailsBox">
+            <h:form id="form101">
+                <p:growl id="msg" showDetail="true" escape="false" autoUpdate="true"/>
+                <p:messages id="message"/>
+
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Title" /> 
+                    <p:inputText value="#{createNewExperience.newExperience.title}" /> 
+                    
+                    <h:outputText value="Category" /> 
+                    <p:selectOneMenu id="category" value="#{createNewExperience.catId}" style="width:140px;">
+                        <f:selectItem itemLabel="Select Category" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperience.lsCat}" var="cat" itemLabel="#{cat.category}" itemValue="#{cat.categoryId}"/>
+                    </p:selectOneMenu>
+                    
+                    <h:outputText value="Type" /> 
+                    <p:selectOneMenu id="type" value="#{createNewExperience.typeId}" style="width:140px;">
+                        <f:selectItem itemLabel="Select Type" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperience.lsType}" var="type" itemLabel="#{type.type}" itemValue="#{type.typeId}"/>
+                    </p:selectOneMenu> 
+                    
+                    <h:outputText value="Address" /> 
+                    <p:inputText value="#{createNewExperience.newExperience.address}" /> 
+                    
+                    <h:outputText value="Language" />  
+                    <p:selectOneMenu id="language" value="#{createNewExperience.langId}" style="width:100px;">
+                        <f:selectItem itemLabel="Select Language" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperience.lsLang}" var="lang" itemLabel="#{lang.language}" itemValue="#{lang.languageId}"/>
+                    </p:selectOneMenu>
+
+                    <h:outputText value="Description" /> 
+                    <p:inputTextarea rows="10" cols="50" value="#{createNewExperience.newExperience.description}" placeholder="Description"/>
+                    
+                    <p:outputLabel for="itemsProvided" value="Items I Will Provide (press Enter to add a new one): " />
+                    <p:chips id="itemsProvided" value="#{createNewExperience.newExperience.providingItems}" />
+                    
+                    <p:outputLabel for="itemsRequired" value="Items I WIll Require (press Enter to add a new one):" />
+                    <p:chips id="itemsRequired" value="#{createNewExperience.newExperience.requiringItems}" />
+                    
+                </p:panelGrid>
+                <br />
+                
+                <p:commandButton value="Create New Experience" action="#{createNewExperience.create}" update="form101:message"/>
+            </h:form>    
+        </div>   
+
+
+    </ui:define>
+
+</ui:composition>
