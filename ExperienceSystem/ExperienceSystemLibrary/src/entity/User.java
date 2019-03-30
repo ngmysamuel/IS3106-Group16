@@ -90,7 +90,7 @@ public class User implements Serializable {
     private List<User> blocks; // Other users blocked by this user
     @ManyToMany
     private List<User> follows; // Follow other users
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "userEvaluating")
     private List<Evaluation> evaluations;
     @OneToMany (mappedBy = "user")
     private List<Booking> bookings;
@@ -98,8 +98,9 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String username) {
+    public User(String username, String password) {
         this.username = username;
+        this.password = password;
     }
 
     public List<User> getFollowers() {

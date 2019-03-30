@@ -67,7 +67,7 @@ public class ViewExperiencesIAmHosting {
   
     
     public User getCurrentUser() {
-        User u = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+        User u = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
 System.out.println(u+"---------------------------");
         try {
             u = userController.retrieveUserByUsername(u.getUsername());

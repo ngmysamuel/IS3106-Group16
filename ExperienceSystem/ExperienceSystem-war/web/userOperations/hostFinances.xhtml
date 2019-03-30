@@ -43,14 +43,14 @@
             <p:panelGrid style="width:100%;">
                 <p:row>
                     <p:column>
-                        <p:panel id="experience" header="Experience">
-                            <h:outputText style="text-align: center; font-size: 30px;" value="5" />
+                        <p:panel id="experience" header="Experience Hosting">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="#{hostFinancesManagedBean.numOfExpHosted}" />
                         </p:panel>
                     </p:column>
 
                     <p:column>
-                        <p:panel id="experienceListings" header="Experience Listings">
-                            <h:outputText style="text-align: center; font-size: 30px;" value="12" />
+                        <p:panel id="experienceListings" header="Experience Attended">
+                            <h:outputText style="text-align: center; font-size: 30px;" value="" />
                         </p:panel>
                     </p:column>
 
@@ -135,7 +135,7 @@
                                 
                                 <p:row>
                                     <p:column>
-                                        <p:inputTextarea row="5" value="reason for the appeal" />
+                                        <p:inputTextarea rows="5" value="reason for the appeal" />
                                     </p:column>
                                 </p:row>
                                 

@@ -25,7 +25,10 @@ import javax.validation.constraints.NotNull;
 public class Evaluation implements Serializable {
 
     @ManyToOne
-    private User user;
+    private User userBeingEvaluated;
+    
+    @ManyToOne
+    private User userEvaluating;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -41,16 +44,7 @@ public class Evaluation implements Serializable {
 
     public Evaluation() {
     }
-
     
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public LocalDate getEvaluationTime() {
         return evaluationTime;
     }
@@ -114,6 +108,22 @@ public class Evaluation implements Serializable {
     @Override
     public String toString() {
         return "entity.Evaluation[ id=" + evaluationId + " ]";
+    }
+
+    public User getUserBeingEvaluated() {
+        return userBeingEvaluated;
+    }
+
+    public void setUserBeingEvaluated(User userBeingEvaluated) {
+        this.userBeingEvaluated = userBeingEvaluated;
+    }
+
+    public User getUserEvaluating() {
+        return userEvaluating;
+    }
+
+    public void setUserEvaluating(User userEvaluating) {
+        this.userEvaluating = userEvaluating;
     }
     
 }

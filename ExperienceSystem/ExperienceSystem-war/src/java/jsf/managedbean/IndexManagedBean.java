@@ -42,12 +42,12 @@ public class IndexManagedBean implements Serializable{
     public void kk() {
         User u = new User();
         try {
-            u = userController.retrieveUserByUsername("John");
+            u = userController.retrieveUserByUsername("john");
         } catch (UserNotFoundException ex) {
             Logger.getLogger(IndexManagedBean.class.getName()).log(Level.SEVERE, null, ex);
         }
 System.out.println(u.getUsername());
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", u);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUserEntity", u);
     }
     
     public void searchExperience() throws IOException{

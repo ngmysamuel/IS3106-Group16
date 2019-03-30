@@ -1,14 +1,14 @@
-/ExperienceSystem/ExperienceSystem-ejb/nbproject/*
-/ExperienceSystem/ExperienceSystem-ejb/build/*
+ExperienceSystem/ExperienceSystem-ejb/nbproject/*
+ExperienceSystem/ExperienceSystem-ejb/build/*
 
-/ExperienceSystem/ExperienceSystem-war/nbproject/*
-/ExperienceSystem/ExperienceSystem-war/build/*
+ExperienceSystem/ExperienceSystem-war/nbproject/*
+ExperienceSystem/ExperienceSystem-war/build/*
 
-/ExperienceSystem/ExperienceSystemLibrary/build/*
-/ExperienceSystem/ExperienceSystemLibrary/nbproject/*
+ExperienceSystem/ExperienceSystemLibrary/nbproject/*
+ExperienceSystem/ExperienceSystemLibrary/build/*
 
-/ExperienceSystem/build/*
-/ExperienceSystem/nbproject/*
+ExperienceSystem/ExperienceSystemEmployee-war/nbproject/*
+ExperienceSystem/ExperienceSystemEmployee-war/build/*
 
-/ExperienceSystem/ExperienceSystemEmployee-war/nbproject/*
-/ExperienceSystem/ExperienceSystemEmployee-war/build/*
+ExperienceSystem/nbproject/*
+ExperienceSystem/build/*

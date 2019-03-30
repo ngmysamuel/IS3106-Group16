@@ -75,20 +75,17 @@ public class CreateNewExperience {
     
     public String create() {
         try {
-            User u = (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+            User u = (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
             u = userController.retrieveUserById(u.getUserId());
             newExperience.setHost(u);
-            Experience e = experienceController.createExpWithLangTypeCat(newExperience, getCatId(), getTypeId(), getLangId());
-System.out.println("--------------"+u.getUsername());            
+            Experience e = experienceController.createExpWithLangTypeCat(newExperience, getCatId(), getTypeId(), getLangId());    
             List<Experience> lss = u.getExperienceHosted();
-System.out.println("LSS1:"+lss); 
             lss.add(e);
-System.out.println("LSS2:"+lss); 
             u.setExperienceHosted(lss);
             userController.update(u);
             
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New experience created successfully (Exp ID: " + e.getExperienceId()+ ")", null));
-            return "createNewHostExperience";
+            return "viewAllHostExperiences";
             
         } catch (CreateNewExperienceException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CreateNewExperienceException", null));
@@ -97,7 +94,7 @@ System.out.println("LSS2:"+lss);
         } catch (UserNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "User not Found", null));
         }
-        return "";
+        return "createNewHostExperience";
     }
 
     public Experience getNewExperience() {
