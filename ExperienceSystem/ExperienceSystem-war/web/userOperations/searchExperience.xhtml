@@ -31,7 +31,7 @@
                 width: 65%;
                 margin: auto;
             }
-            #searchInputBox, #searchResultsArea {
+            #searchInputBox, #searchResultsArea, #searchResultsDataTable {
                 width: 90%;
                 margin: auto;
             }
@@ -85,19 +85,19 @@
                 <br />
                 <hr style="border-top: 1px solid black;"/>
                 <br />
-                <h:form id="seachInputRow">
+                <h:form id="searchInputRow">
 
                     <span class="ui-inputgroup-addon"><i class="pi pi-calendar"></i></span>
                     <p:calendar id="searchDate" value="#{viewAllExperiencesManagedBean.selectedDateEntity}" placeholder="Experience Date" showOn="button" inputStyle="width:140px;" />
 
                     <span class="ui-inputgroup-addon"><i class="pi pi-tag"></i></span>
                     <p:selectOneMenu id="category" value="#{viewAllExperiencesManagedBean.selectedCategoryEntity}" style="width:140px;">
-                        <f:selectItem itemLabel="Select Category" itemValue="" noSelectOption="true"/>
-                        <f:selectItems value="#{viewAllExperiencesManagedBean.categoryEntities}" var="category" itemValue="#{category}" itemLabel="#{category.category}" />
-                        <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="seachInputRow searchResultsform" />
+                        <f:selectItem itemLabel="Select Category" itemValue="0" noSelectOption="true"/>
+                        <f:selectItems value="#{viewAllExperiencesManagedBean.categoryEntities}" var="category" itemValue="#{category.categoryId}" itemLabel="#{category.category}" />
+<!--                        <p:ajax event="select" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:category searchResultsform" />-->
                     </p:selectOneMenu>
 
-                    <span class="ui-inputgroup-addon"><i class="pi pi-map-marker"></i></span>
+<!--                    <span class="ui-inputgroup-addon"><i class="pi pi-map-marker"></i></span>
                     <p:selectOneMenu id="city" value="#{viewAllExperiencesManagedBean.selectedLocationEntity}" style="width:100px;">
                         <f:selectItem itemLabel="Select Location" itemValue="" noSelectOption="true"/>
                         <f:selectItems value="#{viewAllExperiencesManagedBean.locationEntities}" var="location" itemLabel="#{location.label}" itemValue="#{location.value}" />
@@ -105,9 +105,8 @@
 
                     <span class="ui-inputgroup-addon"><i class="pi pi-users"></i></span>
                     <h:outputLabel value=" People " />
-                    <p:spinner id="numOfPeople" value="#{viewAllExperiencesManagedBean.numOfPeople}" min="0" max="10" size="2"/>
-                    
-                    <h:outputLabel value="  " />                   
+                    <p:spinner id="numOfPeople" value="#{viewAllExperiencesManagedBean.numOfPeople}" min="0" max="10" size="2"/>-->
+                 
                     <p:commandButton type="submit" value="Search" actionListener="#{viewAllExperiencesManagedBean.filterExperience}" update="@form" />
 
                 </h:form>
@@ -115,54 +114,44 @@
                 <hr style="border-top: 1px solid black;"/>
             </div>
 
-            <div id="searchResultsArea">
+            <div id="searchResultsDataTable">
                 <h:form id="searchResultsform">
-                    <p:dataView var="experience" value="#{viewAllExperiencesManagedBean.experienceEntities}" rows="10" paginator="true" rowsPerPageTemplate="10,20,30"
-                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                gridIcon="pi pi-th-large" listIcon="pi pi-bars" id="dataView">
+                    <p:dataTable id="dataTableAllExperiences" widgetVar="dataTableAllExperiences" value="#{viewAllExperiencesManagedBean.experienceEntities}" var="experienceEntity" rowKey="#{experienceEntity.experienceId}" rowIndexVar="row"
+                                 filteredValue="#{viewAllExperiencesManagedBean.filteredExperienceEntities}"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,30">
 
-                        <p:dataViewGridItem>
-                            <p:panel header="#{experience.title}" style="text-align:center">
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: right;">
+                                <h:outputText value="Search all fields:" />
+                                <p:inputText id="globalFilter" onkeyup="PF('dataTableAllExperiences').filter()" style="width:300px;" placeholder="Enter keyword"/>
+                            </p:outputPanel>
+                        </f:facet>
 
-                                <h:panelGrid columns="1" style="width:100%">
-                                    <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/SQiLyd4.jpg"/> 
+                        <p:column>
+                            <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/SQiLyd4.jpg"/> 
+                        </p:column>
 
-                                    <h:outputText value="#{experience.description}" />
+                        <p:column sortBy="#{experienceEntity.experienceId}" filterBy="#{experienceEntity.title}" filterMatchMode="contains">
+                            <h:outputText value="#{experienceEntity.title}" />
+                        </p:column>                           
 
-                                    <p:commandLink action="#{viewAllExperiencesManagedBean.viewExperienceDetails}" title="View Details">
-                                        <h:outputText styleClass="ui-icon pi pi-search" style="margin:0 auto;" />
-                                        <f:setPropertyActionListener value="#{experience}" target="#{viewAllExperiencesManagedBean.selectedExperienceToView}" />
-                                    </p:commandLink>
-                                </h:panelGrid>
-                            </p:panel>
-                        </p:dataViewGridItem>
+                        <p:column sortBy="#{experienceEntity.category.category}" filterBy="#{experienceEntity.category.category}" filterMatchMode="contains">
+                            <h:outputText value="#{experienceEntity.category.category}" />
+                        </p:column>
 
-                        <p:dataViewListItem style="margin:auto; width:100%;">
-                            <h:panelGrid columns="3" style="margin:auto; width:100%;" >
-                                <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/SQiLyd4.jpg" /> 
+                        <p:column sortBy="#{experienceEntity.description}" filterBy="#{experienceEntity.description}" filterMatchMode="contains">
+                            <h:outputText value="#{experienceEntity.description}" />
+                        </p:column>
 
-                                <p:outputPanel>
-                                    <h:panelGrid columns="2" cellpadding="5">
-                                        <h:outputText value="Title:" />
-                                        <h:outputText value="#{experience.title}" style="font-weight: bold"/>
+                        <p:column headerText="Action" >
+                            <p:commandButton actionListener="#{viewAllExperiencesManagedBean.viewChosenExperienceDetails}" title="View Details">
+                                <f:setPropertyActionListener value="#{experienceEntity}" target="#{viewAllExperiencesManagedBean.selectedExperienceToView}" />
+                            </p:commandButton>
+                        </p:column>
 
-                                        <h:outputText value="Category:" />
-                                        <h:outputText value="#{experience.category.category}" style="font-weight: bold"/>
-
-                                        <h:outputText value="Description" />
-                                        <h:outputText value="#{experience.description}" style="font-weight: bold"/>
-                                    </h:panelGrid>
-                                </p:outputPanel>
-
-                                <p:commandLink actionListener="#{viewAllExperiencesManagedBean.viewExperienceDetails}" title="View Details">
-                                    <h:outputText styleClass="ui-icon pi pi-search" style="margin:0 auto;" value="View Details"/>
-                                    <f:setPropertyActionListener value="#{experience}" target="#{viewAllExperiencesManagedBean.selectedExperienceToView}" />
-                                </p:commandLink>
-                            </h:panelGrid>
-                        </p:dataViewListItem>
-                    </p:dataView>
-
+                    </p:dataTable>
                 </h:form>
+
             </div>
         </div>
     </ui:define>

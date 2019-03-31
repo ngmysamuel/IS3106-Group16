@@ -115,10 +115,75 @@
                 </p:panelGrid>
                 <br />
                 
-                <p:commandButton value="Update Account Info" action="#"/>
+                <p:commandButton value="Update Account Info" oncomplete="PF('dialogUpdateAccountInfo').show()" action="#"/>
                 <p:commandButton value="Upgrade To Premium Account" action="#"/>
             </h:form>    
-        </div>   
+        </div>  
+        
+        <h:form id="formUpdateAccountInfo">
+            <p:dialog id="dialogUpdateAccountInfo" widgetVar="dialogUpdateAccountInfo" closable="true" resizable="false">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Username" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="Username" /> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Gender" /> 
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="Gender" >
+                                <f:selectItem itemLabel="Male" itemValue="Male" />
+                                <f:selectItem itemLabel="Female" itemValue="Female" />
+                            </p:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="First Name" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="name" /> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Last Name" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="name" /> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Phone number" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="number" /> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Birth Date" /> 
+                        </p:column>
+                        <p:column>
+                            <p:calendar id="searchDate" value="#" placeholder="Birth Date" showOn="button" inputStyle="width:140px;" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Self Introduction" /> 
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:inputTextarea row="5" value="intro" /> 
+                        </p:column>            
+                    </p:row>
+                    <p:commandButton value="Update" action="#" />
+                </p:panelGrid>
+            </p:dialog>
+            
+        </h:form>
     </ui:define>
 
 </ui:composition>
