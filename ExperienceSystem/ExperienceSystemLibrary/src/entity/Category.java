@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,26 +22,22 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Category implements Serializable {
 
-    @OneToMany(mappedBy = "category")
-    private List<Experience> experiences;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
     @NotNull
-    private String category;
+    private String name;
     @NotNull
     private String description;
+    
+    @OneToMany(mappedBy = "category")
+    private List<Experience> experiences;
 
     public Category() {
+        experiences = new ArrayList();
+        
     }
-
-    public Category(String category, String description) {
-        this.category = category;
-        this.description = description;
-    }
-
     
     public List<Experience> getExperiences() {
         return experiences;
@@ -50,12 +47,12 @@ public class Category implements Serializable {
         this.experiences = experiences;
     }
 
-    public String getCategory() {
-        return category;
+    public String getName() {
+        return name;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

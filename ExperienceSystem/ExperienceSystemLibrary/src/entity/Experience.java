@@ -8,7 +8,6 @@ package entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -28,24 +28,24 @@ import javax.persistence.OneToMany;
 @Entity
 public class Experience implements Serializable {
 
-    
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long experienceId;
-//    @NotNull
+    @NotNull
     private String title;
     private String description;
     private List<String> providingItems;
     private List<String> requiringItems;
     private String supportingDocument;
-//    @NotNull
+    // 0.0 - 5.0
+    @NotNull
     private BigDecimal averageScore;
-//    @NotNull
+    @NotNull
     private String address;
     private List<String> reminders;
-//    @NotNull
+    // An experience is active only when it has experience dates that are happening currently or will happen in the future
+    @NotNull
     private boolean active;
     
     private BigDecimal avgPrice;
@@ -73,6 +73,10 @@ public class Experience implements Serializable {
     public Experience(String title, String description) {
         this.title = title;
         this.description = description;
+        // for initializing and testing purposes
+        averageScore = new BigDecimal(0);
+        address = "Kent Ridge Road";
+        active = false;
     }
     
     public Long getExperienceId() {

@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,22 +22,17 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Language implements Serializable {
 
-    @OneToMany(mappedBy = "language")
-    private List<Experience> experiences;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long languageId;
-    
     @NotNull
-    private String language;
+    private String name;
+    
+    @OneToMany(mappedBy = "language")
+    private List<Experience> experiences = new ArrayList();
 
     public Language() {
-    }
-
-    public Language(String language) {
-        this.language = language;
     }
 
     public List<Experience> getExperiences() {
@@ -47,12 +43,12 @@ public class Language implements Serializable {
         this.experiences = experiences;
     }
     
-    public String getLanguage() {
-        return language;
+    public String getName() {
+        return name;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getLanguageId() {

@@ -21,11 +21,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -37,6 +39,7 @@ import util.exception.ExperienceDateNotActiveException;
 import util.exception.ExperienceNotActiveException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.RegisterUserException;
 import util.exception.UserNotFoundException;
 
 /**
@@ -44,14 +47,13 @@ import util.exception.UserNotFoundException;
  * @author samue
  */
 @Stateless
-public class UserController implements UserControllerRemote, UserControllerLocal {
+@Local(UserControllerLocal.class)
+public class UserController implements UserControllerLocal {
 
     @EJB
     private ExperienceDateControllerLocal experienceDateController;
-
     @EJB
     private ExperienceControllerLocal experienceController;
-
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
 
@@ -63,14 +65,32 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         validator = validatorFactory.getValidator();
     }
 
-    public void persist(Object object) {
-        em.persist(object);
-    }
 
-    public User register(User user) {
-        em.persist(user);
-        em.flush();
-        return user;
+    @Override
+    public User register(User user) throws InputDataValidationException, RegisterUserException {
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        
+        if(constraintViolations.isEmpty()) {
+            try {
+                em.persist(user);
+                em.flush();
+                return user;
+            } catch(PersistenceException ex) {                
+                if(ex.getCause() != null && 
+                        ex.getCause().getCause() != null &&
+                        ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException")) {
+                    throw new RegisterUserException("User with the same username already exist");
+                }
+                else {
+                    throw new RegisterUserException("An unexpected error has occurred: " + ex.getMessage());
+                }
+            } catch(Exception ex) {
+                throw new RegisterUserException("An unexpected error has occurred: " + ex.getMessage());
+            }  
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+        
     }
 
     public void update(User user) {
@@ -87,21 +107,12 @@ public class UserController implements UserControllerRemote, UserControllerLocal
         }
     }
 
-    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<User>> constraintViolations) {
-        String msg = "Input data validation error!:";
-
-        for (ConstraintViolation contraints : constraintViolations) {
-            System.out.println(contraints.getRootBeanClass().getSimpleName()
-                    + "." + contraints.getPropertyPath() + " " + contraints.getMessage());
-        }
-
-        return msg;
-    }
-
+    // TODO:
+    // 1. Implement encryption of the user password
+    // 2. Lazy fetching of all array attributes
     public User login(String username, String password) throws InvalidLoginCredentialException {
         try {
             User user = retrieveUserByUsername(username);
-            //String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + staffEntity.getSalt()));
             if (user.getPassword().equals(password)) {
                 return user;
             } else {
@@ -318,5 +329,15 @@ System.out.println("user.getExpHost: "+user.getExperienceHosted());
         return user;
     }
 
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<User>> constraintViolations) {
+        String msg = "Input data validation error:";
+
+        for (ConstraintViolation contraints : constraintViolations) {
+            System.out.println(contraints.getRootBeanClass().getSimpleName()
+                    + "." + contraints.getPropertyPath() + " " + contraints.getMessage());
+        }
+
+        return msg;
+    }
 }
 

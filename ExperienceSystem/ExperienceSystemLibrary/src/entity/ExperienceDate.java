@@ -25,6 +25,21 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class ExperienceDate implements Serializable, Comparable<ExperienceDate> {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long experienceDateId;
+    @NotNull
+    private Date startDate;
+    @NotNull
+    private Integer capacity;
+    @NotNull
+    private Integer spotsAvailable;
+    @NotNull
+    private BigDecimal price;
+    @NotNull
+    private boolean active;
+    
     @OneToOne(mappedBy = "experienceDate")
     private ExperienceDateCancellationReport experienceDateCancellationReport;
     @OneToMany(mappedBy = "experienceDate")
@@ -33,26 +48,6 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
     private Experience experience;
     @OneToOne
     private ExperienceDatePaymentReport experienceDatePaymentReport;
-    
-    
-    
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long experienceDateId;
-        @NotNull
-    private Date startDate;
-//    @NotNull
-    private Date endDate;
-    @NotNull
-    private Integer capacity;
-//    @NotNull
-    private Integer spotsAvailable;
-    @NotNull
-    private BigDecimal price;
-    @NotNull
-    private boolean active;
-    
 
     public ExperienceDate() {
 
@@ -97,15 +92,6 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public Integer getCapacity() {

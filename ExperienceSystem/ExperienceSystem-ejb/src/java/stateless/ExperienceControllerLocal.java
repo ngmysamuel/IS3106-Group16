@@ -61,7 +61,7 @@ public interface ExperienceControllerLocal {
 
     public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
 
-    public List<Experience> retrieveExperienceByDate(Date startDate, Date endDate);
+    public List<Experience> retrieveExperienceByDate(Date startDate);
 
     public List<Experience> retrieveExperienceByCategory(Category category);
 

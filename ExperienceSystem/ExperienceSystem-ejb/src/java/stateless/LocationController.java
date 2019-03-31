@@ -91,16 +91,16 @@ public class LocationController implements LocationControllerRemote, LocationCon
         
         // check whether there's another Type with the same name
         Query query = em.createQuery("SELECT l FROM Location l WHERE l.location = :inLocationName");
-        query.setParameter("inLocationName", location.getLocation());
+        query.setParameter("inLocationName", location.getName());
         try{
             Location duplicateLocation = (Location)query.getSingleResult();
             if (duplicateLocation.getLocationId().equals(location.getLocationId())) {
-                locationToUpdate.setLocation(location.getLocation());
+                locationToUpdate.setName(location.getName());
             } else {
                 throw new InputDataValidationException("Location with the same name already exists!");
             }
         } catch(NoResultException ex) {
-            locationToUpdate.setLocation(location.getLocation());
+            locationToUpdate.setName(location.getName());
         }
         
     }

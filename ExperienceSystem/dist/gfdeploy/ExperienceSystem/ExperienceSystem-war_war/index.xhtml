@@ -3,7 +3,8 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="./templates/defaultTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 
     <ui:define name="content">
@@ -94,15 +95,24 @@
                         <br/>
                         <br/>
                         
-                        <p:outputLabel for="button" value="Date" />
+                        <p:outputLabel for="date" value="Date" />
                         <br/>
-                        <p:calendar id="button" value="#{indexManagedBean.searchDate}" showOn="button" required="true" />
+                        <p:calendar id="date" value="#{indexManagedBean.searchDate}" showOn="button" required="true" mindate="#{indexManagedBean.minSearchDate}" requiredMessage="Please select a date"/>
                         <br/>
                         <br/>
                         
-                        <p:outputLabel for="minMax" value="Number of People" />
+                        <p:outputLabel for="category" value="Category" />
                         <br/>
-                        <p:spinner id="minMax" value="#{indexManagedBean.searchNumOfPeople}" min="1" max="10" required="true"/>
+                        <p:selectOneMenu id="category" value="#{indexManagedBean.searchCategoryId}" style="width:125px" required="true" requiredMessage="Please select a category">
+                            <f:selectItem itemLabel="[Select One]" itemValue="0" noSelectionOption="true" />
+                            <f:selectItems value="#{indexManagedBean.categories}" var="category" itemLabel="#{category.name}" itemValue="#{category.categoryId}"/>
+                        </p:selectOneMenu>
+                        <br/>
+                        <br/>
+                        
+                        <p:outputLabel for="numOfPeople" value="Number of People" />
+                        <br/>
+                        <p:spinner id="numOfPeople" value="#{indexManagedBean.searchNumOfPeople}" min="1" max="10" required="true" requiredMessage="Please select the number of people"/>
                         <br/>
                         <br/>
                         <p:commandButton value="Search" action="#{indexManagedBean.searchExperience}" />

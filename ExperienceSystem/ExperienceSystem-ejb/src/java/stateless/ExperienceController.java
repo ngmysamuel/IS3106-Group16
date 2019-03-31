@@ -334,7 +334,7 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
     }
     
     @Override
-    public List<Experience> retrieveExperienceByDate(Date startDate, Date endDate){
+    public List<Experience> retrieveExperienceByDate(Date startDate){
         List<Experience> allExperiences = null;
         allExperiences = this.retrieveAllExperiences();
         List<Experience> selectedExperiences = null; 
@@ -343,9 +343,8 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
             for(ExperienceDate date: dates){
                 
                 Date start = date.getStartDate();
-                Date end = date.getEndDate();
                 
-                if(start.after(startDate) && end.before(endDate)){
+                if(start.after(startDate)){
                     selectedExperiences.add(date.getExperience());
                     break;
                 }

@@ -89,17 +89,17 @@ public class CategoryController implements CategoryControllerRemote, CategoryCon
         
         // check whether there's another Type with the same name
         Query query = em.createQuery("SELECT c FROM Category c WHERE c.category = :inCategoryName");
-        query.setParameter("inCategoryName", category.getCategory());
+        query.setParameter("inCategoryName", category.getName());
         try{
             Category duplicateCategory = (Category)query.getSingleResult();
             if (duplicateCategory.getCategoryId().equals(category.getCategoryId())) {
-                categoryToUpdate.setCategory(category.getCategory());
+                categoryToUpdate.setName(category.getName());
                 categoryToUpdate.setDescription(category.getDescription());
             } else {
                 throw new InputDataValidationException("Category with the same name already exists!");
             }
         } catch(NoResultException ex) {
-            categoryToUpdate.setCategory(category.getCategory());
+            categoryToUpdate.setName(category.getName());
             categoryToUpdate.setDescription(category.getDescription());
         }
         

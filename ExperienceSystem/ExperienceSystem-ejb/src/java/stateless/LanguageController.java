@@ -89,16 +89,16 @@ public class LanguageController implements LanguageControllerRemote, LanguageCon
         
         // check whether there's another Type with the same name
         Query query = em.createQuery("SELECT l FROM Language l WHERE l.language = :inLanguageName");
-        query.setParameter("inLanguageName", language.getLanguage());
+        query.setParameter("inLanguageName", language.getName());
         try{
             Language duplicateLanguage = (Language)query.getSingleResult();
             if (duplicateLanguage.getLanguageId().equals(language.getLanguageId())) {
-                languageToUpdate.setLanguage(language.getLanguage());
+                languageToUpdate.setName(language.getName());
             } else {
                 throw new InputDataValidationException("Language with the same name already exists!");
             }
         } catch(NoResultException ex) {
-            languageToUpdate.setLanguage(language.getLanguage());
+            languageToUpdate.setName(language.getName());
         }
         
     }

@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,26 +22,24 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Type implements Serializable {
 
-    @OneToMany(mappedBy = "type")
-    private List<Experience> experiences;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long typeId;
     @NotNull
-    private String type;
+    private String name;
+    
+    @OneToMany(mappedBy = "type")
+    private List<Experience> experiences;
 
     public Type() {
+        experiences = new ArrayList();
     }
 
     public Type(String type) {
-        this.type = type;
+        this.name = type;
     }
-
- 
     
-
     public List<Experience> getExperiences() {
         return experiences;
     }
@@ -49,12 +48,12 @@ public class Type implements Serializable {
         this.experiences = experiences;
     }
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getTypeId() {

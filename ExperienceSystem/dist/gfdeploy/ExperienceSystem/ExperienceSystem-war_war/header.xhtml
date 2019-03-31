@@ -88,18 +88,18 @@
 
                     <span class="dropdown">
 
-                        <h:button styleClass="header_menu_item" value="Register" rendered="false" />
-                        <h:button styleClass="header_menu_item" value="My Account" />
+                        <h:button styleClass="header_menu_item" value="Account" rendered="#{sessionScope.isLogin == false}" />
+                        <h:button styleClass="header_menu_item" value="My Account" rendered="#{sessionScope.isLogin == true}"/>
                         <div class="dropdown-content">
-                            <p:commandLink oncomplete="PF('dialogSignUp').show()" value="Sign Up" rendered="false"/>
-                            <p:commandLink oncomplete="PF('dialogSignIn').show()" value="Sign In" rendered="false"/>
+                            <p:commandLink oncomplete="PF('dialogSignUp').show()" value="Sign Up" rendered="#{sessionScope.isLogin == false}"/>
+                            <p:commandLink oncomplete="PF('dialogLogIn').show()" value="Log In" rendered="#{sessionScope.isLogin == false}"/>
                             
-                            <p:link outcome="/userOperations/viewAllFavouriteExperiences.xhtml" value="My Favourate Experiences" />
-                            <p:link outcome="/userOperations/viewAllReservations.xhtml" value="My Reservations" />
-                            <p:link outcome="/userOperations/viewAllPastExperiences.xhtml" value="My Past Experiences" />
-                            <p:link outcome="/userOperations/viewUserNetwork.xhtml" value="My Network" />
-                            <p:link outcome="/userOperations/accountInfo.xhtml" value="Account Info" />
-                            <p:commandLink oncomplete="PF('dialogLogOut').show()" value="Log Out" />
+                            <p:link outcome="/userOperations/viewAllFavouriteExperiences.xhtml" value="My Favourate Experiences" rendered="#{sessionScope.isLogin == true}"/>
+                            <p:link outcome="/userOperations/viewAllReservations.xhtml" value="My Reservations" rendered="#{sessionScope.isLogin == true}"/>
+                            <p:link outcome="/userOperations/viewAllPastExperiences.xhtml" value="My Past Experiences" rendered="#{sessionScope.isLogin == true}"/>
+                            <p:link outcome="/userOperations/viewUserNetwork.xhtml" value="My Network" rendered="#{sessionScope.isLogin == true}"/>
+                            <p:link outcome="/userOperations/accountInfo.xhtml" value="Account Info" rendered="#{sessionScope.isLogin == true}"/>
+                            <p:commandLink oncomplete="PF('dialogLogOut').show()" value="Log Out" rendered="#{sessionScope.isLogin == true}"/>
                         </div>
                     </span>
 
@@ -107,7 +107,7 @@
             </h:form>
         </div>
     
-    <h:form id="formSignUp">
+    <h:form id="formSignUp" rendered="#{sessionScope.isLogin == false}">
         <p:dialog id="dialogSignUp" widgetVar="dialogSignUp" closable="true" header="Sign Up" resizable="false">
             <p:panelGrid>
                 <p:row>
@@ -156,15 +156,19 @@
         </p:dialog>
     </h:form>
     
-    <h:form id="formSignIn">
-        <p:dialog id="dialogSignIn" widgetVar="dialogSignIn" closable="true" header="Sign In" resizable="false">
-            <p:panelGrid> 
+    <h:form id="formLogIn" rendered="#{sessionScope.isLogin == false}">
+        
+        <p:dialog id="dialogLogIn" widgetVar="dialogLogIn" closable="true" header="Log In" resizable="false">
+            <p:messages id="messagesLogIn" redisplay="false" />
+            <p:panelGrid style="width:100%;"> 
                 <p:row>
                     <p:column>
                         <p:outputLabel value="Username" />
                     </p:column>
                     <p:column>
-                        <p:inputText value="Username" />
+                        <p:inputText value="#{userLoginManagedBean.username}" requiredMessage="Please enter your username" >
+                            <f:validateLength minimum="6" />
+                        </p:inputText>
                     </p:column>
                 </p:row>
                 
@@ -173,21 +177,24 @@
                         <p:outputLabel value="Password" />
                     </p:column>
                     <p:column> 
-                        <p:password id="pwd1" value="#" match="pwd2" required="true" feedback="true" />
+                        <p:password value="#{userLoginManagedBean.password}" required="true" requiredMessage="Please enter your password" >
+                            <f:validateLength minimum="8" maximum="32" />
+                        </p:password>
                     </p:column>
                 </p:row>
                 
                 <p:row>
                     <p:column colspan="2">
-                        <p:commandButton value="Sign In" action="#" />
+                        <p:commandButton value="Log In" update="@form" actionListener="#{userLoginManagedBean.login}" icon="fa fa-sign-in" oncomplete="PF('dialogLogIn').show();" />
                     </p:column>
                 </p:row>
                 
             </p:panelGrid>
         </p:dialog>
+        
     </h:form>
     
-    <h:form id="formLogOut">
+    <h:form id="formLogOut" rendered="#{sessionScope.isLogin == true}" >
         <p:dialog id="dialogLogOut" widgetVar="dialogLogOut" closable="true" header="Log Out" resizable="false">
             <p:panelGrid> 
                 <p:row>
@@ -198,7 +205,7 @@
                 
                 <p:row>
                     <p:column>
-                        <p:commandButton value="Yes" action="#" />
+                        <p:commandButton value="Yes" actionListener="#{userLoginManagedBean.logout}" icon="fa fa-sign-out" />
                     </p:column>
                     <p:column>
                         <p:commandButton value="No" action="#" />

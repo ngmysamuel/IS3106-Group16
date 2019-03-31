@@ -8,8 +8,8 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -27,61 +28,37 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class User implements Serializable {
 
-    @ManyToMany(mappedBy = "follows")
-    private List<User> followers;
-
-    @ManyToMany(mappedBy = "blocks")
-    private List<User> blockers; // Users who blocked this user.
-
-    @OneToMany(mappedBy = "recipient")
-    private List<Message> messagesReplied;
-
-    @OneToMany(mappedBy = "sender")
-    private List<Message> messagesSent;
-
-    @ManyToMany(mappedBy = "users")
-    private List<Notification> notifications;
-
-    @OneToMany(mappedBy = "host")
-    private List<Experience> experienceHosted = new ArrayList<Experience>();
-
-    @ManyToMany(mappedBy = "followers")
-    private List<Experience> followedExperiences;
-
-    @OneToMany(mappedBy = "user")
-    private List<Appeal> appeals;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
     
-//    @NotNull
-//    @Size(min=8)
+    @NotNull
+    @Size(min=6)
     private String username;
-//    @NotNull
-//    @Size(min=8)
+    @NotNull
+    @Size(min = 8, max = 32)
     private String password;
-//    @NotNull
+    @NotNull
     private String firstName;
-//    @NotNull
+    @NotNull
     private String lastName;
 //    @NotNull
     private String gender;
 //    @NotNull
-    private LocalDate birthday;
-//    @NotNull
+    private Date birthday;
+    @NotNull
     private String email;
 //    @NotNull
     private Long phoneNumber;
-    private String description;
 //    @NotNull
     private String prefferedCurrency;
 //    @NotNull
     private List<String> creditCardDetails;
     private BigDecimal averageHostScore;
     private BigDecimal averageAttendScore;
-//    @NotNull
+    private String selfIntro;
+    @NotNull
     private Boolean premium;
     
     @OneToOne
@@ -94,13 +71,43 @@ public class User implements Serializable {
     private List<Evaluation> evaluations;
     @OneToMany (mappedBy = "user")
     private List<Booking> bookings;
+    
+    @ManyToMany(mappedBy = "follows")
+    private List<User> followers;
+    @ManyToMany(mappedBy = "blocks")
+    private List<User> blockers; // Users who blocked this user.
+    @OneToMany(mappedBy = "recipient")
+    private List<Message> messagesReplied;
+    @OneToMany(mappedBy = "sender")
+    private List<Message> messagesSent;
+    @ManyToMany(mappedBy = "users")
+    private List<Notification> notifications;
+    @OneToMany(mappedBy = "host")
+    private List<Experience> experienceHosted = new ArrayList<Experience>();
+    @ManyToMany(mappedBy = "followers")
+    private List<Experience> followedExperiences;
+    @OneToMany(mappedBy = "user")
+    private List<Appeal> appeals;
 
     public User() {
-    }
-
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+        
+        // for initializing and testing purposes
+        firstName = "User";
+        lastName = "Name";
+        premium = false;
+        creditCardDetails = new ArrayList();
+        blocks = new ArrayList();
+        follows = new ArrayList();
+        evaluations = new ArrayList();
+        bookings = new ArrayList();
+        followers = new ArrayList();
+        blockers = new ArrayList();
+        messagesReplied = new ArrayList();
+        messagesSent = new ArrayList();
+        notifications = new ArrayList();
+        experienceHosted = new ArrayList();
+        followedExperiences = new ArrayList();
+        appeals = new ArrayList();
     }
 
     public List<User> getFollowers() {
@@ -207,11 +214,11 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
-    public LocalDate getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(LocalDate birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
@@ -231,12 +238,12 @@ public class User implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSelfIntro() {
+        return selfIntro;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSelfIntro(String selfIntro) {
+        this.selfIntro = selfIntro;
     }
 
     public String getPrefferedCurrency() {
