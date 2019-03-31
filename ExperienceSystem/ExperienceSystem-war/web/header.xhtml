@@ -80,9 +80,9 @@
                         <h:button styleClass="header_menu_item" value="Hosting" />
                         <div class="dropdown-content">
                             <p:link outcome="/userOperations/createNewHostExperience.xhtml" value="Create New Experience" />
-                            <p:link outcome="/userOperations/viewAllHostExperiences.xhtml" value="Manage Host Experiences" />
-                            <p:link outcome="/userOperations/searchExperience.xhtml" value="Guest Management" />
-                            <p:link outcome="/userOperations/hostFinances.xhtml" value="Finances" />
+                            <p:link outcome="/userOperations/viewAllHostExperiences.xhtml" value="Manage Host Experiences" rendered="#{sessionScope.isLogin == true}"/>
+                            <p:link outcome="/userOperations/searchExperience.xhtml" value="Guest Management" rendered="#{sessionScope.isLogin == true}"/>
+                            <p:link outcome="/userOperations/hostFinances.xhtml" value="Finances" rendered="#{sessionScope.isLogin == true}"/>
                         </div>
                     </div>
 

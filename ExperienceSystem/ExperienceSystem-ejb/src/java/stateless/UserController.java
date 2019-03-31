@@ -40,6 +40,7 @@ import util.exception.ExperienceNotActiveException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.RegisterUserException;
+import util.exception.UpdateUserException;
 import util.exception.UserNotFoundException;
 
 /**
@@ -93,18 +94,25 @@ public class UserController implements UserControllerLocal {
         
     }
 
-    public void update(User user) {
-        try {
-            em.merge(user);
-            em.flush();
-        } catch (ConstraintViolationException e) {
-            Set<ConstraintViolation<?>> s = e.getConstraintViolations();
-            for (Iterator<ConstraintViolation<?>> it = e.getConstraintViolations().iterator(); it.hasNext();) {
-                ConstraintViolation<? extends Object> v = it.next();
-                System.err.println(v);
-                System.err.println("==>>"+v.getMessage());
+    public void update(User user) throws InputDataValidationException, UpdateUserException {
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        if (constraintViolations.isEmpty()) {
+            try {
+                User userToUpdate = retrieveUserById(user.getUserId());
+                userToUpdate.setUsername(user.getUsername());
+                userToUpdate.setFirstName(user.getFirstName());
+                userToUpdate.setLastName(user.getLastName());
+                userToUpdate.setGender(user.getGender());
+                userToUpdate.setPhoneNumber(user.getPhoneNumber());
+                userToUpdate.setBirthday(user.getBirthday());
+                userToUpdate.setSelfIntro(user.getSelfIntro());
+            } catch (UserNotFoundException ex) {
+                throw new UpdateUserException(ex.getMessage());
             }
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
+
     }
 
     // TODO:
@@ -150,7 +158,8 @@ public class UserController implements UserControllerLocal {
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new UserNotFoundException("No such user");
         }
-System.out.println("user.getExpHost: "+user.getExperienceHosted());
+        // lazy fetching
+        System.out.println("user.getExpHost: "+user.getExperienceHosted());
         for (Experience e : user.getExperienceHosted()) {
         }
         return user;
@@ -235,18 +244,18 @@ System.out.println("user.getExpHost: "+user.getExperienceHosted());
         return lsExperiences;
     }
 
-    @Override
-    public void createHostExperience(Experience exp, Long id) {
-        User user = em.find(User.class, id);
-        try {
-            exp = experienceController.createNewExperience(exp);
-        } catch (CreateNewExperienceException ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InputDataValidationException ex) {
-            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        user.getExperienceHosted().add(exp);
-    }
+//    @Override
+//    public void createHostExperience(Experience exp, Long id) {
+//        User user = em.find(User.class, id);
+//        try {
+//            exp = experienceController.createNewExperience(exp);
+//        } catch (CreateNewExperienceException ex) {
+//            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (InputDataValidationException ex) {
+//            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        user.getExperienceHosted().add(exp);
+//    }
 
     @Override
     public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException, ExperienceNotActiveException {
@@ -331,12 +340,13 @@ System.out.println("user.getExpHost: "+user.getExperienceHosted());
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<User>> constraintViolations) {
         String msg = "Input data validation error:";
-
-        for (ConstraintViolation contraints : constraintViolations) {
-            System.out.println(contraints.getRootBeanClass().getSimpleName()
-                    + "." + contraints.getPropertyPath() + " " + contraints.getMessage());
+        
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
         }
-
+        System.out.println("******** UserController: prepareInputDataValidationErrorsMessage");
+        System.out.println("    **** " + msg);
         return msg;
     }
 }

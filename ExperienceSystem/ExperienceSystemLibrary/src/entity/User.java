@@ -18,6 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -46,6 +48,7 @@ public class User implements Serializable {
 //    @NotNull
     private String gender;
 //    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date birthday;
     @NotNull
     private String email;

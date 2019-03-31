@@ -63,13 +63,14 @@
                             <p:outputLabel value="Username" /> 
                         </p:column>
                         <p:column>
-                            <p:outputLabel value="#{viewAccountInformationManagedBean.currentUser.username}" /> 
+                            <h:outputText value="#{accountManagementManagedBean.currentUser.username}" /> 
                         </p:column>
                         <p:column>
                             <p:outputLabel value="Full Name" /> 
                         </p:column>
                         <p:column>
-                            <p:outputLabel value="#{viewAccountInformationManagedBean.currentUser.firstName} #{viewAccountInformationManagedBean.currentUser.lastName}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.firstName != null and accountManagementManagedBean.currentUser.lastName != null}" value="#{accountManagementManagedBean.currentUser.firstName} #{accountManagementManagedBean.currentUser.lastName}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.firstName == null or accountManagementManagedBean.currentUser.lastName == null}" value=" " /> 
                         </p:column>
                     </p:row>
                     
@@ -78,13 +79,17 @@
                             <p:outputLabel value="Gender" /> 
                         </p:column>
                         <p:column>
-                            <p:outputLabel value="#{viewAccountInformationManagedBean.currentUser.gender}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.gender != null}" value="#{accountManagementManagedBean.currentUser.gender}" />
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.gender == null}" value=" " />
                         </p:column>
                         <p:column>
                             <p:outputLabel value="Birth Date" /> 
                         </p:column>
                         <p:column>
-                            <p:outputLabel value="#{viewAccountInformationManagedBean.currentUser.birthday}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.birthday != null}" value="#{accountManagementManagedBean.currentUser.birthday}" >
+                                <f:convertDateTime pattern="dd-MM-yyyy" />
+                            </h:outputText>
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.birthday == null}" value=" " /> 
                         </p:column>
                     </p:row>
                      
@@ -93,13 +98,15 @@
                             <p:outputLabel value="Email" /> 
                         </p:column>
                         <p:column>
-                            <p:outputLabel value="#{viewAccountInformationManagedBean.currentUser.email}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.email != null}" value="#{accountManagementManagedBean.currentUser.email}" />
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.email == null}" value=" "/> 
                         </p:column>
                         <p:column>
                             <p:outputLabel value="Phone Number" /> 
                         </p:column>
                         <p:column>
-                            <p:outputLabel value="#{viewAccountInformationManagedBean.currentUser.phoneNumber}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.phoneNumber != null}" value="#{accountManagementManagedBean.currentUser.phoneNumber}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.phoneNumber == null}" value=" " /> 
                         </p:column>
                     </p:row>
                     
@@ -108,33 +115,36 @@
                             <p:outputLabel value="Self Description" /> 
                         </p:column>
                         <p:column colspan="2">
-                            <p:outputLabel value="#{viewAccountInformationManagedBean.currentUser.selfIntro}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.selfIntro != null}" value="#{accountManagementManagedBean.currentUser.selfIntro}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.selfIntro == null}" value=" " /> 
                         </p:column>
                     </p:row>
                     
                 </p:panelGrid>
                 <br />
                 
-                <p:commandButton value="Update Account Info" oncomplete="PF('dialogUpdateAccountInfo').show()" />
+                <p:commandButton value="Update Account Info" update="formUpdateAccountInfo" oncomplete="PF('dialogUpdateAccountInfo').show()" />
                 <p:commandButton value="Upgrade To Premium Account" action="#"/>
             </h:form>    
         </div>  
         
         <h:form id="formUpdateAccountInfo">
             <p:dialog id="dialogUpdateAccountInfo" widgetVar="dialogUpdateAccountInfo" closable="true" resizable="false">
+                <p:messages id="msgUpdateAccountInfo" redisplay="false" />
+                
                 <p:panelGrid>
                     <p:row>
                         <p:column>
                             <p:outputLabel value="Username" /> 
                         </p:column>
                         <p:column>
-                            <p:inputText value="#{viewAccountInformationManagedBean.currentUser.username}" /> 
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.username}" /> 
                         </p:column>
                         <p:column>
                             <p:outputLabel value="Gender" /> 
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu value="#{viewAccountInformationManagedBean.currentUser.gender}" >
+                            <p:selectOneMenu value="#{accountManagementManagedBean.currentUser.gender}" >
                                 <f:selectItem itemLabel="Male" itemValue="Male" />
                                 <f:selectItem itemLabel="Female" itemValue="Female" />
                             </p:selectOneMenu> 
@@ -146,13 +156,13 @@
                             <p:outputLabel value="First Name" /> 
                         </p:column>
                         <p:column>
-                            <p:inputText value="#{viewAccountInformationManagedBean.currentUser.firstName}" /> 
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.firstName}" /> 
                         </p:column>
                         <p:column>
                             <p:outputLabel value="Last Name" /> 
                         </p:column>
                         <p:column>
-                            <p:inputText value="#{viewAccountInformationManagedBean.currentUser.lastName}" /> 
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.lastName}" /> 
                         </p:column>
                     </p:row>
                     
@@ -161,13 +171,13 @@
                             <p:outputLabel value="Phone number" /> 
                         </p:column>
                         <p:column>
-                            <p:inputText value="#{viewAccountInformationManagedBean.currentUser.phoneNumber}" /> 
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.phoneNumber}" /> 
                         </p:column>
                         <p:column>
                             <p:outputLabel value="Birth Date" /> 
                         </p:column>
                         <p:column>
-                            <p:calendar value="#{viewAccountInformationManagedBean.currentUser.birthday}" placeholder="Birth Date" navidator="true" inputStyle="width:140px;" />
+                            <p:calendar value="#{accountManagementManagedBean.currentUser.birthday}" placeholder="Birth Date" navidator="true" inputStyle="width:140px;" />
                         </p:column>
                     </p:row>
                     
@@ -176,10 +186,10 @@
                             <p:outputLabel value="Self Introduction" /> 
                         </p:column>
                         <p:column colspan="2">
-                            <p:inputTextarea row="5" value="#{viewAccountInformationManagedBean.currentUser.selfIntro}" /> 
+                            <p:inputTextarea row="5" value="#{accountManagementManagedBean.currentUser.selfIntro}" /> 
                         </p:column>            
                     </p:row>
-                    <p:commandButton value="Update" actionListener="#{viewAccountInformationManagedBean.updateAccountInfo}" />
+                    <p:commandButton value="Update" update="@form formAccountInfo" oncomplete="PF('dialogUpdateAccountInfo').show()" actionListener="#{accountManagementManagedBean.updateAccountInfo}" />
                 </p:panelGrid>
             </p:dialog>
             

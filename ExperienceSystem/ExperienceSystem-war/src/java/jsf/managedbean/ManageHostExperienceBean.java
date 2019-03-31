@@ -89,20 +89,20 @@ public class ManageHostExperienceBean implements Serializable {
     }
 
     public void evaluate(ActionEvent event) throws IOException {
-        User currentGuest = (User) event.getComponent().getAttributes().get("g");
-        User loggedIn = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
-        Evaluation e = new Evaluation();
-        e.setScore(BigDecimal.valueOf((double) rating));
-        e.setRemark(remark);
-        e.setUserBeingEvaluated(currentGuest);
-        e.setUserEvaluating(loggedIn);
-        e.setEvaluationTime(LocalDate.now());
-        e = evaluationController.create(e);
-        List<Evaluation> lsE = loggedIn.getEvaluations();
-        lsE.add(e);
-        loggedIn.setEvaluations(lsE);
-        userController.update(loggedIn);
-        FacesContext.getCurrentInstance().getExternalContext().redirect("manageHostExperience.xhtml");
+//        User currentGuest = (User) event.getComponent().getAttributes().get("g");
+//        User loggedIn = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
+//        Evaluation e = new Evaluation();
+//        e.setScore(BigDecimal.valueOf((double) rating));
+//        e.setRemark(remark);
+//        e.setUserBeingEvaluated(currentGuest);
+//        e.setUserEvaluating(loggedIn);
+//        e.setEvaluationTime(LocalDate.now());
+//        e = evaluationController.create(e);
+//        List<Evaluation> lsE = loggedIn.getEvaluations();
+//        lsE.add(e);
+//        loggedIn.setEvaluations(lsE);
+//        userController.update(loggedIn);
+//        FacesContext.getCurrentInstance().getExternalContext().redirect("manageHostExperience.xhtml");
     }
 
     public void deleteExpDate(ActionEvent event) throws IOException {

@@ -76,6 +76,7 @@ public class CategoryController implements CategoryControllerRemote, CategoryCon
     public Category retrieveCategoryById (Long categoryId){
         return em.find(Category.class, categoryId);
     }
+    
     @Override
     public void updateCategory(Category category) throws InputDataValidationException, CategoryNotFoundException {
         if(category.getCategoryId() == null || category.getCategoryId() == new Long(0)) {

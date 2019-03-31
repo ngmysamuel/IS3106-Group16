@@ -60,17 +60,17 @@ public class ViewAllMyReservations {
     }
     
     public void commHost(ActionEvent event) {
-        String messageString = (String) event.getComponent().getAttributes().get("message");
-        User host = (User) event.getComponent().getAttributes().get("host");
-        Message message = new Message();
-        message.setContent(messageString);
-        message.setSender(currentUser);
-        message.setRecipient(host);
-        message.setSendDate(LocalDateTime.now());
-        currentUser.getMessagesSent().add(message);
-        userController.update(currentUser);
-        host.getMessagesSent().add(message);
-        userController.update(host);
+//        String messageString = (String) event.getComponent().getAttributes().get("message");
+//        User host = (User) event.getComponent().getAttributes().get("host");
+//        Message message = new Message();
+//        message.setContent(messageString);
+//        message.setSender(currentUser);
+//        message.setRecipient(host);
+//        message.setSendDate(LocalDateTime.now());
+//        currentUser.getMessagesSent().add(message);
+//        userController.update(currentUser);
+//        host.getMessagesSent().add(message);
+//        userController.update(host);
     }
     
     public boolean filterByPrice(Object value, Object filter, Locale locale) {
@@ -97,7 +97,7 @@ public class ViewAllMyReservations {
             }   
         }
         u.setBookings(bookings);
-        userController.update(u);
+//        userController.update(u);
         ExperienceDate ed = booking.getExperienceDate();
         for (Booking b : ed.getBookings()) {
             if (Objects.equals(b.getBookingId(), booking.getBookingId())) {

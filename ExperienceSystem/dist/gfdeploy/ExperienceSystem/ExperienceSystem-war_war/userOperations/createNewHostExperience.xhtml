@@ -79,6 +79,12 @@
                 -webkit-border-radius: 0;
                 border-radius: 0;
             }
+            .detailTitleClass{
+                width:35%;
+            }
+            .detailContentClass{
+                width:65%
+            }
         </style>
 
         <div id="topBox">
@@ -98,49 +104,56 @@
         </div>
 
         <div id="detailsBox">
-            <h:form id="form101">
-                <p:growl id="msg" showDetail="true" escape="false" />
-                <p:messages id="message"/>
+            <h:form id="formCreateNewExperience" rendered="#{sessionScope.isLogin == true}">
+                <p:growl id="msgCreateNewExperience" showDetail="true" escape="false" />
 
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText value="Title" /> 
-                    <p:inputText value="#{createNewExperience.newExperience.title}" /> 
+                    <p:inputText value="#{createNewExperienceManagedBean.newExperience.title}" required="true" requiredMessage="Title is required" /> 
                     
                     <h:outputText value="Category" /> 
-                    <p:selectOneMenu id="category" value="#{createNewExperience.catId}" style="width:140px;">
-                        <f:selectItem itemLabel="Select Category" itemValue="" noSelectionOption="true"/>
-                        <f:selectItems value="#{createNewExperience.lsCat}" var="cat" itemLabel="#{cat.category}" itemValue="#{cat.categoryId}"/>
+                    <p:selectOneMenu id="category" value="#{createNewExperienceManagedBean.categoryId}" style="width:150px;" required="true" requiredMessage="Category is required">
+                        <f:selectItem itemLabel="[Select Category]" itemValue="0" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperienceManagedBean.categories}" var="category" itemLabel="#{category.name}" itemValue="#{category.categoryId}"/>
                     </p:selectOneMenu>
                     
                     <h:outputText value="Type" /> 
-                    <p:selectOneMenu id="type" value="#{createNewExperience.typeId}" style="width:140px;">
+                    <p:selectOneMenu id="type" value="#{createNewExperienceManagedBean.typeId}" style="width:150px;" required="true" requiredMessage="Type is required">
                         <f:selectItem itemLabel="Select Type" itemValue="" noSelectionOption="true"/>
-                        <f:selectItems value="#{createNewExperience.lsType}" var="type" itemLabel="#{type.type}" itemValue="#{type.typeId}"/>
+                        <f:selectItems value="#{createNewExperienceManagedBean.types}" var="type" itemLabel="#{type.name}" itemValue="#{type.typeId}"/>
+                    </p:selectOneMenu> 
+                    
+                    <h:outputText value="Location" /> 
+                    <p:selectOneMenu id="location" value="#{createNewExperienceManagedBean.locationId}" style="width:150px;" required="true" requiredMessage="Location is required">
+                        <f:selectItem itemLabel="Select Type" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{createNewExperienceManagedBean.locations}" var="location" itemLabel="#{location.name}" itemValue="#{location.locationId}"/>
                     </p:selectOneMenu> 
                     
                     <h:outputText value="Address" /> 
-                    <p:inputText value="#{createNewExperience.newExperience.address}" /> 
+                    <p:inputText value="#{createNewExperienceManagedBean.newExperience.address}" /> 
                     
                     <h:outputText value="Language" />  
-                    <p:selectOneMenu id="language" value="#{createNewExperience.langId}" style="width:100px;">
+                    <p:selectOneMenu id="language" value="#{createNewExperienceManagedBean.languageId}" style="width:150px;" required="true" requiredMessage="Language is required">
                         <f:selectItem itemLabel="Select Language" itemValue="" noSelectionOption="true"/>
-                        <f:selectItems value="#{createNewExperience.lsLang}" var="lang" itemLabel="#{lang.language}" itemValue="#{lang.languageId}"/>
+                        <f:selectItems value="#{createNewExperienceManagedBean.languages}" var="language" itemLabel="#{language.name}" itemValue="#{language.languageId}"/>
                     </p:selectOneMenu>
 
                     <h:outputText value="Description" /> 
-                    <p:inputTextarea rows="10" cols="50" value="#{createNewExperience.newExperience.description}" placeholder="Description"/>
+                    <p:inputTextarea rows="10" cols="50" value="#{createNewExperienceManagedBean.newExperience.description}" placeholder="Description"/>
                     
                     <p:outputLabel for="itemsProvided" value="Items I Will Provide (press Enter to add a new one): " />
-                    <p:chips id="itemsProvided" value="#{createNewExperience.newExperience.providingItems}" />
+                    <p:chips id="itemsProvided" value="#{createNewExperienceManagedBean.newExperience.providingItems}" />
                     
                     <p:outputLabel for="itemsRequired" value="Items I WIll Require (press Enter to add a new one):" />
-                    <p:chips id="itemsRequired" value="#{createNewExperience.newExperience.requiringItems}" />
+                    <p:chips id="itemsRequired" value="#{createNewExperienceManagedBean.newExperience.requiringItems}" />
                     
                 </p:panelGrid>
                 <br />
                 
-                <p:commandButton value="Create New Experience" action="#{createNewExperience.create}" update="form101:message"/>
-            </h:form>    
+                <p:commandButton value="Create New Experience" actionListener="#{createNewExperienceManagedBean.createNewExperience}" update="formCreateNewExperience:msgCreateNewExperience"/>
+            </h:form> 
+            
+            <p:outputLabel rendered="#{sessionScope.isLogin == false}" value="Log in to host your own experiences!"/>
         </div>   
 
 

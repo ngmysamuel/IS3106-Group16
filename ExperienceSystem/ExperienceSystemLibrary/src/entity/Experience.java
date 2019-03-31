@@ -46,24 +46,28 @@ public class Experience implements Serializable {
     private List<String> reminders;
     // An experience is active only when it has experience dates that are happening currently or will happen in the future
     @NotNull
-    private boolean active;
-    
+    private boolean active; 
     private BigDecimal avgPrice;
 
     @ManyToOne
+    @NotNull
+    private Category category;
+    @NotNull
+    @ManyToOne
     private Type type;
+    @NotNull
     @ManyToOne
     private Location location;
+    @NotNull
     @ManyToOne
     private Language language;
+    
     @OneToMany(mappedBy = "experience")
     private List<ExperienceDate> experienceDates = new ArrayList<>();
     @ManyToMany
     private List<User> followers;
     @ManyToOne
-    private User host;
-    @ManyToOne
-    private Category category;
+    private User host; 
     
     private Date nextAvailDate;
 
@@ -75,7 +79,6 @@ public class Experience implements Serializable {
         this.description = description;
         // for initializing and testing purposes
         averageScore = new BigDecimal(0);
-        address = "Kent Ridge Road";
         active = false;
     }
     

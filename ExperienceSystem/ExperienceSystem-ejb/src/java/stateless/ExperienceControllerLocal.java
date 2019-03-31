@@ -37,13 +37,14 @@ public interface ExperienceControllerLocal {
     public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
 
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
-    public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException;
     public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId) throws InputDataValidationException;
     public void updateExperienceInformation(Experience experience) throws ConstraintViolationException, InputDataValidationException, ExperienceNotFoundException;
 
     public void deleteExperience(Long id, String r) throws ExperienceNotActiveException;
 
     public List<Experience> retrieveAllExperiences();
+    
+    public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId);
 
     public Experience retrieveExperienceByTitle(String title) throws ExperienceNotFoundException;
 

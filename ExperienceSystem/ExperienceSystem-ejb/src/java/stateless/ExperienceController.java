@@ -49,16 +49,15 @@ import util.exception.InputDataValidationException;
 public class ExperienceController implements ExperienceControllerRemote, ExperienceControllerLocal {
 
     @EJB
-    private LanguageControllerLocal languageController;
-
+    private LanguageControllerLocal languageControllerLocal;
     @EJB
-    private TypeControllerLocal typeController;
-
+    private TypeControllerLocal typeControllerLocal;
     @EJB
-    private CategoryControllerLocal categoryController;
-
+    private CategoryControllerLocal categoryControllerLocal;
     @EJB
-    private ExperienceDateCancellationReportControllerLocal experienceDateCancellationReportController;
+    private LocationControllerLocal locationControllerLocal;
+    @EJB
+    private ExperienceDateCancellationReportControllerLocal experienceDateCancellationReportControllerLocal;
     
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
@@ -85,29 +84,48 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }
         return ls3;
     }
+//    
+//    public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException {
+//        if (catId == null || typeId == null || langId == null) {
+//            throw new InputDataValidationException();
+//        }
+//        Category c = categoryControllerLocal.retrieveCategoryById(catId);
+//        Type t = typeControllerLocal.retrieveTypeById(typeId);
+//        Language l = languageControllerLocal.retrieveLanguageById(langId);
+//        exp.setCategory(c);
+//        exp.setType(t);
+//        exp.setLanguage(l);
+//        exp.setActive(true);
+//        exp.setAverageScore(BigDecimal.ZERO);
+//        return createNewExperience(exp);
+//    }
     
-    public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException {
-        if (catId == null || typeId == null || langId == null) {
-            throw new InputDataValidationException();
-        }
-        Category c = categoryController.retrieveCategoryById(catId);
-        Type t = typeController.retrieveTypeById(typeId);
-        Language l = languageController.retrieveLanguageById(langId);
-        exp.setCategory(c);
-        exp.setType(t);
-        exp.setLanguage(l);
-        exp.setActive(true);
-        exp.setAverageScore(BigDecimal.ZERO);
-        return createNewExperience(exp);
-    }
-    
+    // When an experience is successfully created, it will be attached to the host's experience list
     @Override
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException{
+        Category category = categoryControllerLocal.retrieveCategoryById(newExperience.getCategory().getCategoryId());
+        Type type = typeControllerLocal.retrieveTypeById(newExperience.getType().getTypeId());
+        Language language = languageControllerLocal.retrieveLanguageById(newExperience.getLanguage().getLanguageId());
+        Location location = locationControllerLocal.retrieveLocationById(newExperience.getLocation().getLocationId());
+
+        if (category == null || type == null || language == null || location == null) {
+            throw new InputDataValidationException("Category/Type/Language/Location information is not provided!");
+        }
+
+        newExperience.setCategory(category);
+        newExperience.setType(type);
+        newExperience.setLanguage(language);
+        newExperience.setLocation(location);
+
+        newExperience.setAverageScore(BigDecimal.ZERO);
+        
         Set<ConstraintViolation<Experience>> constraintViolations = validator.validate(newExperience);
         if(constraintViolations.isEmpty()){
             try{
                 em.persist(newExperience);
                 em.flush();
+                User host = newExperience.getHost();
+                host.getExperienceHosted().add(newExperience);
                 return newExperience;
             }catch(PersistenceException ex){
                 if(ex.getCause() != null
@@ -117,7 +135,7 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
                 }else{
                     throw new CreateNewExperienceException("An unexpected error has occurred: " + ex.getMessage());
                 }
-             } catch (Exception ex) {
+            } catch (Exception ex) {
                 throw new CreateNewExperienceException("An unexpected error has occurred: " + ex.getMessage());
             }
         } else {
@@ -129,9 +147,9 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         if (catId == null || typeId == null || langId == null) {
             throw new InputDataValidationException();
         }
-        Category c = categoryController.retrieveCategoryById(catId);
-        Type t = typeController.retrieveTypeById(typeId);
-        Language l = languageController.retrieveLanguageById(langId);
+        Category c = categoryControllerLocal.retrieveCategoryById(catId);
+        Type t = typeControllerLocal.retrieveTypeById(typeId);
+        Language l = languageControllerLocal.retrieveLanguageById(langId);
         exp.setCategory(c);
         exp.setType(t);
         exp.setLanguage(l);
@@ -189,7 +207,7 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
                         rpt.setBooking(b);
                         rpt.setExperienceDate(date);
                         rpt.setCancellationReason(r);
-                        experienceDateCancellationReportController.createNewExperienceDateCancellationReport(rpt);
+                        experienceDateCancellationReportControllerLocal.createNewExperienceDateCancellationReport(rpt);
                     }
                 }
             }
@@ -410,6 +428,14 @@ public class ExperienceController implements ExperienceControllerRemote, Experie
         }
     }
 
-    
+    //Retrieve all host experiences hosted by a given user
+    @Override
+    public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId) { 
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.host.userId = :inHostUserId");
+        query.setParameter("inHostUserId", hostUserId);
+
+        List<Experience> hostExperiences = query.getResultList();
+        return hostExperiences;
+    }
 
 }

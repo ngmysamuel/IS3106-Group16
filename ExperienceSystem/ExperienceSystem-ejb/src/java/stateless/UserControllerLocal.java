@@ -14,6 +14,7 @@ import util.exception.ExperienceNotActiveException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.RegisterUserException;
+import util.exception.UpdateUserException;
 import util.exception.UserNotFoundException;
 
 /**
@@ -25,7 +26,7 @@ public interface UserControllerLocal {
     
     public User register(User user) throws InputDataValidationException, RegisterUserException;
     
-    public void update(User user);
+    public void update(User user) throws InputDataValidationException, UpdateUserException;
     
     public User login(String username, String password) throws InvalidLoginCredentialException;
     
@@ -37,7 +38,6 @@ public interface UserControllerLocal {
     public List<Experience> retrieveAllUpcomingExperienceDates(Long id);
     public List<ExperienceDate> retrieveAllHostExperience(Long id);
     public List<ExperienceDate> retrieveAllUpcomingHostExperienceDates(Long id);
-    public void createHostExperience(Experience exp, Long id);
     public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException, ExperienceNotActiveException;
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException;
 
