@@ -54,4 +54,5 @@ public class ViewAllHostExperiencesManagedBean implements Serializable {
         this.hostExperiences = hostExperiences;
     }
     
+    
 }

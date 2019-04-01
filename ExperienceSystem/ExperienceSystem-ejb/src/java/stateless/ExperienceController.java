@@ -209,8 +209,11 @@ public class ExperienceController implements ExperienceControllerLocal {
         if(e == null){
             throw new ExperienceNotFoundException();
         }
-        for (ExperienceDate ed : e.getExperienceDates()) {
-        }
+        e.getExperienceDates().size();
+        e.getFollowers();
+        e.getProvidingItems();
+        e.getRequiringItems();
+        e.getReminders();
         return e;
     }
     

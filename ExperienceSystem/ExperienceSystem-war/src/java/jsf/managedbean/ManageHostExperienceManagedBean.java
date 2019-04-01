@@ -5,7 +5,6 @@
  */
 package jsf.managedbean;
 
-import entity.Booking;
 import entity.Category;
 import entity.Experience;
 import entity.ExperienceDate;
@@ -18,9 +17,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -28,8 +25,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import stateless.CategoryControllerLocal;
 import stateless.EvaluationControllerLocal;
 import stateless.ExperienceControllerLocal;
@@ -42,7 +37,6 @@ import util.exception.CreateNewExperienceDateException;
 import util.exception.CreateNewExperienceException;
 import util.exception.DeleteExperienceException;
 import util.exception.ExperienceDateNotActiveException;
-import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UpdateEperienceInfoException;
@@ -81,10 +75,11 @@ public class ManageHostExperienceManagedBean implements Serializable {
     private List<Location> locations;
 
     private Date date;
-    private int capacity;
+    private Date minDate;
+    private Integer capacity;
     private BigDecimal price;
 
-    private ExperienceDate currentExpDate;
+    private ExperienceDate currentExperienceDate;
     private List<User> guests = new ArrayList<>();
 
     private int rating;
@@ -152,6 +147,41 @@ public class ManageHostExperienceManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().redirect("viewAllHostExperiences.xhtml");
     }
     
+    
+    
+    public void createNewExperienceDate(ActionEvent event) throws IOException {
+        ExperienceDate newExperienceDate = new ExperienceDate();
+
+        newExperienceDate.setStartDate(date);
+        newExperienceDate.setCapacity(capacity);
+        newExperienceDate.setSpotsAvailable(capacity);
+        newExperienceDate.setPrice(price);
+        newExperienceDate.setActive(true);
+        newExperienceDate.setExperience(hostExperience);
+        
+        try {
+            newExperienceDate = experienceDateControllerLocal.createNewExperienceDate(newExperienceDate);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New Experience Date created successfully!", null));
+            hostExperience.getExperienceDates().add(newExperienceDate);
+        } catch (CreateNewExperienceDateException | InputDataValidationException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+        }
+
+    }
+    
+    public void deleteExperienceDate(ActionEvent event) throws IOException {
+        ExperienceDate experienceDateToDelete = (ExperienceDate)event.getComponent().getAttributes().get("experienceDateToDelete");
+        try {
+            experienceDateControllerLocal.deleteExperienceDate(experienceDateToDelete.getExperienceDateId(), "");
+            hostExperience.getExperienceDates().remove(experienceDateToDelete);
+            experienceDateToDelete.setActive(false);
+            hostExperience.getExperienceDates().add(experienceDateToDelete);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Experience Date deleted successfully!", null));
+        } catch (ExperienceDateNotActiveException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+        }
+    }
+    
     public void redir(ActionEvent event) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect("manageHostExperience.xhtml");
         this.hostExperience = (Experience) event.getComponent().getAttributes().get("exp");
@@ -175,27 +205,15 @@ public class ManageHostExperienceManagedBean implements Serializable {
 //        FacesContext.getCurrentInstance().getExternalContext().redirect("manageHostExperience.xhtml");
     }
 
-    public void deleteExpDate(ActionEvent event) throws IOException {
-        System.out.println(currentExpDate + "(1)");
-        if (currentExpDate == null) {
-            System.out.println(currentExpDate + "(2a)");
-            setExpDate(event);
-        }
-        System.out.println(currentExpDate + "(3)");
-        try {
-            experienceDateControllerLocal.deleteExperienceDate(currentExpDate.getExperienceDateId(), "");
-        } catch (ExperienceDateNotActiveException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ExperienceDateNotActiveException", null));
-        }
-    }
+    
 
-    public void updateExpDate(ActionEvent event) throws IOException {
-        if (currentExpDate == null) {
+    public void updateExperienceDate(ActionEvent event) throws IOException {
+        if (currentExperienceDate == null) {
             setExpDate(event);
         }
-        System.out.println(currentExpDate.getStartDate());
+        System.out.println(currentExperienceDate.getStartDate());
         try {
-            experienceDateControllerLocal.updateExperienceDate(currentExpDate);
+            experienceDateControllerLocal.updateExperienceDate(currentExperienceDate);
         } catch (InputDataValidationException | CreateNewExperienceException ex) {
             
         }
@@ -203,52 +221,15 @@ public class ManageHostExperienceManagedBean implements Serializable {
     }
 
     public void setExpDate(ActionEvent event) {
-//        ExperienceDate ed = (ExperienceDate) event.getComponent().getAttributes().get("d");
-//        ed = experienceDateControllerLocal.retrieveExperienceDateByDateId(ed.getExperienceDateId());
-//        for (Booking b : ed.getBookings()) {
+//        ExperienceDate newExperienceDate = (ExperienceDate) event.getComponent().getAttributes().get("d");
+//        newExperienceDate = experienceDateControllerLocal.retrieveExperienceDateByDateId(newExperienceDate.getExperienceDateId());
+//        for (Booking b : newExperienceDate.getBookings()) {
 //            if (b.isHostEvaluated()) {
 //                guests.add(b.getGuest());
 //            }
 //        }
-//        setCurrentExpDate(ed);
+//        setCurrentExpDate(newExperienceDate);
     }
-
-   
-    public void addDate() throws IOException {
-//        ExperienceDate ed = new ExperienceDate();
-//        ed.setActive(true);
-//        ed.setStartDate(date);
-//        ed.setCapacity(getCapacity());
-//        ed.setPrice(getPrice());
-//        ed.setExperience(getHostExperience());
-//        try {
-//            ed = experienceDateControllerLocal.createNewExperienceDate(ed);
-//        } catch (CreateNewExperienceDateException ex) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "CreateNewExperienceDateException", null));
-//        } catch (InputDataValidationException ex) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "InputDataValidationException", null));
-//        }
-//        List<ExperienceDate> lss = getHostExperience().getExperienceDates();
-//        lss.add(ed);
-//        hostExperience.setExperienceDates(lss);
-//        try {
-//            experienceControllerLocal.updateExperienceInformation(hostExperience);
-//        } catch (InputDataValidationException ex) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "InputDataValidationException", null));
-//        } catch (ExperienceNotFoundException ex) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ExperienceNotFoundException", null));
-//        } catch (ConstraintViolationException e) {
-//            Set<ConstraintViolation<?>> s = e.getConstraintViolations();
-//            for (Iterator<ConstraintViolation<?>> it = e.getConstraintViolations().iterator(); it.hasNext();) {
-//                ConstraintViolation<? extends Object> v = it.next();
-//                System.err.println(v);
-//                System.err.println("==>>" + v.getMessage());
-//            }
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ConstraintViolationException", null));
-//        }
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("manageHostExperience.xhtml?id=1");
-    }
-
 
 
     public Long getHostExperienceIdToView() {
@@ -339,11 +320,20 @@ public class ManageHostExperienceManagedBean implements Serializable {
         this.date = date;
     }
 
-    public int getCapacity() {
+    public Date getMinDate() {
+        minDate = new Date();
+        return minDate;
+    }
+
+    public void setMinDate(Date minDate) {
+        this.minDate = minDate;
+    }
+
+    public Integer getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(Integer capacity) {
         this.capacity = capacity;
     }
 
@@ -355,12 +345,12 @@ public class ManageHostExperienceManagedBean implements Serializable {
         this.price = price;
     }
 
-    public ExperienceDate getCurrentExpDate() {
-        return currentExpDate;
+    public ExperienceDate getCurrentExperienceDate() {
+        return currentExperienceDate;
     }
 
-    public void setCurrentExpDate(ExperienceDate currentExpDate) {
-        this.currentExpDate = currentExpDate;
+    public void setCurrentExperienceDate(ExperienceDate currentExperienceDate) {
+        this.currentExperienceDate = currentExperienceDate;
     }
 
     public List<User> getGuests() {

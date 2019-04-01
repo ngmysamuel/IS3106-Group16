@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -16,6 +17,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -30,13 +34,17 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long experienceDateId;
     @NotNull
+    @Temporal(TemporalType.DATE)
     private Date startDate;
     @NotNull
+    @Min(1)
     private Integer capacity;
     @NotNull
+    @Min(0)
     private Integer spotsAvailable;
     @NotNull
     private BigDecimal price;
+    // An Experience Date is active only if it has not happened (it is upcoming)
     @NotNull
     private boolean active;
     
@@ -50,7 +58,7 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
     private ExperienceDatePaymentReport experienceDatePaymentReport;
 
     public ExperienceDate() {
-
+        bookings = new ArrayList();
     }
     
 

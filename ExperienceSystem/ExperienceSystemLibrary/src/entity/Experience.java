@@ -19,8 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -285,7 +283,9 @@ public class Experience implements Serializable {
                     }
                 }     
             }
-            return sum.divide(count, 2);
+            if(count.compareTo(new BigDecimal(0)) > 0) {
+                return sum.divide(count, 2);
+            }
         }
         return null;
     }
