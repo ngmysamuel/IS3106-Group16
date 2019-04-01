@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/templates/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <ez:Breadcrumb pageName="customerManagement"/>
+        
+        <div>
+            <h3>Customer Management</h3>
+            
+            <h:form id="formAllCustomers">
+                
+               <p:messages id="messages" redisplay="false" closable="true"/>
+               
+               <p:dataTable id="dataTableAllCustomers" widgetVar="dataTableAllCustomers" value="#{customerManagementManagedBean.users}" var="user" rowKey="#{user.userId}" rowIndexVar="row"
+                            filteredValue="#{customerManagementManagedBean.filteredUsers}"
+                            rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                   <f:facet name="header">
+                       <p:outputPanel style="text-align: right;">
+                           
+                           <h:outputText value="Search all fields: "/>
+                           <p:inputText id="globalFilter" onkeyup="PF('dataTableAllCustomers').filter()" style="width:300px" placeholder="Enter keyword"/>
+                          
+                       </p:outputPanel>
+                   </f:facet>
+                   
+                   <p:column headerText="User ID" sortBy="#{user.userId}" filterBy="#{user.userId}" filterMatchMode="contains">
+                       <h:outputText value="#{user.userId}"/>
+                   </p:column>
+                   
+                   <p:column headerText="User Name" sortBy="#{user.username}" filterBy="#{user.username}" filterMatchMode="contains">
+                       <h:outputText value="#{user.username}"/>
+                   </p:column>
+                   
+                   <p:column headerText="Average Host Score" sortBy="#{user.averageHostScore}" filterBy="#{user.averageHostScore}" filterMatchMode="contains">
+                       <h:outputText value="#{user.averageHostScore}"/>
+                   </p:column>
+                   
+                   <p:column headerText="Average Attend Score" sortBy="#{user.averageAttendScore}" filterBy="#{user.averageAttendScore}" filterMatchMode="contains">
+                       <h:outputText value="#{user.averageAttendScore}"/>
+                   </p:column>
+                   
+                   <p:column headerText="Premium Status" sortBy="#{user.premium}" filterBy="#{user.premium}" filterMatchMode="equals">
+                        <p:selectOneButton onchange="PF('dataTableAllCustomers').filter()" styleClass="custom-filter">
+                            
+                            <f:converter converterId="javax.faces.Boolean" />
+                            <f:selectItem itemLabel="Premium" itemValue="true" />
+                            <f:selectItem itemLabel="Normal" itemValue="false" />
+                            <h:outputText value="#{user.premium ? 'Premium': 'Normal'}" />
+                    
+                        </p:selectOneButton>
+                   </p:column>
+                   
+                   <p:column headerText="Action">
+                       <p:commandButton update="formViewCustomer" oncomplete="PF('dialogViewCustomer').show()" icon="ui-icon-document" title="View">
+                           <f:setPropertyActionListener value="#{user}" target="#{customerManagementManagedBean.selectedUserToView}" />
+                        </p:commandButton>
+                       <p:commandButton actionListener="#{customerManagementManagedBean.doUpdateCustomer}" update="formUpdateCustomer" oncomplete="PF('dialogUpdateCustomer').show()" icon="ui-icon-pencil" title="Premium">
+                            <f:attribute name="userToUpdate" value="#{user}" />
+                        </p:commandButton>
+                   </p:column>
+   
+               </p:dataTable>
+               
+               <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                   <p:commandButton value="Yes" type="Button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                   <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+               </p:confirmDialog>
+               
+            </h:form>
+            
+            <h:form id="formViewCustomer">
+                <p:dialog id="dialogViewCustomer" widgetVar="dialogViewCustomer" header="View Customer" closable="true">
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="User ID: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.userId" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="User Name: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.username" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Password: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.password" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="First Name: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.firstName" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Last Name"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.lastName" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Gender"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.gender" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Birthday"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.birthday" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Email"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.email" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Phone Number"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.phoneNumber" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Description"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.description" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Preffered Currency"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.prefferedCurrency" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Credit Card Details"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.creditCardDetails" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Average Host Score"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.averageHostScore" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Average Attend Score"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.averageAttendScore" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Preferred Language"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.preferredLanguage" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="premium"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="customerManagementManagedBean.selectedUserToView.premium" />
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                  
+                      
+                    
+                </p:dialog>
+            </h:form> 
+            
+            <h:form id="formUpdateCustomer">
+                <p:dialog id="dialogUpdateCustomer" widgetVar="dialogUpdateCustomer" header="Update Membership Status" closable="true">
+                    <p:messages id="messagesUpdateProduct" redisplay="false"/>
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                
+                                <p:outputLabel for="Current Status" value="Status: "/>
+                                
+                            </p:column>
+                            
+                            <p:column>
+                                <p:inputText id="status" value="#{customerManagementManagedBean.selectedCustomerToUpdate.premium}"/>
+                            </p:column>
+                            
+                            <p:column>
+                                <p:message for="status"/>
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+        </div>
+            
+    </ui:define>
+
+</ui:composition>
