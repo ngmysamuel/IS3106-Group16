@@ -106,7 +106,7 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
     public ExperienceDate retrieveExperienceDateByDateId(Long id) {
         ExperienceDate ed = em.find(ExperienceDate.class, id);
         for (Booking b : ed.getBookings()) {
-            b.getUser().getUsername();
+            b.getGuest().getUsername();
         }
         return ed;
     }

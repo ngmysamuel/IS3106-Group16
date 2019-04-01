@@ -52,28 +52,28 @@ public class ViewPastExperiences {
     }
     
     public void eval(ActionEvent event) {
-        Experience e = (Experience) event.getComponent().getAttributes().get("eval");
-        String remark = (String) event.getComponent().getAttributes().get("remark");
-        BigDecimal score = (BigDecimal) event.getComponent().getAttributes().get("score");
-        Long experienceId = e.getExperienceId();
-        for (Booking b : currentUser.getBookings()) {
-            Experience eb = b.getExperienceDate().getExperience();
-            if (eb.getExperienceId().equals(experienceId)) {
-                if (b.getEvaluation() == null) {
-                    Evaluation eval = new Evaluation();
-                    eval.setBooking(b);
-                    eval.setEvaluationTime(LocalDate.now());
-                    eval.setRemark(remark);
-                    eval.setScore(score);
-                    eval.setUserEvaluating(currentUser);
-                    evaluationController.create(eval);
-                    b.setEvaluation(eval);
-                    bookingController.update(b);
-                } else {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "You have alr eval", null));
-                }
-            }
-        }
+//        Experience e = (Experience) event.getComponent().getAttributes().get("eval");
+//        String remark = (String) event.getComponent().getAttributes().get("remark");
+//        BigDecimal score = (BigDecimal) event.getComponent().getAttributes().get("score");
+//        Long experienceId = e.getExperienceId();
+//        for (Booking b : currentUser.getBookings()) {
+//            Experience eb = b.getExperienceDate().getExperience();
+//            if (eb.getExperienceId().equals(experienceId)) {
+//                if (b.getEvaluation() == null) {
+//                    Evaluation eval = new Evaluation();
+//                    eval.setBooking(b);
+//                    eval.setEvaluationTime(LocalDate.now());
+//                    eval.setRemark(remark);
+//                    eval.setScore(score);
+//                    eval.setUserEvaluating(currentUser);
+//                    evaluationController.create(eval);
+//                    b.setEvaluation(eval);
+//                    bookingController.update(b);
+//                } else {
+//                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "You have alr eval", null));
+//                }
+//            }
+//        }
     }
 
     public List<Experience> getLs() {

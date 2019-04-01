@@ -16,12 +16,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
-import javax.validation.ConstraintViolationException;
 import util.exception.CreateNewExperienceException;
+import util.exception.DeleteExperienceException;
 import util.exception.ExperienceDateNotFoundException;
-import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.UpdateEperienceInfoException;
 
 /**
  *
@@ -29,18 +29,15 @@ import util.exception.InputDataValidationException;
  */
 @Local
 public interface ExperienceControllerLocal {
-
-    public List<User> retrieveAllUsers(Experience exp);
     
     public Boolean removeFollowerFromExperience(Long id, User user);
     public Boolean addFollowerToExperience(Long id, User user);
     public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
 
+    // Experience CRUD
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
-    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId) throws InputDataValidationException;
-    public void updateExperienceInformation(Experience experience) throws ConstraintViolationException, InputDataValidationException, ExperienceNotFoundException;
-
-    public void deleteExperience(Long id, String r) throws ExperienceNotActiveException;
+    public void updateExperienceInformation(Experience experience) throws UpdateEperienceInfoException;
+    public void deleteExperience(Long id) throws DeleteExperienceException;
 
     public List<Experience> retrieveAllExperiences();
     
@@ -70,5 +67,6 @@ public interface ExperienceControllerLocal {
 
     List<Experience> retrieveExperienceBySingleDate(Date date);
     ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
-    
+
+    public BigDecimal calculateExperienceAverageScore(Long experienceId);
 }

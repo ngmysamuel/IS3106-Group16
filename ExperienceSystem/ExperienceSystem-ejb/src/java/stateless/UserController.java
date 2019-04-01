@@ -93,6 +93,37 @@ public class UserController implements UserControllerLocal {
         }
         
     }
+    
+    @Override
+    public List<User> retrieveAllUsers() {
+        Query query = em.createQuery("SELECT c FROM User c ORDER BY c.userId ASC");
+        return query.getResultList();
+    }
+
+    public User retrieveUserByUsername(String username) throws UserNotFoundException {
+        Query q = em.createQuery("SELECT u FROM User u WHERE u.username = :name");
+        q.setParameter("name", username);
+        User user = new User();
+        try {
+            user = (User) q.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new UserNotFoundException("No such user");
+        }
+        // lazy fetching
+        System.out.println("user.getExpHost: "+user.getExperienceHosted());
+        for (Experience e : user.getExperienceHosted()) {
+        }
+        return user;
+    }
+
+    public User retrieveUserById(Long id) throws UserNotFoundException {
+        User user = em.find(User.class, id);
+        if (user != null) {
+            return user;
+        } else {
+            throw new UserNotFoundException("Staff ID " + id + " does not exist!");
+        }
+    }
 
     public void update(User user) throws InputDataValidationException, UpdateUserException {
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
@@ -141,37 +172,6 @@ public class UserController implements UserControllerLocal {
         Experience exp = em.find(Experience.class, id);
         experienceController.removeFollowerFromExperience(id, user);
         user.getFollowedExperiences().remove(exp);
-    }
-
-    @Override
-    public List<User> retrieveAllUsers() {
-        Query query = em.createQuery("SELECT c FROM User c ORDER BY c.userId ASC");
-        return query.getResultList();
-    }
-
-    public User retrieveUserByUsername(String username) throws UserNotFoundException {
-        Query q = em.createQuery("SELECT u FROM User u WHERE u.username = :name");
-        q.setParameter("name", username);
-        User user = new User();
-        try {
-            user = (User) q.getSingleResult();
-        } catch (NoResultException | NonUniqueResultException ex) {
-            throw new UserNotFoundException("No such user");
-        }
-        // lazy fetching
-        System.out.println("user.getExpHost: "+user.getExperienceHosted());
-        for (Experience e : user.getExperienceHosted()) {
-        }
-        return user;
-    }
-
-    public User retrieveUserById(Long id) throws UserNotFoundException {
-        User user = em.find(User.class, id);
-        if (user != null) {
-            return user;
-        } else {
-            throw new UserNotFoundException("Staff ID " + id + " does not exist!");
-        }
     }
 
     @Override
@@ -244,28 +244,6 @@ public class UserController implements UserControllerLocal {
         return lsExperiences;
     }
 
-//    @Override
-//    public void createHostExperience(Experience exp, Long id) {
-//        User user = em.find(User.class, id);
-//        try {
-//            exp = experienceController.createNewExperience(exp);
-//        } catch (CreateNewExperienceException ex) {
-//            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (InputDataValidationException ex) {
-//            Logger.getLogger(UserController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        user.getExperienceHosted().add(exp);
-//    }
-
-    @Override
-    public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException, ExperienceNotActiveException {
-        Experience exp = em.find(Experience.class, expId);
-        User user = em.find(User.class, id);
-        if (user.getUserId() != exp.getHost().getUserId()) {
-            throw new InvalidLoginCredentialException("You are not the host");
-        }
-        experienceController.deleteExperience(expId, r);
-    }
 
     @Override
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException {

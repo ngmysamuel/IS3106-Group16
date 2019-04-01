@@ -45,36 +45,26 @@ public class User implements Serializable {
     private String firstName;
     @NotNull
     private String lastName;
-//    @NotNull
     private String gender;
-//    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date birthday;
     @NotNull
     private String email;
-//    @NotNull
     private Long phoneNumber;
-//    @NotNull
     private String prefferedCurrency;
-//    @NotNull
     private List<String> creditCardDetails;
     private BigDecimal averageHostScore;
     private BigDecimal averageAttendScore;
     private String selfIntro;
     @NotNull
-    private Boolean premium;
-    
+    private Boolean premium; 
     @OneToOne
     private Language preferredLanguage;
+    
     @ManyToMany
     private List<User> blocks; // Other users blocked by this user
     @ManyToMany
-    private List<User> follows; // Follow other users
-    @OneToMany(mappedBy = "userEvaluating")
-    private List<Evaluation> evaluations;
-    @OneToMany (mappedBy = "user")
-    private List<Booking> bookings;
-    
+    private List<User> follows; // Follow other users  
     @ManyToMany(mappedBy = "follows")
     private List<User> followers;
     @ManyToMany(mappedBy = "blocks")
@@ -85,15 +75,21 @@ public class User implements Serializable {
     private List<Message> messagesSent;
     @ManyToMany(mappedBy = "users")
     private List<Notification> notifications;
-    @OneToMany(mappedBy = "host")
-    private List<Experience> experienceHosted = new ArrayList<Experience>();
-    @ManyToMany(mappedBy = "followers")
-    private List<Experience> followedExperiences;
+    
+    @OneToMany(mappedBy = "guest")
+    private List<Booking> bookings;
     @OneToMany(mappedBy = "user")
     private List<Appeal> appeals;
+    
+    @OneToMany(mappedBy = "host")
+    private List<Experience> experienceHosted;
+    @ManyToMany(mappedBy = "followers")
+    private List<Experience> followedExperiences;
+ 
+    private List<Evaluation> evaluationsForUserAsGuest;
+    private List<Evaluation> evaluationsForUserAsHost;
 
     public User() {
-        
         // for initializing and testing purposes
         firstName = "User";
         lastName = "Name";
@@ -101,7 +97,8 @@ public class User implements Serializable {
         creditCardDetails = new ArrayList();
         blocks = new ArrayList();
         follows = new ArrayList();
-        evaluations = new ArrayList();
+        evaluationsForUserAsGuest = new ArrayList();
+        evaluationsForUserAsHost = new ArrayList();
         bookings = new ArrayList();
         followers = new ArrayList();
         blockers = new ArrayList();
@@ -313,12 +310,20 @@ public class User implements Serializable {
         this.follows = follows;
     }
 
-    public List<Evaluation> getEvaluations() {
-        return evaluations;
+    public List<Evaluation> getEvaluationsForUserAsGuest() {
+        return evaluationsForUserAsGuest;
     }
 
-    public void setEvaluations(List<Evaluation> evaluations) {
-        this.evaluations = evaluations;
+    public void setEvaluationsForUserAsGuest(List<Evaluation> evaluationsForUserAsGuest) {
+        this.evaluationsForUserAsGuest = evaluationsForUserAsGuest;
+    }
+
+    public List<Evaluation> getEvaluationsForUserAsHost() {
+        return evaluationsForUserAsHost;
+    }
+
+    public void setEvaluationsForUserAsHost(List<Evaluation> evaluationsForUserAsHost) {
+        this.evaluationsForUserAsHost = evaluationsForUserAsHost;
     }
 
     public List<Booking> getBookings() {

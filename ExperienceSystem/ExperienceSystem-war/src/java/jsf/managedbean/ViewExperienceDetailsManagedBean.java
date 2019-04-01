@@ -105,7 +105,7 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
             newBooking.setTotalPrice(total);
             newBooking.setExperienceDate(selectedExperienceDate);
             newBooking.setNumberOfPeople(numOfPeople);
-            newBooking.setUser(currentUser);
+            newBooking.setGuest(currentUser);
         }
         catch (ExperienceDateNotFoundException ex){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));

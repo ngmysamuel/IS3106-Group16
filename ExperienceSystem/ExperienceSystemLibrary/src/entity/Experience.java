@@ -19,6 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -38,16 +40,15 @@ public class Experience implements Serializable {
     private List<String> providingItems;
     private List<String> requiringItems;
     private String supportingDocument;
-    // 0.0 - 5.0
-    @NotNull
-    private BigDecimal averageScore;
+    
     @NotNull
     private String address;
     private List<String> reminders;
-    // An experience is active only when it has experience dates that are happening currently or will happen in the future
+    // An experience is inactive only when it is deleted
     @NotNull
     private boolean active; 
-    private BigDecimal avgPrice;
+    private BigDecimal averagePrice;
+    private BigDecimal averageScore;
 
     @ManyToOne
     @NotNull
@@ -78,8 +79,7 @@ public class Experience implements Serializable {
         this.title = title;
         this.description = description;
         // for initializing and testing purposes
-        averageScore = new BigDecimal(0);
-        active = false;
+        active = true;
     }
     
     public Long getExperienceId() {
@@ -135,14 +135,6 @@ public class Experience implements Serializable {
 
     public void setRequiringItems(List<String> requiringItems) {
         this.requiringItems = requiringItems;
-    }
-
-    public BigDecimal getAverageScore() {
-        return averageScore;
-    }
-
-    public void setAverageScore(BigDecimal averageScore) {
-        this.averageScore = averageScore;
     }
 
     public String getAddress() {
@@ -262,23 +254,44 @@ public class Experience implements Serializable {
         this.nextAvailDate = nextAvailDate;
     }
 
-    public BigDecimal getAvgPrice() {
+    public BigDecimal getAveragePrice() {
         BigDecimal sum = BigDecimal.ZERO;
         BigDecimal count = BigDecimal.ZERO;
-        if (!this.experienceDates.isEmpty()) {
+        if (!this.experienceDates.isEmpty() && experienceDates.size() > 0) {
             for (ExperienceDate ed : experienceDates) {
                 count = count.add(BigDecimal.ONE);
                 sum = sum.add(ed.getPrice());
             }
-System.out.println(sum);
-System.out.println("count: "+count);
-            return sum.divide(count,2,RoundingMode.HALF_UP);
+            System.out.println(sum);
+            System.out.println("count: " + count);
+            return sum.divide(count, 2, RoundingMode.HALF_UP);
         }
         return null;
     }
 
-    public void setAvgPrice(BigDecimal avgPrice) {
-        this.avgPrice = avgPrice;
+    public void setAveragePrice(BigDecimal averagePrice) {
+        this.averagePrice = averagePrice;
+    }
+
+    public BigDecimal getAverageScore() {
+        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal count = BigDecimal.ZERO;
+        if (!this.experienceDates.isEmpty() && experienceDates.size() > 0) {
+            for (ExperienceDate ed : experienceDates) {
+                for (Booking booking: ed.getBookings()) {
+                    if (booking.isHostEvaluated()) {
+                        count = count.add(BigDecimal.ONE);
+                        sum = sum.add(booking.getEvaluationByGuest().getScore());
+                    }
+                }     
+            }
+            return sum.divide(count, 2);
+        }
+        return null;
+    }
+
+    public void setAverageScore(BigDecimal averageScore) {
+        this.averageScore = averageScore;
     }
     
 }

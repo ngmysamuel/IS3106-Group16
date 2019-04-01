@@ -42,7 +42,7 @@ public class ViewAllHostExperiencesManagedBean implements Serializable {
     
     public void viewHostExperienceDetails(ActionEvent event) throws IOException {
         Experience hostExperienceToView = (Experience)event.getComponent().getAttributes().get("hostExperienceToView");
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("hostExperienceIdToView", hostExperienceToView.getExperienceId());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hostExperienceIdToView", hostExperienceToView.getExperienceId());
         FacesContext.getCurrentInstance().getExternalContext().redirect("manageHostExperience.xhtml");
     }
 
