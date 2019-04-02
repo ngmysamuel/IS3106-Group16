@@ -83,7 +83,7 @@
                                 <h:outputLabel value="User ID: "/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.userId" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.userId}" />
                             </p:column>
                         </p:row>
                         
@@ -92,7 +92,7 @@
                                 <h:outputLabel value="User Name: "/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.username" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.username}" />
                             </p:column>
                         </p:row>
                         
@@ -101,7 +101,7 @@
                                 <h:outputLabel value="Password: "/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.password" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.password}" />
                             </p:column>
                         </p:row>
                         
@@ -110,7 +110,7 @@
                                 <h:outputLabel value="First Name: "/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.firstName" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.firstName}" />
                             </p:column>
                         </p:row>
                         
@@ -119,7 +119,7 @@
                                 <h:outputLabel value="Last Name"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.lastName" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.lastName}" />
                             </p:column>
                         </p:row>
                         <p:row>
@@ -127,7 +127,7 @@
                                 <h:outputLabel value="Gender"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.gender" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.gender}" />
                             </p:column>
                         </p:row>
                         
@@ -136,7 +136,7 @@
                                 <h:outputLabel value="Birthday"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.birthday" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.birthday}" />
                             </p:column>
                         </p:row>
                         
@@ -145,7 +145,7 @@
                                 <h:outputLabel value="Email"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.email" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.email}" />
                             </p:column>
                         </p:row>
                         
@@ -154,7 +154,7 @@
                                 <h:outputLabel value="Phone Number"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.phoneNumber" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.phoneNumber}" />
                             </p:column>
                         </p:row>
                         
@@ -163,7 +163,7 @@
                                 <h:outputLabel value="Description"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.description" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.description}" />
                             </p:column>
                         </p:row>
                         
@@ -172,7 +172,7 @@
                                 <h:outputLabel value="Preffered Currency"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.prefferedCurrency" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.prefferedCurrency}" />
                             </p:column>
                         </p:row>
                         
@@ -181,7 +181,7 @@
                                 <h:outputLabel value="Credit Card Details"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.creditCardDetails" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.creditCardDetails}" />
                             </p:column>
                         </p:row>
                         
@@ -190,7 +190,7 @@
                                 <h:outputLabel value="Average Host Score"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.averageHostScore" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.averageHostScore}" />
                             </p:column>
                         </p:row>
                         
@@ -199,7 +199,7 @@
                                 <h:outputLabel value="Average Attend Score"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.averageAttendScore" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.averageAttendScore}" />
                             </p:column>
                         </p:row>
                         
@@ -208,7 +208,7 @@
                                 <h:outputLabel value="Preferred Language"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.preferredLanguage" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.preferredLanguage}" />
                             </p:column>
                         </p:row>
                         
@@ -217,7 +217,7 @@
                                 <h:outputLabel value="premium"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="customerManagementManagedBean.selectedUserToView.premium" />
+                                <h:outputText value="#{customerManagementManagedBean.selectedUserToView.premium}" />
                             </p:column>
                         </p:row>
                         
@@ -246,6 +246,12 @@
                             
                             <p:column>
                                 <p:message for="status"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Customer" update="@form formAllCustomers:dataTableAllCustomers" actionListener="#{customerManagementManagedBean.updateCustomer}" oncomplete="PF('dialogUpdateCustomer').show();" />
                             </p:column>
                         </p:row>
                         
