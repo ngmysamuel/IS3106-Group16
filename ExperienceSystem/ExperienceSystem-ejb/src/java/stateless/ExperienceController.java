@@ -18,8 +18,10 @@ import enumerated.StatusEnum;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -35,7 +37,6 @@ import javax.validation.ValidatorFactory;
 import util.exception.CreateNewExperienceException;
 import util.exception.DeleteExperienceException;
 import util.exception.ExperienceDateNotFoundException;
-import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UpdateEperienceInfoException;
@@ -57,6 +58,8 @@ public class ExperienceController implements ExperienceControllerLocal {
     private LocationControllerLocal locationControllerLocal;
     @EJB
     private ExperienceDateCancellationReportControllerLocal experienceDateCancellationReportControllerLocal;
+    @EJB
+    private ExperienceDateControllerLocal experienceDateControllerLocal;
     
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
@@ -284,30 +287,11 @@ public class ExperienceController implements ExperienceControllerLocal {
         List<Experience> allExperiences = this.retrieveAllExperiences();
         List<Experience> selectedExperiences = null;
         for(Experience e: allExperiences){
-            if(this.getAveragePrice(e).compareTo(minPrice) >= 0 && this.getAveragePrice(e).compareTo(maxPrice) <= 0){
+            if(e.getAveragePrice() != null && e.getAveragePrice().compareTo(minPrice) >= 0 && e.getAveragePrice().compareTo(maxPrice) <= 0){
                 boolean add = selectedExperiences.add(e);
             }
         }
         return selectedExperiences;
-    }
-    
-    @Override
-    public BigDecimal getAveragePrice(Experience experience){
-        Query query = em.createQuery("SELECT d FROM ExperienceDate d WHERE d.experience.experienceId = :inExperienceId");
-        query.setParameter("inExperienceId", experience.getExperienceId());
-        List<ExperienceDate> dates = query.getResultList();
-        
-        BigDecimal total = new BigDecimal('0');
-        int count = dates.size();
-        for(ExperienceDate date : dates){
-            total.add(date.getPrice());
-        }
-        BigDecimal num = new BigDecimal(count);
-        
-        if(num.equals(new BigDecimal(0))){
-            return new BigDecimal(0);
-        }
-        return total.divide(num);
     }
     
     @Override
@@ -321,17 +305,18 @@ public class ExperienceController implements ExperienceControllerLocal {
         return exps;
     }
     
-    @Override
-    public List<Experience> retrieveExperienceBySingleDate(Date date) {
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.experienceDates.startDate = :inDate");
-        query.setParameter("inDate", date);
-        List<Experience> experiences = query.getResultList();
-        for(Experience e: experiences){
-            e.getExperienceDates();
-        }
-              
-        return experiences;
-    }
+    // this function shoud not work properly
+//    @Override
+//    public List<Experience> retrieveExperienceBySingleDate(Date date) {
+//        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.experienceDates.startDate = :inDate");
+//        query.setParameter("inDate", date);
+//        List<Experience> experiences = query.getResultList();
+//        for(Experience e: experiences){
+//            e.getExperienceDates();
+//        }
+//              
+//        return experiences;
+//    }
     
     @Override
     public List<Experience> retrieveExperienceByDate(Date startDate){
@@ -366,34 +351,6 @@ public class ExperienceController implements ExperienceControllerLocal {
         return expDates;
     }
     
-    
-    public Boolean removeFollowerFromExperience(Long id, User user) {
-        Experience exp = em.find(Experience.class, id);
-        return exp.getFollowers().remove(user);
-    }
-
-    public Boolean addFollowerToExperience(Long id, User user) {
-        Experience exp = em.find(Experience.class, id);
-        return exp.getFollowers().add(user);
-    }
-
-    
-
-    public void persist(Object object) {
-        em.persist(object);
-    }
-
-    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Experience>> constraintViolations) {
-        String msg = "Input data validation error!:";
-            
-        for(ConstraintViolation constraintViolation:constraintViolations)
-        {
-            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
-        }
-        
-        return msg;
-    }
-
     @Override
     public ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException {
         Query query = em.createQuery("SELECT ed FROM ExperienceDate ed WHERE ed.experience.experienceId = :inExperienceId AND ed.startDate = :inDate");
@@ -410,27 +367,99 @@ public class ExperienceController implements ExperienceControllerLocal {
         }
     }
     
-    // The navigation route: Experience -> ExperienceDate -> Booking -> Evaluation
-    @Override
-    public BigDecimal calculateExperienceAverageScore(Long experienceId) {
-        BigDecimal averageScore = null;
-
-        try {
-            Experience experience = retrieveExperienceById(experienceId);
-            List<ExperienceDate> experienceDates = experience.getExperienceDates();
-            
-            if (experienceDates != null && experienceDates.size() > 0) {  
-                BigDecimal sumOfScores = new BigDecimal(0);
-                averageScore = new BigDecimal(0);
-                for (ExperienceDate experienceDate : experienceDates) {
-                    sumOfScores.add(experienceDate.getPrice());
-                }
-                averageScore = sumOfScores.divide(new BigDecimal(experienceDates.size()));
-            }
-        } catch (ExperienceNotFoundException ex) {
-        }
-
-        return averageScore;
+    public Boolean removeFollowerFromExperience(Long id, User user) {
+        Experience exp = em.find(Experience.class, id);
+        return exp.getFollowers().remove(user);
     }
 
+    public Boolean addFollowerToExperience(Long id, User user) {
+        Experience exp = em.find(Experience.class, id);
+        return exp.getFollowers().add(user);
+    }
+
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Experience>> constraintViolations) {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
+
+
+    // filtering section
+    // return a list of experiences which have at least one experience dates whose date matches the filtering date
+    @Override
+    public List<Experience> filterExperienceByDate(List<Experience> experienceList, Date filteringDate) {  
+        ListIterator iterator = experienceList.listIterator();
+        
+        while(iterator.hasNext()) {
+            Experience experience = (Experience)iterator.next();
+            
+            // retrieve the list of active experience dates of this experience
+            List<ExperienceDate> activeExperienceDates = experienceDateControllerLocal.retrieveAllActiveExperienceDatesByExperienceId(experience.getExperienceId());
+            List<ExperienceDate> experienceDatesMatched = new ArrayList();
+            
+            // remove the experience if the experience does not have any active experience date whose date matches the filtering date
+            for(ExperienceDate experienceDate: activeExperienceDates) {
+                if(experienceDate.getStartDate().compareTo(filteringDate) == 0) {
+                    experienceDatesMatched.add(experienceDate);
+                }
+            }
+            if(experienceDatesMatched.size() == 0) {
+                iterator.remove();
+            } else {
+                experience.setExperienceDates(experienceDatesMatched);
+            }
+        }
+
+        return experienceList;
+    }
+    
+    // return a list of experiences which have at least one experience dates which has the number of slots available
+    @Override
+    public List<Experience> filterExperienceBySlotsAvailable(List<Experience> experienceList, Integer numOfPeople) {      
+        ListIterator iterator = experienceList.listIterator();
+        
+        while(iterator.hasNext()) {
+            Experience experience = (Experience)iterator.next();       
+            List<ExperienceDate> availableExperienceDates = experience.getExperienceDates();
+            
+            ListIterator iterator2 = availableExperienceDates.listIterator();
+            while(iterator2.hasNext()) {
+                ExperienceDate experienceDate = (ExperienceDate)iterator2.next();
+                if(experienceDate.getSpotsAvailable() < numOfPeople){
+                    iterator2.remove();
+                }
+            }
+            
+            // remove the experience if it does not have any active experience date with slots available for the request
+            if(availableExperienceDates.size() == 0) {
+                iterator.remove();
+            }
+        }
+
+        return experienceList;
+    }
+    
+    // return a list of experiences which have at least one experience dates which has the required category
+    @Override
+    public List<Experience> filterExperienceByCategory(List<Experience> experienceList, Long categoryId) {
+
+        if (categoryId != null) {
+            ListIterator iterator = experienceList.listIterator();
+
+            while (iterator.hasNext()) {
+                Experience experience = (Experience) iterator.next();
+
+                if (experience.getCategory().getCategoryId().compareTo(categoryId) != 0) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        return experienceList;
+    }
 }

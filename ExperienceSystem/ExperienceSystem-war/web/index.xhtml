@@ -91,13 +91,14 @@
                 </div>
                 <div id="searchingBox">
                     <h:form id="formSearchExperience">
+                        <p:growl id="messageIndexSearchExperience" />
                         <p:outputLabel value="Book Your Experience"/>
                         <br/>
                         <br/>
                         
                         <p:outputLabel for="date" value="Date" />
                         <br/>
-                        <p:calendar id="date" value="#{indexManagedBean.searchDate}" showOn="button" required="true" mindate="#{indexManagedBean.minSearchDate}" requiredMessage="Please select a date"/>
+                        <p:calendar id="date" value="#{indexManagedBean.searchDate}" showOn="button" required="true" pattern="dd/MM/yyyy" mindate="#{indexManagedBean.minSearchDate}" requiredMessage="Please select a date"/>
                         <br/>
                         <br/>
                         
@@ -115,7 +116,7 @@
                         <p:spinner id="numOfPeople" value="#{indexManagedBean.searchNumOfPeople}" min="1" max="10" required="true" requiredMessage="Please select the number of people"/>
                         <br/>
                         <br/>
-                        <p:commandButton value="Search" action="#{indexManagedBean.searchExperience}" />
+                        <p:commandButton value="Search" actionListener="#{indexManagedBean.searchExperience}" />
                     </h:form>
                 </div>
             </div>

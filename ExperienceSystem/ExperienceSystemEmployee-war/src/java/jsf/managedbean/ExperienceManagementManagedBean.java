@@ -5,6 +5,7 @@
  */
 package jsf.managedbean;
 
+import java.io.Serializable;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -16,7 +17,7 @@ import stateless.ExperienceControllerLocal;
  */
 @Named(value = "experienceManagementManagedBean")
 @ViewScoped
-public class ExperienceManagementManagedBean {
+public class ExperienceManagementManagedBean implements Serializable {
 
     @EJB(name = "ExperienceControllerLocal")
     private ExperienceControllerLocal experienceControllerLocal;

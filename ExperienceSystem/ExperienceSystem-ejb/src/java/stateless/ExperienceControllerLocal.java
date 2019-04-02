@@ -39,34 +39,26 @@ public interface ExperienceControllerLocal {
     public void updateExperienceInformation(Experience experience) throws UpdateEperienceInfoException;
     public void deleteExperience(Long id) throws DeleteExperienceException;
 
-    public List<Experience> retrieveAllExperiences();
-    
+    // retrieving
+    public List<Experience> retrieveAllExperiences();  
     public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId);
-
     public Experience retrieveExperienceByTitle(String title) throws ExperienceNotFoundException;
-
     public List<Experience> retrieveTopRatedExperience();
-
     public List<Experience> retrieveExperienceByLocation(Location location);
-
-    public BigDecimal getAveragePrice(Experience experience);
-
     public List<Experience> retrieveExperienceByPrice(BigDecimal minPrice, BigDecimal maxPrice);
-
     public List<Experience> retrieveExperienceByType(Type type);
-
     public List<Experience> retrieveExperienceByLanguage(Language language);
-
-    public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
-
     public List<Experience> retrieveExperienceByDate(Date startDate);
-
     public List<Experience> retrieveExperienceByCategory(Category category);
-
     public List<Experience> retrieveExperienceByName(String title);
 
-    List<Experience> retrieveExperienceBySingleDate(Date date);
+    // filtering 
+    public List<Experience> filterExperienceByDate(List<Experience> experienceList, Date filteringDate);
+    public List<Experience> filterExperienceBySlotsAvailable(List<Experience> experienceList, Integer numOfPeople);
+    public List<Experience> filterExperienceByCategory(List<Experience> experienceList, Long categoryId);
+    
+    public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
+
     ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
 
-    public BigDecimal calculateExperienceAverageScore(Long experienceId);
 }

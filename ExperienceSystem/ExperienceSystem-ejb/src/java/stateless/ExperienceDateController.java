@@ -11,8 +11,11 @@ import entity.ExperienceDate;
 import entity.ExperienceDateCancellationReport;
 import entity.ExperienceDatePaymentReport;
 import enumerated.StatusEnum;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
+import static java.util.Locale.filter;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -153,6 +156,26 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
             }
         }
     }
+    
+    @Override
+    public List<ExperienceDate> retrieveAllActiveExperienceDatesByExperienceId(Long experienceId) {
+        List<ExperienceDate> activeExperienceDates = new ArrayList();
+        
+        Experience experience = em.find(Experience.class, experienceId);
+        if(experience != null) {
+            activeExperienceDates = experience.getExperienceDates();
+            ListIterator iter = activeExperienceDates.listIterator();
+            while(iter.hasNext()){
+                ExperienceDate currentExperienceDate = (ExperienceDate)iter.next();
+                if(!currentExperienceDate.isActive()) {
+                    iter.remove();
+                }
+            }
+            return activeExperienceDates;
+        } else {
+            return activeExperienceDates;
+        }
+    }
 
     public List<ExperienceDateCancellationReport> retrieveAllExperienceDateCancellationReports() {
         Query query = em.createQuery("SELECT r FROM ExperienceDateCancellationReport r ORDER BY r.cancellationReportId");
@@ -163,10 +186,6 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
         Query query = em.createQuery("SELECT r FROM ExperienceDatePaymentReport r WHERE r.experienceDate.experienceDateId = :inExperienceDateId");
         query.setParameter("inExperienceDateId", experienceDate.getExperienceDateId());
         return (ExperienceDatePaymentReport) query.getResultList();
-    }
-
-    public void persist(Object object) {
-        em.persist(object);
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ExperienceDate>> constraintViolations) {

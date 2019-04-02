@@ -8,16 +8,14 @@ package jsf.managedbean;
 import entity.Category;
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.inject.Named;
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
 import stateless.CategoryControllerLocal;
 import stateless.UserControllerLocal;
 
@@ -40,7 +38,7 @@ public class IndexManagedBean implements Serializable {
     // User input
     private Date searchDate;
     private Long searchCategoryId;
-    private int searchNumOfPeople;
+    private Integer searchNumOfPeople;
 
     public IndexManagedBean() {
     }
@@ -50,7 +48,14 @@ public class IndexManagedBean implements Serializable {
         categories = categoryControllerLocal.retrieveAllCategories();
     }
 
-    public void searchExperience() throws IOException {
+    public void searchExperience(ActionEvent event) throws IOException {
+        System.out.println("******** IndexManagedBean: searchExperience");
+        System.out.println("    **** IndexManagedBean: searchDate" + searchDate.toString());
+        System.out.println("    **** IndexManagedBean: searchCategoryId " + searchCategoryId);
+        System.out.println("    **** IndexManagedBean: searchNumOfPeople " + searchNumOfPeople);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("searchDate", searchDate);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("searchCategoryId", searchCategoryId);
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("searchNumOfPeople", searchNumOfPeople);
         FacesContext.getCurrentInstance().getExternalContext().redirect("./userOperations/searchExperience.xhtml");
     }
 
@@ -87,14 +92,12 @@ public class IndexManagedBean implements Serializable {
         this.searchCategoryId = searchCategoryId;
     }
 
-    public int getSearchNumOfPeople() {
+    public Integer getSearchNumOfPeople() {
         return searchNumOfPeople;
     }
 
-    public void setSearchNumOfPeople(int searchNumOfPeople) {
+    public void setSearchNumOfPeople(Integer searchNumOfPeople) {
         this.searchNumOfPeople = searchNumOfPeople;
-
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchNumOfPeople", searchNumOfPeople);
     }
 
 }

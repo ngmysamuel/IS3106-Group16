@@ -75,7 +75,7 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
     @PostConstruct
     public void postConstruct(){
         experienceEntityToView = (Experience)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("experienceEntityToView");
-        price = experienceController.getAveragePrice(experienceEntityToView);
+        price = experienceEntityToView.getAveragePrice();
         isLogin = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
         if(isLogin != null && isLogin){
             currentUser = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
