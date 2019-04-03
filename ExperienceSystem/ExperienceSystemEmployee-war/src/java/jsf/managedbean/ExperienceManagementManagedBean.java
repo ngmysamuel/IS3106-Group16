@@ -5,9 +5,7 @@
  */
 package jsf.managedbean;
 
-<<<<<<< HEAD
 import java.io.Serializable;
-=======
 import entity.Category;
 import entity.Experience;
 import entity.Language;
@@ -19,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
->>>>>>> 8d72763091b2b8088b0b029abf0f5bfb1f99befd
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -37,9 +34,6 @@ import stateless.TypeControllerLocal;
  */
 @Named(value = "experienceManagementManagedBean")
 @ViewScoped
-<<<<<<< HEAD
-public class ExperienceManagementManagedBean implements Serializable {
-=======
 public class ExperienceManagementManagedBean implements Serializable{
 
     @EJB(name = "CategoryControllerLocal")
@@ -53,7 +47,6 @@ public class ExperienceManagementManagedBean implements Serializable{
 
     @EJB(name = "LanguageControllerLocal")
     private LanguageControllerLocal languageControllerLocal;
->>>>>>> 8d72763091b2b8088b0b029abf0f5bfb1f99befd
 
     @EJB(name = "ExperienceControllerLocal")
     private ExperienceControllerLocal experienceControllerLocal;
