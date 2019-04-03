@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,18 +22,18 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Location implements Serializable {
 
-    
-    @OneToMany(mappedBy = "location")
-    private List<Experience> experiences;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long locationId;
     @NotNull
-    private String location;
+    private String name;
+    
+    @OneToMany(mappedBy = "location")
+    private List<Experience> experiences;
 
     public Location() {
+        experiences = new ArrayList();
     }
     
     public List<Experience> getExperiences() {
@@ -43,12 +44,12 @@ public class Location implements Serializable {
         this.experiences = experiences;
     }
 
-    public String getLocation() {
-        return location;
+    public String getName() {
+        return name;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getLocationId() {

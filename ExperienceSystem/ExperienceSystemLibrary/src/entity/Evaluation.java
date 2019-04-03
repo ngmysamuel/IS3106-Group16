@@ -15,42 +15,52 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author Asus
  */
+
+// Evaluation is both for a guest to evaluate an experience and for a host to evaluate a guest
 @Entity
 public class Evaluation implements Serializable {
-
-    @ManyToOne
-    private User userBeingEvaluated;
-    
-    @ManyToOne
-    private User userEvaluating;
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long evaluationId;
-    @NotNull
-    private LocalDate evaluationTime;
     private String remark;
     @NotNull
+    @Min(0)
+    @Max(5)
     private BigDecimal score;
-    @OneToOne
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date evaluationTime;
+    
+    @NotNull
+    @ManyToOne
     private Booking booking;
+    @NotNull
+    @ManyToOne
+    private User userEvaluating; // associated with the booking, it indicates whether this evaluation is written by a host or a guest 
+    
 
     public Evaluation() {
-    }
-    
-    public LocalDate getEvaluationTime() {
-        return evaluationTime;
+        score = new BigDecimal(0);
     }
 
-    public void setEvaluationTime(LocalDate evaluationTime) {
-        this.evaluationTime = evaluationTime;
+    public Long getEvaluationId() {
+        return evaluationId;
+    }
+
+    public void setEvaluationId(Long evaluationId) {
+        this.evaluationId = evaluationId;
     }
 
     public String getRemark() {
@@ -69,6 +79,14 @@ public class Evaluation implements Serializable {
         this.score = score;
     }
 
+    public Date getEvaluationTime() {
+        return evaluationTime;
+    }
+
+    public void setEvaluationTime(Date evaluationTime) {
+        this.evaluationTime = evaluationTime;
+    }
+
     public Booking getBooking() {
         return booking;
     }
@@ -77,13 +95,15 @@ public class Evaluation implements Serializable {
         this.booking = booking;
     }
 
-    public Long getEvaluationId() {
-        return evaluationId;
+    public User getUserEvaluating() {
+        return userEvaluating;
     }
 
-    public void setEvaluationId(Long evaluationId) {
-        this.evaluationId = evaluationId;
+    public void setUserEvaluating(User userEvaluating) {
+        this.userEvaluating = userEvaluating;
     }
+    
+
 
     @Override
     public int hashCode() {
@@ -108,22 +128,6 @@ public class Evaluation implements Serializable {
     @Override
     public String toString() {
         return "entity.Evaluation[ id=" + evaluationId + " ]";
-    }
-
-    public User getUserBeingEvaluated() {
-        return userBeingEvaluated;
-    }
-
-    public void setUserBeingEvaluated(User userBeingEvaluated) {
-        this.userBeingEvaluated = userBeingEvaluated;
-    }
-
-    public User getUserEvaluating() {
-        return userEvaluating;
-    }
-
-    public void setUserEvaluating(User userEvaluating) {
-        this.userEvaluating = userEvaluating;
     }
     
 }

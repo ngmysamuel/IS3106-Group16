@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -16,6 +17,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -25,6 +29,25 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class ExperienceDate implements Serializable, Comparable<ExperienceDate> {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long experienceDateId;
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    private Date startDate;
+    @NotNull
+    @Min(1)
+    private Integer capacity;
+    @NotNull
+    @Min(0)
+    private Integer spotsAvailable;
+    @NotNull
+    private BigDecimal price;
+    // An Experience Date is active only if it has not happened (it is upcoming)
+    @NotNull
+    private boolean active;
+    
     @OneToOne(mappedBy = "experienceDate")
     private ExperienceDateCancellationReport experienceDateCancellationReport;
     @OneToMany(mappedBy = "experienceDate")
@@ -33,29 +56,9 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
     private Experience experience;
     @OneToOne
     private ExperienceDatePaymentReport experienceDatePaymentReport;
-    
-    
-    
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long experienceDateId;
-        @NotNull
-    private Date startDate;
-//    @NotNull
-    private Date endDate;
-    @NotNull
-    private Integer capacity;
-//    @NotNull
-    private Integer spotsAvailable;
-    @NotNull
-    private BigDecimal price;
-    @NotNull
-    private boolean active;
-    
 
     public ExperienceDate() {
-
+        bookings = new ArrayList();
     }
     
 
@@ -97,15 +100,6 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public Integer getCapacity() {

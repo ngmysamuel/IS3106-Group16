@@ -8,14 +8,19 @@ package entity;
 import enumerated.StatusEnum;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -25,13 +30,14 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Booking implements Serializable {
 
-    @OneToOne(mappedBy = "booking")
-    private Evaluation evaluation;
-    
+  
+    @NotNull
     @ManyToOne
-    private User user;
+    private User guest;
 
+    @NotNull
     private boolean userEvaluated;
+    @NotNull
     private boolean hostEvaluated;
     
     private static final long serialVersionUID = 1L;
@@ -39,8 +45,11 @@ public class Booking implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
     @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date bookingDate;
     @NotNull
+    @Min(1)
+    @Max(10)
     private Integer numberOfPeople;
     @NotNull
     private BigDecimal totalPrice;
@@ -48,6 +57,10 @@ public class Booking implements Serializable {
     private StatusEnum status;
     @ManyToOne
     private ExperienceDate experienceDate;
+    @OneToOne(mappedBy = "booking")
+    private Evaluation evaluationByGuest;
+    @OneToOne(mappedBy = "booking")
+    private Evaluation evaluationByHost;
     @OneToOne
     private ExperienceDateCancellationReport cancellationReport;
 
@@ -100,12 +113,20 @@ public class Booking implements Serializable {
         return true;
     }
 
-    public Evaluation getEvaluation() {
-        return evaluation;
+    public Evaluation getEvaluationByGuest() {
+        return evaluationByGuest;
     }
 
-    public void setEvaluation(Evaluation evaluation) {
-        this.evaluation = evaluation;
+    public void setEvaluationByGuest(Evaluation evaluationByGuest) {
+        this.evaluationByGuest = evaluationByGuest;
+    }
+
+    public Evaluation getEvaluationByHost() {
+        return evaluationByHost;
+    }
+
+    public void setEvaluationByHost(Evaluation evaluationByHost) {
+        this.evaluationByHost = evaluationByHost;
     }
 
     public Date getBookingDate() {
@@ -145,12 +166,12 @@ public class Booking implements Serializable {
         return "entity.Booking[ id=" + bookingId + " ]";
     }
 
-    public User getUser() {
-        return user;
+    public User getGuest() {
+        return guest;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setGuest(User guest) {
+        this.guest = guest;
     }
 
     public boolean isUserEvaluated() {

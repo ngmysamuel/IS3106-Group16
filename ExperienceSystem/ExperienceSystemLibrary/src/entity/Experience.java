@@ -8,7 +8,6 @@ package entity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -20,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -28,42 +28,45 @@ import javax.persistence.OneToMany;
 @Entity
 public class Experience implements Serializable {
 
-    
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long experienceId;
-//    @NotNull
+    @NotNull
     private String title;
     private String description;
     private List<String> providingItems;
     private List<String> requiringItems;
     private String supportingDocument;
-//    @NotNull
-    private BigDecimal averageScore;
-//    @NotNull
+    
+    @NotNull
     private String address;
     private List<String> reminders;
-//    @NotNull
-    private boolean active;
-    
-    private BigDecimal avgPrice;
+    // An experience is inactive only when it is deleted
+    @NotNull
+    private boolean active; 
+    private BigDecimal averagePrice;
+    private BigDecimal averageScore;
 
     @ManyToOne
+    @NotNull
+    private Category category;
+    @NotNull
+    @ManyToOne
     private Type type;
+    @NotNull
     @ManyToOne
     private Location location;
+    @NotNull
     @ManyToOne
     private Language language;
+    
     @OneToMany(mappedBy = "experience")
     private List<ExperienceDate> experienceDates = new ArrayList<>();
     @ManyToMany
     private List<User> followers;
     @ManyToOne
-    private User host;
-    @ManyToOne
-    private Category category;
+    private User host; 
     
     private Date nextAvailDate;
 
@@ -73,6 +76,8 @@ public class Experience implements Serializable {
     public Experience(String title, String description) {
         this.title = title;
         this.description = description;
+        // for initializing and testing purposes
+        active = true;
     }
     
     public Long getExperienceId() {
@@ -128,14 +133,6 @@ public class Experience implements Serializable {
 
     public void setRequiringItems(List<String> requiringItems) {
         this.requiringItems = requiringItems;
-    }
-
-    public BigDecimal getAverageScore() {
-        return averageScore;
-    }
-
-    public void setAverageScore(BigDecimal averageScore) {
-        this.averageScore = averageScore;
     }
 
     public String getAddress() {
@@ -255,23 +252,46 @@ public class Experience implements Serializable {
         this.nextAvailDate = nextAvailDate;
     }
 
-    public BigDecimal getAvgPrice() {
+    public BigDecimal getAveragePrice() {
         BigDecimal sum = BigDecimal.ZERO;
         BigDecimal count = BigDecimal.ZERO;
-        if (!this.experienceDates.isEmpty()) {
+        if (!this.experienceDates.isEmpty() && experienceDates.size() > 0) {
             for (ExperienceDate ed : experienceDates) {
                 count = count.add(BigDecimal.ONE);
                 sum = sum.add(ed.getPrice());
             }
-System.out.println(sum);
-System.out.println("count: "+count);
-            return sum.divide(count,2,RoundingMode.HALF_UP);
+            System.out.println(sum);
+            System.out.println("count: " + count);
+            return sum.divide(count, 2, RoundingMode.HALF_UP);
         }
         return null;
     }
 
-    public void setAvgPrice(BigDecimal avgPrice) {
-        this.avgPrice = avgPrice;
+    public void setAveragePrice(BigDecimal averagePrice) {
+        this.averagePrice = averagePrice;
+    }
+
+    public BigDecimal getAverageScore() {
+        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal count = BigDecimal.ZERO;
+        if (!this.experienceDates.isEmpty() && experienceDates.size() > 0) {
+            for (ExperienceDate ed : experienceDates) {
+                for (Booking booking: ed.getBookings()) {
+                    if (booking.isHostEvaluated()) {
+                        count = count.add(BigDecimal.ONE);
+                        sum = sum.add(booking.getEvaluationByGuest().getScore());
+                    }
+                }     
+            }
+            if(count.compareTo(new BigDecimal(0)) > 0) {
+                return sum.divide(count, 2);
+            }
+        }
+        return null;
+    }
+
+    public void setAverageScore(BigDecimal averageScore) {
+        this.averageScore = averageScore;
     }
     
 }

@@ -65,8 +65,8 @@ public class ViewMyFollowers {
         ls2.add(user);
         user.setFollows(ls1);
         userToFollow.setFollowers(ls2);
-        userController.update(user);
-        userController.update(userToFollow);
+//        userController.update(user);
+//        userController.update(userToFollow);
     }
     
     public void block(ActionEvent event) {
@@ -78,8 +78,8 @@ public class ViewMyFollowers {
         ls2.add(user);
         user.setBlocks(ls1);
         userToBlock.setBlockers(ls2);
-        userController.update(user);
-        userController.update(userToBlock);
+//        userController.update(user);
+//        userController.update(userToBlock);
     }
 
     public List<User> getFollowers() {

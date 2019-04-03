@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/templates/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <ez:Breadcrumb pageName="typeManagement" />
+        
+        <div>
+            <h3>Type Management</h3>
+            
+            <h:form>
+                <p:menubar>
+                    <p:submenu label="File" icon="ui-icon-document">
+                        
+                        <p:menuitem value="Create New Type" onclick="PF('dialogCreateNewType').show()" icon="fa fa-plus"/>
+                        
+                    </p:submenu>
+                </p:menubar>
+                
+                <br/>
+            </h:form>
+            
+            <h:form id="formAllTypes">
+                <p:messages id="messages" redisplay="false" closable="true"/>
+                
+                <p:dataTable id="dataTableAllTypes" widgetVar="dataTableAllTypes" value="#{typeManagementManagedBean.types}" var="type" rowKey="#{type.typeId}" rowIndexVar="row"
+                             filteredValue="#{typeManagementManagedBean.filteredTypes}"
+                             rows="10" paginator="true"paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            
+                            <h:outputText value="Search all fields:" />
+                            <p:inputText id="globalFilter" onkeyup="PF(dataTableAllTypes).filter()" style="width:300px" placeholder="Enter keyword"/>
+                            
+                        </p:outputPanel>
+                    </f:facet>
+                    
+                    <p:column headerText="Type ID" sortBy="#{type.typeId}" filterBy="#{type.typeId}" filterMatchMode="contains">
+                        <h:outputText value="#{type.typeId}"/>
+                    </p:column>
+                    
+                    <p:column headerText="Name" sortBy="#{type.name}" filterBy="#{type.name}" filterMatchMode="contains">
+                        <h:outputText value="#{type.name}"/> 
+                    </p:column>
+                   
+                    <p:column headerText="Action">
+                        <p:commandButton update="formViewType" oncomplete="PF('dialogViewType').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{type}" target="#{typeManagementManagedBean.selectedTypeToView}" />
+                        </p:commandButton>
+                        <p:commandButton actionListener="#{typeManagementManagedBean.doUpdateType}" update="formUpdateType" oncomplete="PF('dialogUpdateType').show()" icon="ui-icon-pencil" title="Update">
+                            <f:attribute name="typeToUpdate" value="#{type}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{typeManagementManagedBean.deleteType}" update="formAllTypes:dataTableAllTypes formAllTypes:messages">
+                            <f:attribute name="typeToDelete" value="#{type}" />
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{type.name} ?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>    
+                
+                </p:dataTable>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+            
+            <h:form id="formCreateNewType">
+                <p:dialog id="dialogCreateNewType" widgetVar="dialogCreateNewType" header="Create New Type" closable="true">
+                    
+                    <p:messages id="messagesCreateNewType" redisplay="false"/>
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="name" value="Type Name: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="name" value="#{typeManagementManagedBean.newType.name}" required="true" requiredMessage="Type Name is Required"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="name"/>
+                            </p:column>
+                        </p:row>     
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Create New Type" update="@form formAllTypes:dataTableAllTypes" actionListener="#{typeManagementManagedBean.createNewType}" oncomplete="PF('dialogCreateNewType').show();" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>   
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="formViewType">
+                <p:dialog>
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Type ID: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{typeManagementManagedBean.selectedTypeToView.typeId}"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Name"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{typeManagementManagedBean.selectedTypeToView.name}"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Experiences: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{typeManagementManagedBean.selectedTypeToView.experiences}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="formUpdateType">
+                <p:dialog id="dialogUpdateType" widgetVar="dialogUpdateType" header="Update Type" closable="true">
+                    <p:messages id="messagesUpdateType" redisplay="false"/>
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Type ID: "/> 
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{typeManagementManagedBean.selectedTypeToUpdate.typeId}" 
+                            </p:column>
+                            <p:column>
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Name: "/> 
+                            </p:column>
+                            <p:column>
+                                <h:inputText id="name" value="#{typeManagementManagedBean.selectedTypeToUpdate.name}" required="true" requiredMessage="Name is required"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="name"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Type" update="@form formAllTypes:dataTableAllTypes" actionListener="#{typeManagementManagedBean.updateType}" oncomplete="PF('dialogUpdateType').show();" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+                
+                
+                
+        </div>
+    </ui:define>
+
+
+</ui:composition>

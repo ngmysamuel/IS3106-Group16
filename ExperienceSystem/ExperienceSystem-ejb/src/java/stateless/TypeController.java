@@ -91,16 +91,16 @@ public class TypeController implements TypeControllerRemote, TypeControllerLocal
         
         // check whether there's another Type with the same name
         Query query = em.createQuery("SELECT t FROM Type t WHERE t.type = :inTypeName");
-        query.setParameter("inTypeName", type.getType());
+        query.setParameter("inTypeName", type.getName());
         try{
             Type duplicateType = (Type)query.getSingleResult();
             if (duplicateType.getTypeId().equals(type.getTypeId())) {
-                typeToUpdate.setType(type.getType());
+                typeToUpdate.setName(type.getName());
             } else {
                 throw new InputDataValidationException("Type with the same name already exists!");
             }
         } catch(NoResultException ex) {
-            typeToUpdate.setType(type.getType());
+            typeToUpdate.setName(type.getName());
         }
         
     }

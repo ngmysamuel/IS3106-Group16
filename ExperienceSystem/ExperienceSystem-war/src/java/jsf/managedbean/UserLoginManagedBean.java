@@ -24,31 +24,30 @@ import util.exception.InvalidLoginCredentialException;
  */
 @Named(value = "userLoginManagedBean")
 @RequestScoped
-public class UserLoginManagedBean implements Serializable {
+public class UserLoginManagedBean {
 
     @EJB
     private UserControllerLocal userController;
+    
     private String username;
     private String password;
 
-    /**
-     * Creates a new instance of UserLoginManagedBean
-     */
     public UserLoginManagedBean() {
     }
     
-    public void login(ActionEvent event) throws IOException{
+    public void login(ActionEvent event) throws IOException {
+        System.out.println("******** UserLoginManagedBean : login() -> username: " + username + " password: " + password);
         try{
-            User u = userController.login(username, password);
+            User user = userController.login(username, password);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUserEntity", u);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", user);
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
         } catch(InvalidLoginCredentialException ex){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
         }
     }
     
-    public void logout(ActionEvent event) throws IOException{
+    public void logout(ActionEvent event) throws IOException {
         ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
         FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
     }
@@ -68,6 +67,5 @@ public class UserLoginManagedBean implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
+      
 }

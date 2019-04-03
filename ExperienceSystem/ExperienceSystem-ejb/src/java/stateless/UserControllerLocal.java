@@ -10,30 +10,32 @@ import entity.Experience;
 import entity.ExperienceDate;
 import entity.User;
 import java.util.List;
-import javax.ejb.Local;
 import util.exception.ExperienceNotActiveException;
+import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.RegisterUserException;
+import util.exception.UpdateUserException;
 import util.exception.UserNotFoundException;
 
 /**
  *
  * @author samue
  */
-@Local
+
 public interface UserControllerLocal {
-    public User register(User user);
-    public void update(User user);
+    
+    public User register(User user) throws InputDataValidationException, RegisterUserException;
+    
+    public void update(User user) throws InputDataValidationException, UpdateUserException;
+    
     public User login(String username, String password) throws InvalidLoginCredentialException;
-    public void followExperience(Long id, User user);
-    public void unfollowExperience(Long id, User user);
+
     public User retrieveUserByUsername(String username) throws UserNotFoundException;
     public User retrieveUserById(Long id) throws UserNotFoundException;
     public List<Experience> retrieveAllExperience(Long id);
     public List<Experience> retrieveAllUpcomingExperienceDates(Long id);
     public List<ExperienceDate> retrieveAllHostExperience(Long id);
     public List<ExperienceDate> retrieveAllUpcomingHostExperienceDates(Long id);
-    public void createHostExperience(Experience exp, Long id);
-    public void deleteHostExperience(Long expId, Long id, String r) throws InvalidLoginCredentialException, ExperienceNotActiveException;
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException;
 
     List<User> retrieveAllFollowingUsers(Long guestId) throws UserNotFoundException;

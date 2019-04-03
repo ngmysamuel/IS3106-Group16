@@ -5,13 +5,15 @@
  */
 package stateless;
 
+import entity.User;
 import javax.ejb.Remote;
+import util.exception.InputDataValidationException;
+import util.exception.RegisterUserException;
 
 /**
  *
  * @author samue
  */
-@Remote
 public interface UserControllerRemote {
-    
+    public User register(User user) throws InputDataValidationException, RegisterUserException;
 }

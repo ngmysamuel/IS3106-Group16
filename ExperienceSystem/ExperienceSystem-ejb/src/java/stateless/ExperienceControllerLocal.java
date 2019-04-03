@@ -16,12 +16,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
-import javax.validation.ConstraintViolationException;
 import util.exception.CreateNewExperienceException;
+import util.exception.DeleteExperienceException;
 import util.exception.ExperienceDateNotFoundException;
-import util.exception.ExperienceNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.UpdateEperienceInfoException;
 
 /**
  *
@@ -30,44 +30,40 @@ import util.exception.InputDataValidationException;
 @Local
 public interface ExperienceControllerLocal {
 
-    public List<User> retrieveAllUsers(Experience exp);
-    
-    public Boolean removeFollowerFromExperience(Long id, User user);
-    public Boolean addFollowerToExperience(Long id, User user);
-    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
-
+    // Experience CRUD
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
-    public Experience createExpWithLangTypeCat(Experience exp, Long catId, Long typeId, Long langId) throws CreateNewExperienceException, InputDataValidationException;
-    public void updateExperienceWithCatTypeLang(Experience exp, Long catId, Long typeId, Long langId) throws InputDataValidationException;
-    public void updateExperienceInformation(Experience experience) throws ConstraintViolationException, InputDataValidationException, ExperienceNotFoundException;
+    public void updateExperienceInformation(Experience experience) throws UpdateEperienceInfoException;
+    public void deleteExperience(Long id) throws DeleteExperienceException;
 
-    public void deleteExperience(Long id, String r) throws ExperienceNotActiveException;
-
-    public List<Experience> retrieveAllExperiences();
-
+    // retrieving
+    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
+    public List<Experience> retrieveAllExperiences();  
+    public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId);
     public Experience retrieveExperienceByTitle(String title) throws ExperienceNotFoundException;
-
     public List<Experience> retrieveTopRatedExperience();
-
     public List<Experience> retrieveExperienceByLocation(Location location);
-
-    public BigDecimal getAveragePrice(Experience experience);
-
     public List<Experience> retrieveExperienceByPrice(BigDecimal minPrice, BigDecimal maxPrice);
-
     public List<Experience> retrieveExperienceByType(Type type);
-
     public List<Experience> retrieveExperienceByLanguage(Language language);
+    public List<Experience> retrieveExperienceByDate(Date startDate);
+    public List<Experience> retrieveExperienceByCategory(Category category);
+    public List<Experience> retrieveExperienceByName(String title);
+    
+    // experience followers
+    public void removeFollowerFromExperience(Long experienceId, Long userId);
+    public void addFollowerToExperience(Long experienceId, Long userId);
 
+    // filtering 
+    public List<Experience> filterExperienceByActiveState(List<Experience> experienceList);
+    public List<Experience> filterExperienceByDate(List<Experience> experienceList, Date filteringDate);
+    public List<Experience> filterExperienceBySlotsAvailable(List<Experience> experienceList, Integer numOfPeople);
+    public List<Experience> filterExperienceByCategory(List<Experience> experienceList, Long categoryId);
+    public List<Experience> filterExperienceByType(List<Experience> experienceList, Long typeId);
+    public List<Experience> filterExperienceByLanguage(List<Experience> experienceList, Long languageId);
+    public List<Experience> filterExperienceByLocation(List<Experience> experienceList, Long locationId);
+    
     public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
 
-    public List<Experience> retrieveExperienceByDate(Date startDate, Date endDate);
-
-    public List<Experience> retrieveExperienceByCategory(Category category);
-
-    public List<Experience> retrieveExperienceByName(String title);
-
-    List<Experience> retrieveExperienceBySingleDate(Date date);
     ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
-    
+
 }

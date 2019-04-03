@@ -6,14 +6,16 @@
 package stateless;
 
 import entity.Booking;
-import entity.Employee;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.ExperienceDateCancellationReport;
 import entity.ExperienceDatePaymentReport;
 import enumerated.StatusEnum;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
+import static java.util.Locale.filter;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -22,11 +24,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import util.exception.CreateNewEmployeeException;
 import util.exception.CreateNewExperienceDateException;
 import util.exception.CreateNewExperienceException;
 import util.exception.ExperienceDateNotActiveException;
@@ -40,6 +40,8 @@ import util.exception.InputDataValidationException;
 @Stateless
 public class ExperienceDateController implements ExperienceDateControllerRemote, ExperienceDateControllerLocal {
 
+    @EJB
+    private ExperienceControllerLocal experienceControllerLocal;
     @EJB
     private ExperienceDateCancellationReportControllerLocal experienceDateCancellationReportController;
 
@@ -59,6 +61,9 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
 
         if (constraintViolations.isEmpty()) {
             try {
+                // retrieve the experience and set the bidirectional relationship
+                Experience experience = experienceControllerLocal.retrieveExperienceById(newExperienceDate.getExperience().getExperienceId());
+                
                 em.persist(newExperienceDate);
                 em.flush();
                 return newExperienceDate;
@@ -106,7 +111,7 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
     public ExperienceDate retrieveExperienceDateByDateId(Long id) {
         ExperienceDate ed = em.find(ExperienceDate.class, id);
         for (Booking b : ed.getBookings()) {
-            b.getUser().getUsername();
+            b.getGuest().getUsername();
         }
         return ed;
     }
@@ -130,32 +135,45 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
         return query.getResultList();
     }
 
+    // TO CHECK: whether after an experience date is cancelled, it has been automatically removed from the association for the experience
     @Override
-    public void deleteExperienceDate(Long id, String r) throws ExperienceDateNotActiveException {
-System.out.println("Controller (1)");
-        ExperienceDate expDate = em.find(ExperienceDate.class, id);
+    public void deleteExperienceDate(Long experienceDateId, String reason) throws ExperienceDateNotActiveException {
+        ExperienceDate experienceDate = em.find(ExperienceDate.class, experienceDateId);
 
-        if (!expDate.isActive()) {
-System.out.println("Controller (a)");
-            throw new ExperienceDateNotActiveException("This experienceDate is no longer active!");
+        if (!experienceDate.isActive()) {
+            throw new ExperienceDateNotActiveException("This experienceDate is already inactive!");
         } else {
-            expDate.setActive(false);
-System.out.println("Controller (2)");
-            List<Booking> ls = expDate.getBookings();
-            for (Booking b : ls) {
-                b.setStatus(StatusEnum.CANCELLED);
-                ExperienceDateCancellationReport rpt = new ExperienceDateCancellationReport();
-                rpt.setBooking(b);
-                rpt.setExperienceDate(expDate);
-                rpt.setCancellationReason(r);
-                experienceDateCancellationReportController.createNewExperienceDateCancellationReport(rpt);
+            experienceDate.setActive(false);
+            
+            List<Booking> bookings = experienceDate.getBookings();
+            for (Booking booking : bookings) {
+                booking.setStatus(StatusEnum.CANCELLED);
+                ExperienceDateCancellationReport report = new ExperienceDateCancellationReport();
+                report.setBooking(booking);
+                report.setExperienceDate(experienceDate);
+                report.setCancellationReason(reason);
+                experienceDateCancellationReportController.createNewExperienceDateCancellationReport(report);
             }
-            Experience e = expDate.getExperience();
-            List<ExperienceDate> lsed = e.getExperienceDates();
-            lsed.remove(expDate);
-            e.setExperienceDates(lsed);
-            em.merge(e);
-System.out.println("Controller (3)");            
+        }
+    }
+    
+    @Override
+    public List<ExperienceDate> retrieveAllActiveExperienceDatesByExperienceId(Long experienceId) {
+        List<ExperienceDate> activeExperienceDates = new ArrayList();
+        
+        Experience experience = em.find(Experience.class, experienceId);
+        if(experience != null) {
+            activeExperienceDates = experience.getExperienceDates();
+            ListIterator iter = activeExperienceDates.listIterator();
+            while(iter.hasNext()){
+                ExperienceDate currentExperienceDate = (ExperienceDate)iter.next();
+                if(!currentExperienceDate.isActive()) {
+                    iter.remove();
+                }
+            }
+            return activeExperienceDates;
+        } else {
+            return activeExperienceDates;
         }
     }
 
@@ -168,10 +186,6 @@ System.out.println("Controller (3)");
         Query query = em.createQuery("SELECT r FROM ExperienceDatePaymentReport r WHERE r.experienceDate.experienceDateId = :inExperienceDateId");
         query.setParameter("inExperienceDateId", experienceDate.getExperienceDateId());
         return (ExperienceDatePaymentReport) query.getResultList();
-    }
-
-    public void persist(Object object) {
-        em.persist(object);
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ExperienceDate>> constraintViolations) {
