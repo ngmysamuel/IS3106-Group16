@@ -162,18 +162,6 @@ public class UserController implements UserControllerLocal {
         }
     }
 
-    public void followExperience(Long id, User user) {
-        Experience exp = em.find(Experience.class, id);
-        experienceController.addFollowerToExperience(id, user);
-        user.getFollowedExperiences().add(exp);
-    }
-
-    public void unfollowExperience(Long id, User user) {
-        Experience exp = em.find(Experience.class, id);
-        experienceController.removeFollowerFromExperience(id, user);
-        user.getFollowedExperiences().remove(exp);
-    }
-
     @Override
     public List<Experience> retrieveAllExperience(Long id) { //completed exp
         User user = em.find(User.class, id);

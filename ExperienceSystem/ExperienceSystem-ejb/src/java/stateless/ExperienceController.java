@@ -367,14 +367,26 @@ public class ExperienceController implements ExperienceControllerLocal {
         }
     }
     
-    public Boolean removeFollowerFromExperience(Long id, User user) {
-        Experience exp = em.find(Experience.class, id);
-        return exp.getFollowers().remove(user);
+    @Override
+    public void removeFollowerFromExperience(Long experienceId, Long userId) {
+        Experience experience = em.find(Experience.class, experienceId);
+        User user = em.find(User.class, userId);
+        
+        if(experience != null && user != null) {
+            experience.getFollowers().remove(user);
+            user.getFollowedExperiences().remove(experience);
+        }  
     }
 
-    public Boolean addFollowerToExperience(Long id, User user) {
-        Experience exp = em.find(Experience.class, id);
-        return exp.getFollowers().add(user);
+    @Override
+    public void addFollowerToExperience(Long experienceId, Long userId) {
+        Experience experience = em.find(Experience.class, experienceId);
+        User user = em.find(User.class, userId);
+        
+        if(experience != null && user != null) {
+            experience.getFollowers().add(user);
+            user.getFollowedExperiences().add(experience);
+        }  
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Experience>> constraintViolations) {
@@ -390,9 +402,32 @@ public class ExperienceController implements ExperienceControllerLocal {
 
 
     // filtering section
+    // return a list of experiences which are active
+    @Override
+    public List<Experience> filterExperienceByActiveState(List<Experience> experienceList) {
+        System.out.println("******** ExperienceController: filterExperienceByActiveState()");
+        System.out.println("    **** experienceList.size(): " + experienceList.size());
+
+        ListIterator iterator = experienceList.listIterator();
+
+        while (iterator.hasNext()) {
+            Experience experience = (Experience) iterator.next();
+
+            if (!experience.isActive()) {
+                iterator.remove();
+            }
+        }
+
+        return experienceList;
+    }
+    
     // return a list of experiences which have at least one experience dates whose date matches the filtering date
     @Override
     public List<Experience> filterExperienceByDate(List<Experience> experienceList, Date filteringDate) {  
+        System.out.println("******** ExperienceController: filterExperienceByDate()");
+        System.out.println("    **** experienceList.size(): " + experienceList.size());
+        System.out.println("    **** filteringDate: " + filteringDate.toString());
+        
         ListIterator iterator = experienceList.listIterator();
         
         while(iterator.hasNext()) {
@@ -421,6 +456,10 @@ public class ExperienceController implements ExperienceControllerLocal {
     // return a list of experiences which have at least one experience dates which has the number of slots available
     @Override
     public List<Experience> filterExperienceBySlotsAvailable(List<Experience> experienceList, Integer numOfPeople) {      
+        System.out.println("******** ExperienceController: filterExperienceBySlotsAvailable()");
+        System.out.println("    **** experienceList.size(): " + experienceList.size());
+        System.out.println("    **** numOfPeople: " + numOfPeople);
+        
         ListIterator iterator = experienceList.listIterator();
         
         while(iterator.hasNext()) {
@@ -444,17 +483,86 @@ public class ExperienceController implements ExperienceControllerLocal {
         return experienceList;
     }
     
-    // return a list of experiences which have at least one experience dates which has the required category
+    // return a list of experiences which have the required category
     @Override
     public List<Experience> filterExperienceByCategory(List<Experience> experienceList, Long categoryId) {
-
-        if (categoryId != null) {
+        System.out.println("******** ExperienceController: filterExperienceByCategory()");
+        System.out.println("    **** experienceList.size(): " + experienceList.size());
+        System.out.println("    **** categoryId: " + categoryId);
+        
+        if (categoryId != null && categoryId.compareTo(new Long(0)) != 0) {
             ListIterator iterator = experienceList.listIterator();
 
             while (iterator.hasNext()) {
-                Experience experience = (Experience) iterator.next();
+                Experience experience = (Experience)iterator.next();
 
                 if (experience.getCategory().getCategoryId().compareTo(categoryId) != 0) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        return experienceList;
+    }
+    
+    // return a list of experiences which have the required type
+    @Override
+    public List<Experience> filterExperienceByType(List<Experience> experienceList, Long typeId) {
+        System.out.println("******** ExperienceController: filterExperienceByType()");
+        System.out.println("    **** experienceList.size(): " + experienceList.size());
+        System.out.println("    **** typeId: " + typeId);
+        
+        if (typeId != null && typeId.compareTo(new Long(0)) != 0) {
+            ListIterator iterator = experienceList.listIterator();
+
+            while (iterator.hasNext()) {
+                Experience experience = (Experience)iterator.next();
+
+                if (experience.getType().getTypeId().compareTo(typeId) != 0) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        return experienceList;
+    }
+    
+    // return a list of experiences which have the required language
+    @Override
+    public List<Experience> filterExperienceByLanguage(List<Experience> experienceList, Long languageId) {
+        System.out.println("******** ExperienceController: filterExperienceByLanguage()");
+        System.out.println("    **** experienceList.size(): " + experienceList.size());
+        System.out.println("    **** languageId: " + languageId); 
+        
+        if (languageId != null && languageId.compareTo(new Long(0)) != 0) {
+            ListIterator iterator = experienceList.listIterator();
+
+            while (iterator.hasNext()) {
+                Experience experience = (Experience)iterator.next();
+
+                if (experience.getLanguage().getLanguageId().compareTo(languageId) != 0) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        return experienceList;
+    }
+    
+    // return a list of experiences which have the required type
+    @Override
+    public List<Experience> filterExperienceByLocation(List<Experience> experienceList, Long locationId) {
+        System.out.println("******** ExperienceController: filterExperienceByLocation()");
+        System.out.println("    **** experienceList.size(): " + experienceList.size());
+        System.out.println("    **** locationId: " + locationId); 
+
+        if (locationId != null && locationId.compareTo(new Long(0)) != 0) {
+            ListIterator iterator = experienceList.listIterator();
+
+            while (iterator.hasNext()) {
+                Experience experience = (Experience)iterator.next();
+
+                if (experience.getLocation().getLocationId().compareTo(locationId) != 0) {
                     iterator.remove();
                 }
             }

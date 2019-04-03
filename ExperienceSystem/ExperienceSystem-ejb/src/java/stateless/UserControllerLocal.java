@@ -29,9 +29,7 @@ public interface UserControllerLocal {
     public void update(User user) throws InputDataValidationException, UpdateUserException;
     
     public User login(String username, String password) throws InvalidLoginCredentialException;
-    
-    public void followExperience(Long id, User user);
-    public void unfollowExperience(Long id, User user);
+
     public User retrieveUserByUsername(String username) throws UserNotFoundException;
     public User retrieveUserById(Long id) throws UserNotFoundException;
     public List<Experience> retrieveAllExperience(Long id);

@@ -80,22 +80,21 @@ public class ViewAllExperiencesManagedBean implements Serializable{
         locations = locationControllerLocal.retrieveAllLocations();
         languages = languageControllerLocal.retrieveAllLanguages();
         
+        // Flash scope attributes come from index.xhtml
         if(FacesContext.getCurrentInstance().getExternalContext().getFlash().containsKey("searchDate")){
             selectedDate = (Date)FacesContext.getCurrentInstance().getExternalContext().getFlash().get("searchDate");
             selectedCategoryId = (Long)FacesContext.getCurrentInstance().getExternalContext().getFlash().get("searchCategoryId");
             numOfPeople = (Integer)FacesContext.getCurrentInstance().getExternalContext().getFlash().get("searchNumOfPeople");
-            System.out.println("    **** selectedDate: " + selectedDate.toString());
-            System.out.println("    **** selectedCategoryId: " + selectedCategoryId);
-            System.out.println("    **** numOfPeople: " + numOfPeople);
+        } else {
+            selectedDate = (Date)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchDate");
+            selectedCategoryId = (Long)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchCategoryId");
+            selectedTypeId = (Long)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchTypeId");
+            selectedLocationId = (Long)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchLocationId");
+            selectedLanguageId = (Long)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchLanguageId");
+            numOfPeople = (Integer)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchNumOfPeople");
         }
          
         filterExperience();
-    }
-    
-    @PreDestroy
-    public void preDestroy(){
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("searchDate");
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("searchNumOfPeople");
     }
     
     public void filterExperience(){
@@ -107,20 +106,42 @@ public class ViewAllExperiencesManagedBean implements Serializable{
         // filter experiences property by property
         // the sequence is very important because the experience dates available would be filtered based on the previous results
         
+        // Experience must be active
+        filteredExperiences = experienceControllerLocal.filterExperienceByActiveState(filteredExperiences);
+        
         // Date
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchDate", selectedDate);
         if(selectedDate != null) {
             filteredExperiences = experienceControllerLocal.filterExperienceByDate(filteredExperiences, selectedDate);
         }
         // Number of people
-        filteredExperiences = experienceControllerLocal.filterExperienceBySlotsAvailable(filteredExperiences, numOfPeople);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchNumOfPeople", numOfPeople);
+        if(numOfPeople != null) {
+            filteredExperiences = experienceControllerLocal.filterExperienceBySlotsAvailable(filteredExperiences, numOfPeople);
+        }
         // Category
-        if(selectedCategoryId != null) {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchCategoryId", selectedCategoryId);
+        if(selectedCategoryId != null && selectedCategoryId.compareTo(new Long(0)) != 0) {
             filteredExperiences = experienceControllerLocal.filterExperienceByCategory(filteredExperiences, selectedCategoryId);
+        }
+        // Type
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchTypeId", selectedTypeId);
+        if(selectedTypeId != null && selectedTypeId.compareTo(new Long(0)) != 0) {
+            filteredExperiences = experienceControllerLocal.filterExperienceByType(filteredExperiences, selectedTypeId);
+        }
+        // Location
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchLocationId", selectedLocationId);
+        if(selectedLocationId != null && selectedLocationId.compareTo(new Long(0)) != 0) {
+            filteredExperiences = experienceControllerLocal.filterExperienceByLocation(filteredExperiences, selectedLocationId);
+        }
+        // Language
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchLanguageId", selectedLanguageId);
+        if(selectedLanguageId != null && selectedLanguageId.compareTo(new Long(0)) != 0) {
+            filteredExperiences = experienceControllerLocal.filterExperienceByLanguage(filteredExperiences, selectedLanguageId);
         }
 //        if(searchString != null && searchString.trim().length() > 0){
 //            allExperiences = experienceController.retrieveExperienceByName(searchString);
-//        } else {allExperiences = experienceController.retrieveAllExperiences();}
-//        
+//        } else {allExperiences = experienceController.retrieveAllExperiences();}     
 
     }
     
@@ -129,29 +150,8 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     }
     
     public void viewExperienceDetails(ActionEvent event) throws IOException{
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceEntityToView", selectedExperienceToView);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceToView", selectedExperienceToView);
         FacesContext.getCurrentInstance().getExternalContext().redirect("viewExperienceDetails.xhtml");
-    }
-    
-    
-    public Date minDate(List<Date> dates){
-        Date min = dates.get(0);
-        for(Date d: dates){
-            if(min.compareTo(d) > 0){
-                min = d;
-            }
-        }
-        return min;
-    }
-    
-    public Date maxDate(List<Date> dates){
-        Date max = dates.get(0);
-        for(Date d: dates){
-            if(max.compareTo(d) < 0){
-                max = d;
-            }
-        }
-        return max;
     }
 
     public Experience getSelectedExperienceToView() {

@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import stateless.BookingControllerLocal;
@@ -38,18 +38,18 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
 
     @EJB
     private BookingControllerLocal bookingController;
-
     @EJB
     private ExperienceDateControllerLocal experienceDateController;
-
     @EJB
     private ExperienceControllerLocal experienceController;
-    private Experience experienceEntityToView;
+    
+    private Experience experience;
+    private Boolean isExperienceFavouratedByThisUser;
     private List<ExperienceDate> experienceDateEntities;
     private List<User> experienceFollowers;
     private ExperienceDate selectedExperienceDate;
     private Booking newBooking;
-    private Boolean isFollowed;
+
     private BigDecimal price;
     private int numOfPeople;
     private Date selectedDate;
@@ -57,28 +57,31 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
     private BigDecimal subtotal;
     private BigDecimal tax;
     private BigDecimal total;
+    
     private User currentUser;
     private Boolean isLogin;
     private List<String> images;
     
-    /**
-     * Creates a new instance of ViewExperienceDetailsManagedBean
-     */
+
     public ViewExperienceDetailsManagedBean() {
         images = new ArrayList();
         images.add("https://i.imgur.com/2hocHvd.jpg");
         images.add("https://i.imgur.com/R6wtAtN.jpg");
         images.add("https://i.imgur.com/slbHL1Z.jpg");
         images.add("https://i.imgur.com/SQiLyd4.jpg");
+        
+        isExperienceFavouratedByThisUser = false;
     }
     
     @PostConstruct
     public void postConstruct(){
-        experienceEntityToView = (Experience)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("experienceEntityToView");
-        price = experienceEntityToView.getAveragePrice();
-        isLogin = (Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
+        experience = (Experience)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("experienceEntityToView");
+        isLogin = (Boolean)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
         if(isLogin != null && isLogin){
-            currentUser = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
+            currentUser = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+            if(currentUser.getFollowedExperiences().contains(experience)){
+                isExperienceFavouratedByThisUser = true;
+            }
         }
     }
     
@@ -97,7 +100,7 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
     public void checkDateAvailability(ActionEvent event){
         try
         {
-            selectedExperienceDate = experienceController.checkExperienceDateAvailability(experienceEntityToView.getExperienceId(), selectedDate, numOfPeople);
+            selectedExperienceDate = experienceController.checkExperienceDateAvailability(experience.getExperienceId(), selectedDate, numOfPeople);
             this.availability = true;
             this.subtotal = selectedExperienceDate.getPrice().multiply(new BigDecimal(this.numOfPeople));
             this.tax = subtotal.multiply(new BigDecimal(0.07));
@@ -117,19 +120,14 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
         }
     }
     
-    public int minPrice(){
-        // Calculate the current minPrice for this exp.
-        return 50;
+    public void addFavoriteExperience(ActionEvent event){
+        experienceController.addFollowerToExperience(experience.getExperienceId(), currentUser.getUserId());
+        isExperienceFavouratedByThisUser = true;
     }
     
-    public void addFavoriteExperience(){
-        experienceController.addFollowerToExperience(experienceEntityToView.getExperienceId(), (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
-        this.isFollowed = true;
-    }
-    
-    public void removeFavoriteExperience(){
-        experienceController.removeFollowerFromExperience(experienceEntityToView.getExperienceId(), (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity"));
-        this.isFollowed = false;
+    public void removeFavoriteExperience(ActionEvent event){
+        experienceController.removeFollowerFromExperience(experience.getExperienceId(), currentUser.getUserId());
+        isExperienceFavouratedByThisUser = false;
     }
     
     public List<String> getImages() {
@@ -140,12 +138,12 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
         this.images = images;
     }
 
-    public Experience getExperienceEntityToView() {
-        return experienceEntityToView;
+    public Experience getExperience() {
+        return experience;
     }
 
-    public void setExperienceEntityToView(Experience experienceEntityToView) {
-        this.experienceEntityToView = experienceEntityToView;
+    public void setExperience(Experience experience) {
+        this.experience = experience;
     }
 
     public List<ExperienceDate> getExperienceDateEntities() {
@@ -170,14 +168,6 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
 
     public void setNewBooking(Booking newBooking) {
         this.newBooking = newBooking;
-    }
-
-    public Boolean getIsFollowed() {
-        return isFollowed;
-    }
-
-    public void setIsFollowed(Boolean isFollowed) {
-        this.isFollowed = isFollowed;
     }
 
     public ExperienceDate getSelectedExperienceDate() {
@@ -260,7 +250,13 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
     public void setIsLogin(Boolean isLogin) {
         this.isLogin = isLogin;
     }
-    
-    
+
+    public Boolean getIsExperienceFavouratedByThisUser() {
+        return isExperienceFavouratedByThisUser;
+    }
+
+    public void setIsExperienceFavouratedByThisUser(Boolean isExperienceFavouratedByThisUser) {
+        this.isExperienceFavouratedByThisUser = isExperienceFavouratedByThisUser;
+    }
     
 }

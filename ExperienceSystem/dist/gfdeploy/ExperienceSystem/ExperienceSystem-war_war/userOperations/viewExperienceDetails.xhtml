@@ -53,14 +53,14 @@
             .detailTitleClass{
                 width:20%;
             }
-            .detailTitleContent{
+            .detailContentClass{
                 width:80%;
             }
             #rightColumn{
                 width:30%;
             }
             
-            #bookExperienceForm{
+            #formBookExperience{
                 border: 1px solid black;
                 padding: 15px;
                 position: sticky;
@@ -81,19 +81,19 @@
         </div>
         <div id="titleHeader">
             <span>
-                <p:commandLink action="#" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
+                <p:link outcome="searchExperience.xhtml" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
             </span>
             <span>
                 <p:outputLabel value=" |    " style="font-size: 30px;"/>
             </span>
             <span>
-                <p:outputLabel value=" Experience Title" style="font-size: 30px;"/>
+                <p:outputLabel value="#{viewExperienceDetailsManagedBean.experience.title}" style="font-size: 30px;"/>
             </span>
             <span style="margin-left: 10px;">
-                <p:button title="Favourite this experience" icon="ui-icon-heart"/>
+                <p:button id="favourateExperienceButton" title="Favourite this experience" icon="ui-icon-heart" actionListener="#{viewExperienceDetailsManagedBean.addFavoriteExperience}" update="@this unfavourateExperienceButton" rendered="#{viewExperienceDetailsManagedBean.currentUser != null and !viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" />
             </span>
             <span style="margin-left: 10px;">
-                <p:button title="Unfavourite this experience" icon="ui-icon-closethick"/>
+                <p:button id="unfavourateExperienceButton"  title="Unfavourite this experience" icon="ui-icon-closethick" actionListener="#{viewExperienceDetailsManagedBean.removeFavoriteExperience}" update="@this favourateExperienceButton" rendered="#{viewExperienceDetailsManagedBean.currentUser != null and viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" />
             </span>
         </div>
         
@@ -105,37 +105,72 @@
                 <br />
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText value="Title" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experienceEntityToView.title}" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.title}" /> 
+                </p:panelGrid>
+                <br />
+                
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Average rating" /> 
+                    <p:rating disabled="true" value="#{viewExperienceDetailsManagedBean.experience.averageScore}" rendered="#{viewExperienceDetailsManagedBean.experience.averageScore != null}" />
+                    <h:outputText value="No Rating Yet" rendered="#{viewExperienceDetailsManagedBean.experience.averageScore == null}" />                                  
+                </p:panelGrid>
+                <br />
+                
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Category" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.category.name}" />  
+                </p:panelGrid>
+                <br />
+                
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Language" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.language.name}" />  
+                </p:panelGrid>
+                <br />
+                
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Type" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.type.name}" />  
+                </p:panelGrid>
+                <br />
+                
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Location" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.location.name}" />  
+                </p:panelGrid>
+                <br />
+                
+                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
+                    <h:outputText value="Address" /> 
+                    <h:outputText style="width:100%;" value="#{viewExperienceDetailsManagedBean.experience.address}" />  
                 </p:panelGrid>
                 <br />
                 
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText value="Description" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experienceEntityToView.description}" />  
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.description}" />  
                 </p:panelGrid>
                 <br />
+                
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
-                    <h:outputText value="Content" /> 
-                    <h:outputText value="Content" />  
+                    <h:outputText value="Items Provided" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.providingItems}" />  
                 </p:panelGrid>
                 <br />
+                
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
-                    <h:outputText value="Content" /> 
-                    <h:outputText value="Content" />  
-                </p:panelGrid>
-                <br />
-                <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
-                    <h:outputText value="Content" /> 
-                    <h:outputText value="Content" />  
+                    <h:outputText value="Items Required" /> 
+                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.requiringItems}" />  
                 </p:panelGrid>
                 <br />
             </div>
+            
             <div id="rightColumn">
-                <h:form id="bookExperienceForm">
+                <h:form id="formBookExperience">
                     <div style="width:85%; margin:auto; border-left: 1px solid black; padding:10px;">
-                        <p:outputLabel value="From" style="font-size: 15px;" />
+                        <p:outputLabel value="Average" style="font-size: 15px;" />
                         <br />
-                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.price}" style="font-size: 30px;" />
+                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.experience.averagePrice}" style="font-size: 30px;" />
                         <br />
                         <p:outputLabel value="Per Ticket" style="font-size: 15px;" />
                     </div>
@@ -153,7 +188,7 @@
                         <br/>
                         <br/>
                         
-                        <p:commandButton id="bookNow" update="growl" value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.checkDateAvailability}" oncomplete="if(!#{viewExperienceDetailsManagedBean.availability}){PF('dialogCheckout').show()}"/>
+                        <p:commandButton id="bookNow" update="growl" value="Book Now" actionListener="#" oncomplete="if(!#{viewExperienceDetailsManagedBean.availability}){PF('dialogCheckout').show()}"/>
                         <p:growl id="growl" showDetail="true" life="5000"/>
                     </div>
 
@@ -164,65 +199,7 @@
         <h:form id="formCheckout">
             <p:dialog id="dialogCheckout" widgetVar="dialogCheckout" header="Checkout" closable="true" width="500" blockScroll="true">
                 <p:messages id="messagesCheckout" redisplay="false" />
-                <div style="overflow: scroll; max-height: 100%;">
-                    <p:outputLabel value="Order Summary" />
-                    <hr />
-                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
-                        <p:outputLabel value="Experience Title" />
-                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.experienceEntityToView.title}" />
-                        
-                        <p:outputLabel value="Date" />
-                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.selectedDate}" />
-                        
-                        <p:outputLabel value="Guests" />
-                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.numOfPeople}" />
-                        
-                    </p:panelGrid>
-                    <hr />
-                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
-                        <p:outputLabel value="Subtotal" />
-                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.subtotal}" />
-                        
-                        <p:outputLabel value="Tax(7%)" />
-                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.tax}" />
-                        
-                    </p:panelGrid>
-                    <hr />
-                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
-                        <p:outputLabel value="Total" />
-                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.total}" />
-                    </p:panelGrid>
-                    <br />
-                    
-                    <p:outputLabel value="Guest Details" />
-                    <hr />
-         
-                    <c:if test="#{viewExperienceDetailsManagedBean.isLogin}">
-                        <p:panelGrid columns="2" style="width:100%;" layout="grid">
-                            <p:outputLabel value="First Name" />
-                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.firstName}" disabled="true" />
-
-                            <p:outputLabel value="Last Name" />
-                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.lastName}" disabled="true" />
-
-                            <p:outputLabel value="Email Address" />
-                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.email}" disabled="true" />
-
-                            <p:outputLabel value="Phone Number" />
-                            <p:inputText value="#{viewExperienceDetailsManagedBean.currentUser.phoneNumber}" disabled="true" />
-
-                            <p:outputLabel value="Special Requests" />
-                            <p:inputTextarea rows="2"  value=""/>
-                        </p:panelGrid>
-                    
- 
-                    <p:commandButton value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.reserveExperienceDate}" />
-                    </c:if>
-                    <c:if test="#{!viewExperienceDetailsManagedBean.isLogin}">
-                        <p:staticMessage severity="warn" summary="Not Allowed to Book!" detail="To continue please login to your account!" />
-                    </c:if>
-                    <br />
-                </div>
+                
             </p:dialog>
         </h:form>
     </ui:define>

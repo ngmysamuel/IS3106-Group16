@@ -29,10 +29,6 @@ import util.exception.UpdateEperienceInfoException;
  */
 @Local
 public interface ExperienceControllerLocal {
-    
-    public Boolean removeFollowerFromExperience(Long id, User user);
-    public Boolean addFollowerToExperience(Long id, User user);
-    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
 
     // Experience CRUD
     public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException;
@@ -40,6 +36,7 @@ public interface ExperienceControllerLocal {
     public void deleteExperience(Long id) throws DeleteExperienceException;
 
     // retrieving
+    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException;
     public List<Experience> retrieveAllExperiences();  
     public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId);
     public Experience retrieveExperienceByTitle(String title) throws ExperienceNotFoundException;
@@ -51,11 +48,19 @@ public interface ExperienceControllerLocal {
     public List<Experience> retrieveExperienceByDate(Date startDate);
     public List<Experience> retrieveExperienceByCategory(Category category);
     public List<Experience> retrieveExperienceByName(String title);
+    
+    // experience followers
+    public void removeFollowerFromExperience(Long experienceId, Long userId);
+    public void addFollowerToExperience(Long experienceId, Long userId);
 
     // filtering 
+    public List<Experience> filterExperienceByActiveState(List<Experience> experienceList);
     public List<Experience> filterExperienceByDate(List<Experience> experienceList, Date filteringDate);
     public List<Experience> filterExperienceBySlotsAvailable(List<Experience> experienceList, Integer numOfPeople);
     public List<Experience> filterExperienceByCategory(List<Experience> experienceList, Long categoryId);
+    public List<Experience> filterExperienceByType(List<Experience> experienceList, Long typeId);
+    public List<Experience> filterExperienceByLanguage(List<Experience> experienceList, Long languageId);
+    public List<Experience> filterExperienceByLocation(List<Experience> experienceList, Long locationId);
     
     public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
 

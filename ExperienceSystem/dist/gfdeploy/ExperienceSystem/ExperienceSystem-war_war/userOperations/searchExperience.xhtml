@@ -115,14 +115,15 @@
                                 <p:selectOneMenu id="typeId" value="#{viewAllExperiencesManagedBean.selectedTypeId}" style="width:150px;">
                                     <f:selectItem itemLabel="Select Type" itemValue="0" noSelectOption="#{viewAllExperiencesManagedBean.selectedTypeId == null}"/>
                                     <f:selectItems value="#{viewAllExperiencesManagedBean.types}" var="type" itemValue="#{type.typeId}" itemLabel="#{type.name}" />
-            <!--                        <p:ajax event="select" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:category searchResultsform" />-->
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:typeId formSearchResults" />
                                 </p:selectOneMenu>                            
                             </p:column>
 
                             <p:column>
                                 <p:selectOneMenu id="locationId" value="#{viewAllExperiencesManagedBean.selectedLocationId}" style="width:150px;">
                                     <f:selectItem itemLabel="Select Location" itemValue="0" noSelectOption="#{viewAllExperiencesManagedBean.selectedLocationId == null}"/>
-                                    <f:selectItems value="#{viewAllExperiencesManagedBean.locations}" var="location" itemLabel="#{location.name}" itemValue="#{location.locationId}" />
+                                    <f:selectItems value="#{viewAllExperiencesManagedBean.locations}" var="location" itemValue="#{location.locationId}" itemLabel="#{location.name}" />
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:locationId formSearchResults" />
                                 </p:selectOneMenu>                            
                             </p:column>
 
@@ -130,7 +131,7 @@
                                 <p:selectOneMenu id="languageId" value="#{viewAllExperiencesManagedBean.selectedLanguageId}" style="width:150px;">
                                     <f:selectItem itemLabel="Select Language" itemValue="0" noSelectOption="#{viewAllExperiencesManagedBean.selectedLanguageId == null}"/>
                                     <f:selectItems value="#{viewAllExperiencesManagedBean.languages}" var="language" itemValue="#{language.languageId}" itemLabel="#{language.name}" />
-            <!--                        <p:ajax event="select" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:category searchResultsform" />-->
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:languageId formSearchResults" />
                                 </p:selectOneMenu>                            
                             </p:column>
                         </p:row>
@@ -151,16 +152,15 @@
                                 gridIcon="ui-icon-stop" listIcon="ui-icon-minusthick">
 
                         <p:dataViewGridItem>
-                            <p:panel header="#{experience.title}" style="text-align:center">
+                            <p:panel header="#{experience.title}" style="text-align:center;">
                                 <h:panelGrid columns="1" >
                                     <p:graphicImage style="object-fit:cover; width:100%; height:150px;" url="https://i.imgur.com/2hocHvd.jpg"/> 
 
-                                    <h:outputText value="#{experience.title}" />
+                                    <p:outputLabel style="text-align:center; margin: auto;" value="$#{experience.averagePrice}" />
 
-<!--                                    <p:commandLink update=":form:carDetail" oncomplete="PF('carDialog').show()" title="View Detail">
-                                        <h:outputText styleClass="ui-icon pi pi-search" style="margin:0 auto;" />
-                                        <f:setPropertyActionListener value="#{car}" target="#{dataGridView.selectedCar}" />
-                                    </p:commandLink>-->
+                                    <p:commandButton actionListener="#{viewAllExperiencesManagedBean.viewExperienceDetails}" value="View Details" style="width:100%;">
+                                        <f:setPropertyActionListener value="#{experience}" target="#{viewAllExperiencesManagedBean.selectedExperienceToView}" />
+                                    </p:commandButton>
                                 </h:panelGrid>
                             </p:panel>
                         </p:dataViewGridItem>
@@ -178,14 +178,13 @@
                                         <h:outputText value="#{experience.description}" style="font-weight: bold"/>
 
                                         <h:outputText value="Average price:" />
-                                        <h:outputText value="#{experience.averagePrice != null ? experience.averagePrice : ' '}" style="font-weight: bold"/>
+                                        <h:outputText value="$#{experience.averagePrice}" style="font-weight: bold"/>
                                     </h:panelGrid>
                                 </p:outputPanel>
 
-<!--                                <p:commandLink update=":form:carDetail" oncomplete="PF('carDialog').show()" title="View Detail">
-                                    <h:outputText styleClass="ui-icon pi pi-search" style="margin:0 auto;" />
-                                    <f:setPropertyActionListener value="#{car}" target="#{dataGridView.selectedCar}" />
-                                </p:commandLink>-->
+                                <p:commandButton actionListener="#{viewAllExperiencesManagedBean.viewExperienceDetails}" icon="ui-icon-zoomin" title="View Details" style="width:50px;">
+                                        <f:setPropertyActionListener value="#{experience}" target="#{viewAllExperiencesManagedBean.selectedExperienceToView}" />
+                                </p:commandButton>
                             </h:panelGrid>
                         </p:dataViewListItem>
                     </p:dataView>
