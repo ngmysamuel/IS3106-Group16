@@ -85,7 +85,14 @@
                             <p:column>
                                 <p:message for="name"/>
                             </p:column>
-                        </p:row>        
+                        </p:row>     
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Create New Type" update="@form formAllTypes:dataTableAllTypes" actionListener="#{typeManagementManagedBean.createNewType}" oncomplete="PF('dialogCreateNewType').show();" />
+                            </p:column>
+                        </p:row>
                     </p:panelGrid>   
                 </p:dialog>
             </h:form>
@@ -149,6 +156,12 @@
                             </p:column>
                             <p:column>
                                 <p:message for="name"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Type" update="@form formAllTypes:dataTableAllTypes" actionListener="#{typeManagementManagedBean.updateType}" oncomplete="PF('dialogUpdateType').show();" />
                             </p:column>
                         </p:row>
                     </p:panelGrid>

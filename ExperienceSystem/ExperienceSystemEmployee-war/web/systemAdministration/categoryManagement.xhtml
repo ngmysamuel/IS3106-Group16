@@ -104,7 +104,12 @@
                             </p:column>
                         </p:row>
                         
-                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Create New Category" update="@form formAllCategories:dataTableAllCategories" actionListener="#{categoryManagementManagedBean.createNewCategory}" oncomplete="PF('dialogCreateNewCategory').show();" />
+                            </p:column>
+                        </p:row>
                             
                     </p:panelGrid>
                         
@@ -187,6 +192,11 @@
                             </p:column>
                         </p:row>
                         
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Category" update="@form formAllCategories:dataTableAllCategories" actionListener="#{categoryManagementManagedBean.updateCategory}" oncomplete="PF('dialogUpdateCategory').show();" />
+                            </p:column>
+                        </p:row>
                         
                     </p:panelGrid>
                 </p:dialog>
