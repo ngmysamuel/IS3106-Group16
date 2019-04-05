@@ -28,7 +28,7 @@ import util.exception.InputDataValidationException;
  * @author CaiYuqian
  */
 @Stateless
-public class CategoryController implements CategoryControllerRemote, CategoryControllerLocal {
+public class CategoryController implements CategoryControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;

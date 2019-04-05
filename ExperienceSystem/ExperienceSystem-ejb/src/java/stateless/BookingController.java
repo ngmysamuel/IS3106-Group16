@@ -26,7 +26,7 @@ import util.exception.InputDataValidationException;
  * @author CaiYuqian
  */
 @Stateless
-public class BookingController implements BookingControllerRemote, BookingControllerLocal {
+public class BookingController implements BookingControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;

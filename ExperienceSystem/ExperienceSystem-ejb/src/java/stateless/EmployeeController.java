@@ -31,7 +31,7 @@ import util.exception.InvalidLoginCredentialException;
  * @author CaiYuqian
  */
 @Stateless
-public class EmployeeController implements EmployeeControllerRemote, EmployeeControllerLocal {
+public class EmployeeController implements EmployeeControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
