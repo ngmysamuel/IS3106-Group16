@@ -11,6 +11,7 @@ import entity.ExperienceDate;
 import entity.User;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,7 +76,13 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
     
     @PostConstruct
     public void postConstruct(){
-        experience = (Experience)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("experienceEntityToView");
+        System.out.println("******** ViewExperienceDetailsManagedBean: postConstruct()");
+        experience = (Experience)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("experienceToView");
+        System.out.println("**** experience: " + experience.getTitle());
+        SimpleDateFormat formatter= new SimpleDateFormat("MM-dd-yyyy");  
+        for(ExperienceDate experienceDate: experience.getExperienceDates()) {
+            System.out.println("**** " + formatter.format(experienceDate.getStartDate()));
+        }
         isLogin = (Boolean)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
         if(isLogin != null && isLogin){
             currentUser = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
@@ -121,6 +128,7 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
     }
     
     public void addFavoriteExperience(ActionEvent event){
+        System.out.println("******** ViewExperienceDetailsManagedBean: addFavoriteExperience()");
         experienceController.addFollowerToExperience(experience.getExperienceId(), currentUser.getUserId());
         isExperienceFavouratedByThisUser = true;
     }

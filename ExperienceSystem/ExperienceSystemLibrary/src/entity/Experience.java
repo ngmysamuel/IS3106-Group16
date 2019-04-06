@@ -257,11 +257,11 @@ public class Experience implements Serializable {
         BigDecimal count = BigDecimal.ZERO;
         if (!this.experienceDates.isEmpty() && experienceDates.size() > 0) {
             for (ExperienceDate ed : experienceDates) {
-                count = count.add(BigDecimal.ONE);
-                sum = sum.add(ed.getPrice());
+                if(ed.isActive()) {
+                    count = count.add(BigDecimal.ONE);
+                    sum = sum.add(ed.getPrice());
+                }  
             }
-            System.out.println(sum);
-            System.out.println("count: " + count);
             return sum.divide(count, 2, RoundingMode.HALF_UP);
         }
         return null;

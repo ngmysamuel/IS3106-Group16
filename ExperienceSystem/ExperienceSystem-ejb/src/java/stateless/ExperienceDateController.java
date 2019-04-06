@@ -38,7 +38,7 @@ import util.exception.InputDataValidationException;
  * @author samue
  */
 @Stateless
-public class ExperienceDateController implements ExperienceDateControllerRemote, ExperienceDateControllerLocal {
+public class ExperienceDateController implements ExperienceDateControllerLocal {
 
     @EJB
     private ExperienceControllerLocal experienceControllerLocal;

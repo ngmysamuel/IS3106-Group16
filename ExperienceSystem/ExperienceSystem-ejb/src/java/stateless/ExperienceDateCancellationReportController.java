@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author samue
  */
 @Stateless
-public class ExperienceDateCancellationReportController implements ExperienceDateCancellationReportControllerRemote, ExperienceDateCancellationReportControllerLocal {
+public class ExperienceDateCancellationReportController implements ExperienceDateCancellationReportControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;

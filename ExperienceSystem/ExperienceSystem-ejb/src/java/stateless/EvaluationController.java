@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author samue
  */
 @Stateless
-public class EvaluationController implements EvaluationControllerRemote, EvaluationControllerLocal {
+public class EvaluationController implements EvaluationControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;

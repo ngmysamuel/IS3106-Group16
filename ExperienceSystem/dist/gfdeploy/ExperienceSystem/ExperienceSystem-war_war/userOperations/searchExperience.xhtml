@@ -183,7 +183,7 @@
                                 </p:outputPanel>
 
                                 <p:commandButton actionListener="#{viewAllExperiencesManagedBean.viewExperienceDetails}" icon="ui-icon-zoomin" title="View Details" style="width:50px;">
-                                        <f:setPropertyActionListener value="#{experience}" target="#{viewAllExperiencesManagedBean.selectedExperienceToView}" />
+                                    <f:attribute name="experienceToView" value="#{experience}" />
                                 </p:commandButton>
                             </h:panelGrid>
                         </p:dataViewListItem>
