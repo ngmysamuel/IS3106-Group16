@@ -60,6 +60,11 @@ public class DataInitBean {
                 user2.setUsername("ruichun");
                 user2.setPassword("password");
                 userController.register(user2);
+                User user3 = new User();
+                user3.setEmail("samuel@samuel.com");
+                user3.setUsername("samuel");
+                user3.setPassword("password");
+                userController.register(user3);
             } catch (InputDataValidationException ex) {
                 System.err.println("********** DataInitializationSessionBean.initializeData(): " + ex.getMessage());
             } catch (Exception ex) {

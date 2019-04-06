@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/templates/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <ez:Breadcrumb pageName="locationManagement" />
+        
+        <div>
+            <h3>Location Management</h3>
+            
+            <h:form>
+                <p:menubar>
+                    <p:submenu label="File" icon="ui-icon-document">
+                        <p:menuitem value="Create New Location" onclick="PF('dialogCreateNewLocation').show()" icon="fa fa-plus"/>
+                    </p:submenu>
+                </p:menubar>
+            </h:form>
+            
+            <h:form id="formAllLocations">
+                <p:messages id="messages" redisplay="false" closable="true"/>
+                
+                <p:dataTable id="dataTableAllLocations" widgetVar="dataTableAllLocations" value="locationManagementManagedBean.locations" var="location" rowKey="#{location.locationId}" rowIndexVar="row"
+                             filteredValue="#{locationManagementManagedBean.filteredLocations}"
+                             rows="10" paginator="true"paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            
+                            <h:outputText value="Search all fields:" />
+                            <p:inputText id="globalFilter" onkeyup="PF(dataTableAllLocations).filter()" style="width:300px" placeholder="Enter keyword"/>
+                            
+                        </p:outputPanel>
+                    </f:facet>
+                    
+                    <p:column headerText="Location ID" sortBy="#{location.locationId}" filterBy="#{location.locationId}" filterMatchMode="contains">
+                        <h:outputText value="location.locationId"/>
+                    </p:column>
+                    
+                    <p:column headerText="Location Name" sortBy="#{location.name}" filterBy="#{location.name}" filterMatchMode="contains">
+                        <h:outputText value="location.locationId"/>
+                    </p:column>
+                    
+                    <p:column headerText="Action">
+                        <p:commandButton update="formViewLocation" oncomplete="PF('dialogViewLocation').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{location}" target="#{locationManagementManagedBean.selectedLocationToView}" />
+                        </p:commandButton>
+                        <p:commandButton actionListener="#{locationManagementManagedBean.doUpdateLocation}" update="formUpdateLocation" oncomplete="PF('dialogUpdateLocation').show()" icon="ui-icon-pencil" title="Update">
+                            <f:attribute name="loctionToUpdate" value="#{location}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{categoryManagementManagedBean.deleteCategory}" update="formAllCategories:dataTableAllCategories formAllCategories:messages">
+                            <f:attribute name="locationToDelete" value="#{location}" />
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{location.name} ?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+            
+            <h:form id="formCreateNewLocation">
+                <p:dialog id="dialogCreateNewLocation" widgetVar="dialogCreateNewLocation" header="Create New Location" closable="true">
+                    <p:messages id="messagesCreateNewLocation" redisplay="false"/>
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="name" value="Location Name: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="name" value="#{locationManagementManagedBean.newLocation.name}" required="true" requiredMessage="Location Name is Required"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="name"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Create New Location" update="@form formAllLocations:dataTableAllLocations" actionListener="#{locationManagementManagedBean.createNewLocation}" oncomplete="PF('dialogCreateNewLocation').show();" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="formViewLocation">
+                <p:dialog>
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Loction ID: "/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{locationManagementManagedBean.selectedLocationToView.locationId}"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Name"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{locationManagementManagedBean.selectedLocationToView.name}"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Experiences"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{locationManagementManagedBean.selectedLocationToView.experiences}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="formUpdateLocation">
+                <p:dialog id="dialogUpdateLocation" widgetVar="dialogUpdateLocation" header="Update Location" closable="true">
+                    <p:messages id="messagesUpdateLocation" redisplay="false"/>
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Location ID: "/> 
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{locationManagementManagedBean.selectedLocationToUpdate.locationId}" 
+                            </p:column>
+                            <p:column>
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Name: "/> 
+                            </p:column>
+                            <p:column>
+                                <h:inputText id="name" value="#{locationManagementManagedBean.selectedLocationToUpdate.name}" required="true" requiredMessage="Name is required"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="name"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Location" update="@form formAllLocations:dataTableAllLocations" actionListener="#{locationManagementManagedBean.updateLocation}" oncomplete="PF('dialogUpdateLocation').show();" />
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+        </div>
+        
+    </ui:define>
+
+
+</ui:composition>

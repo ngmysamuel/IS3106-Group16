@@ -10,3 +10,5 @@
 ExperienceSystem/ExperienceSystemLibrary/nbproject/private/private.properties
 ExperienceSystem/nbproject/private/private.properties
 ExperienceSystem/nbproject/project.properties
+/ExperienceSystem/ExperienceSystemEmployee-war/build/
+/ExperienceSystem/ExperienceSystemEmployee-war/dist/
