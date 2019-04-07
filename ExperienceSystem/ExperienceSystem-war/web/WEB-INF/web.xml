@@ -30,6 +30,12 @@
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
     <ejb-local-ref>
+        <ejb-ref-name>UserController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.UserControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#UserController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
         <ejb-ref-name>ExperienceController</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>stateless.ExperienceControllerLocal</local>
@@ -40,5 +46,69 @@
         <ejb-ref-type>Session</ejb-ref-type>
         <local>stateless.ExperienceDateControllerLocal</local>
         <ejb-link>ExperienceSystem-ejb.jar#ExperienceDateController</ejb-link>
+        <ejb-ref-name>BookingController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.BookingControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#BookingController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>LanguageController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.LanguageControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#LanguageController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>EvaluationController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.EvaluationControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#EvaluationController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>TypeController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.TypeControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#TypeController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>LocationController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.LocationControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#LocationController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>LanguageController1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.LanguageControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#LanguageController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>CategoryController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.CategoryControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#CategoryController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>UserController1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.UserControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#UserController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>BookingController1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.BookingControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#BookingController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>UserController2</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.UserControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#UserController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>UserController3</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.UserControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#UserController</ejb-link>
     </ejb-local-ref>
 </web-app>

@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 package stateless;
-
 import entity.Evaluation;
+import entity.Experience;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -14,6 +15,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface EvaluationControllerLocal {
+    public Evaluation retrieveEvaluationById(Long id);
+    public List<Evaluation> retrieveAllEvaluations();
     public Evaluation create(Evaluation e);
+    public void delete(Long id);
     public void update(Evaluation e);
 }

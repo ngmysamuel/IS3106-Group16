@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -28,6 +29,7 @@ import javax.validation.constraints.NotNull;
 
 // Evaluation is both for a guest to evaluate an experience and for a host to evaluate a guest
 @Entity
+@XmlRootElement
 public class Evaluation implements Serializable {
 
     private static final long serialVersionUID = 1L;

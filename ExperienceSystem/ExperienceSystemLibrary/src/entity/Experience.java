@@ -20,12 +20,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Asus
  */
 @Entity
+@XmlRootElement
 public class Experience implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -183,6 +186,7 @@ public class Experience implements Serializable {
         this.language = language;
     }
 
+    @XmlTransient
     public List<ExperienceDate> getExperienceDates() {
         for (ExperienceDate ed : experienceDates) {
         }
@@ -193,6 +197,7 @@ public class Experience implements Serializable {
         this.experienceDates = experienceDates;
     }
 
+    @XmlTransient
     public List<User> getFollowers() {
         return followers;
     }
@@ -257,11 +262,11 @@ public class Experience implements Serializable {
         BigDecimal count = BigDecimal.ZERO;
         if (!this.experienceDates.isEmpty() && experienceDates.size() > 0) {
             for (ExperienceDate ed : experienceDates) {
-                count = count.add(BigDecimal.ONE);
-                sum = sum.add(ed.getPrice());
+                if(ed.isActive()) {
+                    count = count.add(BigDecimal.ONE);
+                    sum = sum.add(ed.getPrice());
+                }  
             }
-            System.out.println(sum);
-            System.out.println("count: " + count);
             return sum.divide(count, 2, RoundingMode.HALF_UP);
         }
         return null;

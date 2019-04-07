@@ -14,12 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Asus
  */
 @Entity
+@XmlRootElement
 public class Appeal implements Serializable {
 
     private static final long serialVersionUID = 1L;

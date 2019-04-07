@@ -22,12 +22,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Asus
  */
 @Entity
+@XmlRootElement
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -110,6 +113,7 @@ public class User implements Serializable {
         appeals = new ArrayList();
     }
 
+    @XmlTransient
     public List<User> getFollowers() {
         return followers;
     }
@@ -118,6 +122,7 @@ public class User implements Serializable {
         this.followers = followers;
     }
 
+    @XmlTransient
     public List<User> getBlockers() {
         return blockers;
     }
@@ -126,6 +131,7 @@ public class User implements Serializable {
         this.blockers = blockers;
     }
 
+    @XmlTransient
     public List<Message> getMessagesReplied() {
         return messagesReplied;
     }
@@ -134,6 +140,7 @@ public class User implements Serializable {
         this.messagesReplied = messagesReplied;
     }
 
+    @XmlTransient
     public List<Message> getMessagesSent() {
         return messagesSent;
     }
@@ -142,6 +149,7 @@ public class User implements Serializable {
         this.messagesSent = messagesSent;
     }
 
+    @XmlTransient
     public List<Notification> getNotifications() {
         return notifications;
     }
@@ -150,6 +158,7 @@ public class User implements Serializable {
         this.notifications = notifications;
     }
 
+    @XmlTransient
     public List<Experience> getExperienceHosted() {
         return experienceHosted;
     }
@@ -158,6 +167,7 @@ public class User implements Serializable {
         this.experienceHosted = experienceHosted;
     }
 
+    @XmlTransient
     public List<Experience> getFollowedExperiences() {
         return followedExperiences;
     }
@@ -166,6 +176,7 @@ public class User implements Serializable {
         this.followedExperiences = followedExperiences;
     }
 
+    @XmlTransient
     public List<Appeal> getAppeals() {
         return appeals;
     }
@@ -294,6 +305,7 @@ public class User implements Serializable {
         this.preferredLanguage = preferredLanguage;
     }
 
+    @XmlTransient
     public List<User> getBlocks() {
         return blocks;
     }
@@ -302,6 +314,7 @@ public class User implements Serializable {
         this.blocks = blocks;
     }
 
+    @XmlTransient
     public List<User> getFollows() {
         return follows;
     }
@@ -326,6 +339,7 @@ public class User implements Serializable {
         this.evaluationsForUserAsHost = evaluationsForUserAsHost;
     }
 
+    @XmlTransient
     public List<Booking> getBookings() {
         return bookings;
     }

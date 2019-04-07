@@ -26,7 +26,7 @@ import util.exception.InputDataValidationException;
  * @author CaiYuqian
  */
 @Stateless
-public class BookingController implements BookingControllerRemote, BookingControllerLocal {
+public class BookingController implements BookingControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
@@ -39,8 +39,13 @@ public class BookingController implements BookingControllerRemote, BookingContro
         validator = validatorFactory.getValidator();
     }
     
-    public void update(Booking b) {
-        em.merge(b);
+    public void update(Booking b) throws InputDataValidationException{
+        Set<ConstraintViolation<Booking>> constraintViolations = validator.validate(b);
+        if (constraintViolations.isEmpty()) {
+            em.merge(b);
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
     }
 
     @Override

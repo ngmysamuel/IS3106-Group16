@@ -14,12 +14,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Asus
  */
 @Entity
+@XmlRootElement
 public class Language implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,6 +38,7 @@ public class Language implements Serializable {
     public Language() {
     }
 
+    @XmlTransient
     public List<Experience> getExperiences() {
         return experiences;
     }

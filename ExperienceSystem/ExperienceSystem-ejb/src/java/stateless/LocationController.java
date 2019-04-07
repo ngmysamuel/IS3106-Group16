@@ -29,7 +29,7 @@ import util.exception.LocationNotFoundException;
  * @author CaiYuqian
  */
 @Stateless
-public class LocationController implements LocationControllerRemote, LocationControllerLocal {
+public class LocationController implements LocationControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;

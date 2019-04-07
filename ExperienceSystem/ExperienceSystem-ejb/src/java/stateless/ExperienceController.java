@@ -92,7 +92,7 @@ public class ExperienceController implements ExperienceControllerLocal {
         newExperience.setType(type);
         newExperience.setLanguage(language);
         newExperience.setLocation(location);
-        
+System.out.println(newExperience.getAddress());
         newExperience.setActive(true);
         
         Set<ConstraintViolation<Experience>> constraintViolations = validator.validate(newExperience);

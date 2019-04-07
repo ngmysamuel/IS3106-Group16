@@ -28,7 +28,7 @@ import util.exception.LanguageNotFoundException;
  * @author CaiYuqian
  */
 @Stateless
-public class LanguageController implements LanguageControllerRemote, LanguageControllerLocal {
+public class LanguageController implements LanguageControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;

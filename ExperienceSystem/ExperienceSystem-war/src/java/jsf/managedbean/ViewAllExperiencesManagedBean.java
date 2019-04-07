@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -47,7 +46,6 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     @EJB
     private ExperienceControllerLocal experienceControllerLocal;
     
-    private List<Experience> allExperiences;
     private List<Experience> filteredExperiences;
     private List<Type> types;
     private List<Category> categories;
@@ -63,8 +61,6 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     private Integer numOfPeople;
     
     private String searchString;
-    
-    private Date today;
 
     public ViewAllExperiencesManagedBean() {
         numOfPeople = 1;
@@ -74,7 +70,6 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     @PostConstruct
     public void postConstruct(){
         System.out.println("******** ViewAllExperiencesManagedBean: postConstruct()");
-        allExperiences = experienceControllerLocal.retrieveAllExperiences();
         categories = categoryControllerLocal.retrieveAllCategories();
         types = typeControllerLocal.retrieveAllTypes();
         locations = locationControllerLocal.retrieveAllLocations();
@@ -101,7 +96,7 @@ public class ViewAllExperiencesManagedBean implements Serializable{
         System.out.println("******** ViewAllExperiencesManagedBean: filterExperience()");
 
         filteredExperiences.clear();
-        filteredExperiences.addAll(allExperiences);
+        filteredExperiences.addAll(experienceControllerLocal.retrieveAllExperiences());
         
         // filter experiences property by property
         // the sequence is very important because the experience dates available would be filtered based on the previous results
@@ -150,7 +145,12 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     }
     
     public void viewExperienceDetails(ActionEvent event) throws IOException{
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceToView", selectedExperienceToView);
+        System.out.println("******** ViewAllExperiencesManagedBean: viewExperienceDetails() ");
+        filteredExperiences.clear();
+        Experience experienceToView = (Experience)event.getComponent().getAttributes().get("experienceToView");     
+        System.out.println("**** experienceToView: " + experienceToView.getTitle());
+        System.out.println("**** experience date listing:  " + experienceToView.getExperienceDates().size());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceToView", experienceToView);
         FacesContext.getCurrentInstance().getExternalContext().redirect("viewExperienceDetails.xhtml");
     }
 
@@ -159,16 +159,10 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     }
 
     public void setSelectedExperienceToView(Experience selectedExperienceToView) {
-        this.selectedExperienceToView = selectedExperienceToView;
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceEntityToView", selectedExperienceToView);
-    }
-
-    public List<Experience> getAllExperiences() {
-        return allExperiences;
-    }
-
-    public void setAllExperiences(List<Experience> allExperiences) {
-        this.allExperiences = allExperiences;
+        System.out.println("******** ViewAllExperiencesManagedBean: setSelectedExperienceToView() ");  
+        System.out.println("**** selectedExperienceToView: " + selectedExperienceToView.getTitle());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("experienceToView", selectedExperienceToView);
+        this.selectedExperienceToView = selectedExperienceToView; 
     }
 
     public List<Type> getTypes() {
@@ -257,14 +251,6 @@ public class ViewAllExperiencesManagedBean implements Serializable{
 
     public void setLanguages(List<Language> languages) {
         this.languages = languages;
-    }
-
-    public Date getToday() {
-        return new Date();
-    }
-
-    public void setToday(Date today) {
-        this.today = today;
     }
 
     public List<Experience> getFilteredExperiences() {

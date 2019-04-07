@@ -29,7 +29,7 @@ import util.exception.TypeNotFoundException;
  * @author CaiYuqian
  */
 @Stateless
-public class TypeController implements TypeControllerRemote, TypeControllerLocal {
+public class TypeController implements TypeControllerLocal {
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;

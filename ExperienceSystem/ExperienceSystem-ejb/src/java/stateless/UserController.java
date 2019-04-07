@@ -66,34 +66,32 @@ public class UserController implements UserControllerLocal {
         validator = validatorFactory.getValidator();
     }
 
-
     @Override
     public User register(User user) throws InputDataValidationException, RegisterUserException {
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
-        
-        if(constraintViolations.isEmpty()) {
+
+        if (constraintViolations.isEmpty()) {
             try {
                 em.persist(user);
                 em.flush();
                 return user;
-            } catch(PersistenceException ex) {                
-                if(ex.getCause() != null && 
-                        ex.getCause().getCause() != null &&
-                        ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException")) {
+            } catch (PersistenceException ex) {
+                if (ex.getCause() != null
+                        && ex.getCause().getCause() != null
+                        && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException")) {
                     throw new RegisterUserException("User with the same username already exist");
-                }
-                else {
+                } else {
                     throw new RegisterUserException("An unexpected error has occurred: " + ex.getMessage());
                 }
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 throw new RegisterUserException("An unexpected error has occurred: " + ex.getMessage());
-            }  
+            }
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
-        
+
     }
-    
+
     @Override
     public List<User> retrieveAllUsers() {
         Query query = em.createQuery("SELECT c FROM User c ORDER BY c.userId ASC");
@@ -101,6 +99,7 @@ public class UserController implements UserControllerLocal {
     }
 
     public User retrieveUserByUsername(String username) throws UserNotFoundException {
+        System.out.println("UserController: retrieveUserByUsername-> username: " + username);
         Query q = em.createQuery("SELECT u FROM User u WHERE u.username = :name");
         q.setParameter("name", username);
         User user = new User();
@@ -110,7 +109,6 @@ public class UserController implements UserControllerLocal {
             throw new UserNotFoundException("No such user");
         }
         // lazy fetching
-        System.out.println("user.getExpHost: "+user.getExperienceHosted());
         for (Experience e : user.getExperienceHosted()) {
         }
         return user;
@@ -146,11 +144,35 @@ public class UserController implements UserControllerLocal {
 
     }
 
+    //TODO: Add all fields
+    public void updateForRest(Long idToUpdate, String username, String password, String email, String firstName, String lastName, Boolean premium) throws InputDataValidationException, UpdateUserException {
+        User userToUpdate = new User();
+        try {
+            userToUpdate = retrieveUserById(idToUpdate);
+        } catch (UserNotFoundException ex) {
+            throw new UpdateUserException("User not found");
+        }
+        userToUpdate.setUsername(username);
+        userToUpdate.setPassword(password);
+        userToUpdate.setFirstName(firstName);
+        userToUpdate.setLastName(lastName);
+        userToUpdate.setEmail(email);
+        userToUpdate.setPremium(premium);
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(userToUpdate);
+        if (constraintViolations.isEmpty()) {
+            em.merge(userToUpdate);
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+
+    }
+
     // TODO:
     // 1. Implement encryption of the user password
     // 2. Lazy fetching of all array attributes
     public User login(String username, String password) throws InvalidLoginCredentialException {
         try {
+            System.out.println("In userController: Login");
             User user = retrieveUserByUsername(username);
             if (user.getPassword().equals(password)) {
                 return user;
@@ -232,7 +254,6 @@ public class UserController implements UserControllerLocal {
         return lsExperiences;
     }
 
-
     @Override
     public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException {
         ExperienceDate expDate = em.find(ExperienceDate.class, expId);
@@ -306,9 +327,8 @@ public class UserController implements UserControllerLocal {
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<User>> constraintViolations) {
         String msg = "Input data validation error:";
-        
-        for(ConstraintViolation constraintViolation:constraintViolations)
-        {
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
             msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
         }
         System.out.println("******** UserController: prepareInputDataValidationErrorsMessage");
@@ -316,4 +336,3 @@ public class UserController implements UserControllerLocal {
         return msg;
     }
 }
-
