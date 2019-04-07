@@ -29,4 +29,16 @@
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
+    <ejb-local-ref>
+        <ejb-ref-name>ExperienceController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.ExperienceControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#ExperienceController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ExperienceDateController</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.ExperienceDateControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#ExperienceDateController</ejb-link>
+    </ejb-local-ref>
 </web-app>

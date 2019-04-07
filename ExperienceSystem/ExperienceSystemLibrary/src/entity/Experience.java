@@ -64,7 +64,7 @@ public class Experience implements Serializable {
     @OneToMany(mappedBy = "experience")
     private List<ExperienceDate> experienceDates = new ArrayList<>();
     @ManyToMany
-    private List<User> followers;
+    private List<User> followers = new ArrayList<>();
     @ManyToOne
     private User host; 
     

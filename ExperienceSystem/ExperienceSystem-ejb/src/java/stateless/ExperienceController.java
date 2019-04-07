@@ -30,6 +30,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -40,6 +41,7 @@ import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UpdateEperienceInfoException;
+import util.exception.UserNotFoundException;
 
 /**
  *
@@ -305,6 +307,20 @@ public class ExperienceController implements ExperienceControllerLocal {
         return exps;
     }
     
+    @Override
+    public List<Experience> retrievePastExperiences(Long userId){
+        Query query = em.createQuery("SELECT u.bookings.experienceDate.experience FROM Experience e, User u WHERE u.bookings.experienceDate.startDate < :currentDate");
+        query.setParameter("currentDate", new Date(), TemporalType.TIMESTAMP);
+        List<Experience> exps = query.getResultList();
+        if(exps == null || exps.isEmpty() || exps.get(0) == null){
+            return new ArrayList();
+        }
+        for(Experience e: exps){
+            e.getExperienceDates();
+        }
+        return exps;
+    }
+    
     // this function shoud not work properly
 //    @Override
 //    public List<Experience> retrieveExperienceBySingleDate(Date date) {
@@ -341,6 +357,20 @@ public class ExperienceController implements ExperienceControllerLocal {
     }
     
     @Override
+    public List<Experience> retrieveFavoriteExperiences(Long userId){
+        Query query = em.createQuery("SELECT u.followedExperiences FROM Experience e, User u WHERE u.userId = :inUserId");
+        query.setParameter("inUserId", userId);
+        List<Experience> exps = query.getResultList();
+        if(exps == null || exps.isEmpty() || exps.get(0) == null){
+            return new ArrayList<>();
+        }
+        for(Experience e: exps){
+            e.getFollowers();
+        }
+        return exps;
+    }
+    
+    @Override
     public List<ExperienceDate> retrieveAllExperienceDates(Experience experience){
         Query query = em.createQuery("SELECT d FROM ExperienceDate d WHERE d.experience.experienceId = :inExperienceId");
         query.setParameter("inExperienceId", experience.getExperienceId());
@@ -368,22 +398,34 @@ public class ExperienceController implements ExperienceControllerLocal {
     }
     
     @Override
-    public void removeFollowerFromExperience(Long experienceId, Long userId) {
+    public void removeFollowerFromExperience(Long experienceId, Long userId) throws UserNotFoundException, ExperienceNotFoundException{
         Experience experience = em.find(Experience.class, experienceId);
         User user = em.find(User.class, userId);
         
-        if(experience != null && user != null) {
+        if(user == null){
+            throw new UserNotFoundException("User with id: " + userId + " doesn't exist!");
+        }
+        else if(experience == null){
+            throw new ExperienceNotFoundException("Experience with id: " + experienceId + " doesn't exist!");
+        }
+        else {
             experience.getFollowers().remove(user);
             user.getFollowedExperiences().remove(experience);
         }  
     }
 
     @Override
-    public void addFollowerToExperience(Long experienceId, Long userId) {
+    public void addFollowerToExperience(Long experienceId, Long userId) throws UserNotFoundException, ExperienceNotFoundException{
         Experience experience = em.find(Experience.class, experienceId);
         User user = em.find(User.class, userId);
         
-        if(experience != null && user != null) {
+        if(user == null){
+            throw new UserNotFoundException("User with id: " + userId + " doesn't exist!");
+        }
+        else if(experience == null){
+            throw new ExperienceNotFoundException("Experience with id: " + experienceId + " doesn't exist!");
+        }
+        else {
             experience.getFollowers().add(user);
             user.getFollowedExperiences().add(experience);
         }  

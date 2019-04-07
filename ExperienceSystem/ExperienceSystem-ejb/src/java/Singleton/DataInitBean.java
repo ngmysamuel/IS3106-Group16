@@ -6,20 +6,31 @@
 package Singleton;
 
 import entity.Category;
+import entity.Experience;
+import entity.ExperienceDate;
 import entity.Language;
 import entity.Location;
 import entity.Type;
 import entity.User;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import stateless.CategoryControllerLocal;
+import stateless.ExperienceControllerLocal;
+import stateless.ExperienceDateControllerLocal;
 import stateless.LanguageControllerLocal;
 import stateless.LocationControllerLocal;
 import stateless.TypeControllerLocal;
 import stateless.UserControllerLocal;
+import util.exception.CreateNewExperienceDateException;
+import util.exception.CreateNewExperienceException;
+import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 
 /**
@@ -31,6 +42,11 @@ import util.exception.InputDataValidationException;
 @Startup
 public class DataInitBean {
 
+    @EJB
+    private ExperienceDateControllerLocal experienceDateController;
+
+    @EJB
+    private ExperienceControllerLocal experienceController;
     @EJB
     private UserControllerLocal userController;
     @EJB
@@ -189,6 +205,91 @@ public class DataInitBean {
             } catch (InputDataValidationException ex) {
                 System.err.println("********** DataInitializationSessionBean.initializeData(): " + ex.getMessage());
             } catch (Exception ex) {
+                System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
+            }
+        }
+        
+        if(experienceController.retrieveAllExperiences() == null || experienceController.retrieveAllExperiences().isEmpty()){
+            try{
+                System.out.println("********** Initializing Experiences");
+                Experience exp1 = new Experience("Pasta Cooking", "Italian pasta-making training.");
+                Location l1 = locationController.retrieveLocationById(new Long(1));
+                exp1.setLocation(l1);
+                Type t2 = typeController.retrieveTypeById(new Long(2));
+                exp1.setType(t2);
+                Category c1 = categoryController.retrieveCategoryById(new Long(1));
+                exp1.setCategory(c1);
+                Language la1 = languageController.retrieveLanguageById(new Long(1));
+                exp1.setLanguage(la1);
+                User u1 = userController.retrieveUserById(new Long(1));
+                exp1.setHost(u1);
+                exp1.setAddress("Address");
+                experienceController.createNewExperience(exp1);
+                l1.getExperiences().add(exp1);
+                t2.getExperiences().add(exp1);
+                c1.getExperiences().add(exp1);
+                la1.getExperiences().add(exp1);
+                u1.getExperienceHosted().add(exp1);
+                
+                Experience exp2 = new Experience("Museum Trip", "NUS Museum");
+                exp2.setLocation(l1);
+                Type t1 = typeController.retrieveTypeById(new Long(1));
+                exp2.setType(t1);
+                Category c4 = categoryController.retrieveCategoryById(new Long(4));
+                exp2.setCategory(c4);
+                exp2.setLanguage(la1);
+                exp2.setLocation(l1);
+                exp2.setAddress("Address2");
+                User u2 = userController.retrieveUserById(new Long(2));
+                exp2.setHost(u2);
+                experienceController.createNewExperience(exp2);
+                l1.getExperiences().add(exp2);
+                t1.getExperiences().add(exp2);
+                c4.getExperiences().add(exp2);
+                la1.getExperiences().add(exp2);
+                u2.getExperienceHosted().add(exp2);
+            }
+            catch (CreateNewExperienceException | InputDataValidationException ex){
+                System.err.println("********** DataInitializationSessionBean.initializeData(): " + ex.getMessage());
+            }
+            catch (Exception ex) {
+                System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
+            }
+        }
+        
+        if(experienceDateController.retrieveAllExperienceDates().isEmpty()){
+            try{
+                Experience e1 = experienceController.retrieveExperienceById(new Long(1));
+                ExperienceDate ed1 = new ExperienceDate();
+                ed1.setExperience(e1);
+                ed1.setCapacity(10);
+                ed1.setPrice(new BigDecimal(67));
+                ed1.setSpotsAvailable(10);
+                ed1.setStartDate(new Date(118,10,30,9,30,27));
+                experienceDateController.createNewExperienceDate(ed1);
+                e1.getExperienceDates().add(ed1);
+                
+                ExperienceDate ed2 = new ExperienceDate();
+                ed2.setExperience(e1);
+                ed2.setCapacity(12);
+                ed2.setPrice(new BigDecimal(70.3));
+                ed2.setSpotsAvailable(12);
+                ed2.setStartDate(new Date(118,11,1,9,30,27));
+                experienceDateController.createNewExperienceDate(ed2);
+                e1.getExperienceDates().add(ed2);
+                
+                Experience e2 = experienceController.retrieveExperienceById(new Long(2));
+                ExperienceDate ed3 = new ExperienceDate();
+                ed3.setExperience(e2);
+                ed3.setCapacity(5);
+                ed3.setPrice(new BigDecimal(30.30));
+                ed3.setSpotsAvailable(5);
+                ed3.setStartDate(new Date(118,11,1,10,32,27));
+                experienceDateController.createNewExperienceDate(ed3);
+                e2.getExperienceDates().add(ed3);
+            } catch (ExperienceNotFoundException | CreateNewExperienceDateException | InputDataValidationException ex) {
+                System.err.println("********** DataInitializationSessionBean.initializeData(): " + ex.getMessage());
+            } catch (Exception ex){
                 System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
             }
         }

@@ -39,4 +39,8 @@ public interface ExperienceDateControllerLocal {
     public List<ExperienceDateCancellationReport> retrieveAllExperienceDateCancellationReports();
     
     public List<ExperienceDate> retrieveAllActiveExperienceDatesByExperienceId(Long experienceId);
+
+    public List<ExperienceDate> retrieveAllExperienceDates();
+
+    public List<ExperienceDate> retrieveExperienceDatesOfAnExperience(Experience experience);
 }

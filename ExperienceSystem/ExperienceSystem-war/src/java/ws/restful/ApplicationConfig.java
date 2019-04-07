@@ -30,6 +30,8 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(ws.restful.CategoryResource.class);
+        resources.add(ws.restful.ExperienceDateService.class);
+        resources.add(ws.restful.ExperienceService.class);
         resources.add(ws.restful.LocationResource.class);
         resources.add(ws.restful.TypeResource.class);
     }

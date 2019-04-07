@@ -11,7 +11,6 @@ import entity.ExperienceDate;
 import entity.Language;
 import entity.Location;
 import entity.Type;
-import entity.User;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +21,7 @@ import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UpdateEperienceInfoException;
+import util.exception.UserNotFoundException;
 
 /**
  *
@@ -50,8 +50,8 @@ public interface ExperienceControllerLocal {
     public List<Experience> retrieveExperienceByName(String title);
     
     // experience followers
-    public void removeFollowerFromExperience(Long experienceId, Long userId);
-    public void addFollowerToExperience(Long experienceId, Long userId);
+    public void removeFollowerFromExperience(Long experienceId, Long userId) throws UserNotFoundException, ExperienceNotFoundException;
+    public void addFollowerToExperience(Long experienceId, Long userId) throws UserNotFoundException, ExperienceNotFoundException;
 
     // filtering 
     public List<Experience> filterExperienceByActiveState(List<Experience> experienceList);
@@ -65,5 +65,9 @@ public interface ExperienceControllerLocal {
     public List<ExperienceDate> retrieveAllExperienceDates(Experience experience);
 
     ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
+
+    public List<Experience> retrieveFavoriteExperiences(Long userId);
+
+    public List<Experience> retrievePastExperiences(Long userId);
 
 }

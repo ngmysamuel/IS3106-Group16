@@ -59,6 +59,7 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
 
     public ExperienceDate() {
         bookings = new ArrayList();
+        active = true;
     }
     
 

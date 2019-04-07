@@ -108,6 +108,19 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
     }
     
     @Override
+    public List<ExperienceDate> retrieveAllExperienceDates(){
+        Query query = em.createQuery("SELECT ed FROM ExperienceDate ed");
+        List<ExperienceDate> eds = query.getResultList();
+        if(eds == null || eds.isEmpty() || eds.get(0) == null){
+            return new ArrayList<>();
+        }
+        for(ExperienceDate ed: eds){
+            ed.getExperience();
+        }
+        return eds;
+    }
+    
+    @Override
     public ExperienceDate retrieveExperienceDateByDateId(Long id) {
         ExperienceDate ed = em.find(ExperienceDate.class, id);
         for (Booking b : ed.getBookings()) {
@@ -132,7 +145,15 @@ public class ExperienceDateController implements ExperienceDateControllerRemote,
         Query query = em.createQuery("SELECT d FROM ExperienceDate d WHERE d.experience.experienceId = :inExperienceId");
         query.setParameter("inExperienceId", experience.getExperienceId());
 
-        return query.getResultList();
+        List<ExperienceDate> experienceDates = query.getResultList();
+        if(experienceDates == null || experienceDates.isEmpty() || experienceDates.get(0) == null){
+            return new ArrayList<>();
+        }
+        for(ExperienceDate ed: experienceDates){
+            ed.getBookings();
+            ed.getExperience();
+        }
+        return experienceDates;
     }
 
     // TO CHECK: whether after an experience date is cancelled, it has been automatically removed from the association for the experience

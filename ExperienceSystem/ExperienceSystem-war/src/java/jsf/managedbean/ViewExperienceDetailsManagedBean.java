@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -26,7 +28,9 @@ import stateless.ExperienceControllerLocal;
 import stateless.ExperienceDateControllerLocal;
 import util.exception.CreateNewBookingException;
 import util.exception.ExperienceDateNotFoundException;
+import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
+import util.exception.UserNotFoundException;
 
 /**
  *
@@ -121,13 +125,25 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
     }
     
     public void addFavoriteExperience(ActionEvent event){
-        experienceController.addFollowerToExperience(experience.getExperienceId(), currentUser.getUserId());
-        isExperienceFavouratedByThisUser = true;
+        try {
+            experienceController.addFollowerToExperience(experience.getExperienceId(), currentUser.getUserId());
+            isExperienceFavouratedByThisUser = true;
+        } catch (UserNotFoundException ex) {
+            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExperienceNotFoundException ex) {
+            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void removeFavoriteExperience(ActionEvent event){
-        experienceController.removeFollowerFromExperience(experience.getExperienceId(), currentUser.getUserId());
-        isExperienceFavouratedByThisUser = false;
+        try {
+            experienceController.removeFollowerFromExperience(experience.getExperienceId(), currentUser.getUserId());
+            isExperienceFavouratedByThisUser = false;
+        } catch (UserNotFoundException ex) {
+            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExperienceNotFoundException ex) {
+            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public List<String> getImages() {
