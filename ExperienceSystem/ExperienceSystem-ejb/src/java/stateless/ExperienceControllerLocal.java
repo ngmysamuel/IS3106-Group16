@@ -66,4 +66,6 @@ public interface ExperienceControllerLocal {
 
     ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException;
 
+    public List<Experience> retrieveAllFavouriteExperienceByUserId(Long userId);
+
 }

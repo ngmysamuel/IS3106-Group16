@@ -49,6 +49,8 @@ import util.exception.UpdateEperienceInfoException;
 public class ExperienceController implements ExperienceControllerLocal {
 
     @EJB
+    private UserControllerLocal userControllerLocal;
+    @EJB
     private LanguageControllerLocal languageControllerLocal;
     @EJB
     private TypeControllerLocal typeControllerLocal;
@@ -204,6 +206,15 @@ public class ExperienceController implements ExperienceControllerLocal {
 
         List<Experience> hostExperiences = query.getResultList();
         return hostExperiences;
+    }
+    
+    @Override 
+    public List<Experience> retrieveAllFavouriteExperienceByUserId(Long userId){
+        Query query = em.createQuery("SELECT e FROM Experience e, IN (e.followers) f WHERE f.userId = :inUserId");
+        query.setParameter("inUserId", userId);
+        
+        List<Experience> favouriteExperiences = query.getResultList();
+        return favouriteExperiences;
     }
     
     @Override
@@ -369,6 +380,7 @@ public class ExperienceController implements ExperienceControllerLocal {
     
     @Override
     public void removeFollowerFromExperience(Long experienceId, Long userId) {
+        System.out.println("Have you reach the beginning of EJB component?");
         Experience experience = em.find(Experience.class, experienceId);
         User user = em.find(User.class, userId);
         
@@ -376,6 +388,7 @@ public class ExperienceController implements ExperienceControllerLocal {
             experience.getFollowers().remove(user);
             user.getFollowedExperiences().remove(experience);
         }  
+        System.out.println("Have you reach the EJB component?");
     }
 
     @Override

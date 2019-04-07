@@ -9,32 +9,25 @@
         <h3>Main Menu</h3>
         <nav>
             <h:form>
-                <p:menu style="width:200px">
+                <p:menu style="width:300px">
                     <p:submenu label="System">
-                        
                         <p:menuitem value="Home" outcome="/index" icon="fa fa-home" />
                         <p:menuitem value="Logout" actionListener="#{loginManagedBean.logout}" icon="fa fa-sign-out" rendered="#{sessionScope.isLogin==true}" />
-                        
                     </p:submenu>
                     
-                    <p:submenu label ="Customer Office" rendered="#{sessionScope.isLogin==true}">
-                    
-                        <p:menuitem value="Manage Customers" outcome="/customerOfficer/customerManagement.xhtml" icon="fa fa-list"
-                                    
+                    <p:submenu label="Customer Office">
+                        <p:menuitem value="Manage Customers" outcome="/customerOfficer/customerManagement.xhtml" icon="fa fa-list"/>     
                     </p:submenu>
-                    
-                    <p:submenu label ="System Administration" rendered="#{sessionScope.isLogin==true}">
-                    
+<!-- rendered="#{sessionScope.isLogin==true}"-->
+                    <p:submenu label="System Administration">
                         <p:menuitem value="Staff Management" outcome="/systemAdministration/staffManagement.xhtml" icon ="fa fa-users"/>
                         <p:menuitem value="Experience Management" outcome="/systemAdministration/experienceManagement.xhtml" icon="fa fa-tags"/>
                         <p:menuitem value="Location Management" outcome="/systemAdministration/locationManagement.xhtml" icon="fa fa-tags"/>
                         <p:menuitem value="Language Management" outcome="/systemAdministration/languageManagement.xhtml" icon="fa fa-tags"/>
                         <p:menuitem value="Type Management" outcome="/systemAdministration/typeManagement.xhtml" icon="fa fa-tags"/>
                         <p:menuitem value="Category Management" outcome="/systemAdministration/categoryManagement.xhtml" icon="fa fa-tags"/>
-                        <p:menuitem value="Appeal Management" outcome="/systemAdministration/appealManagement.xhtml" icon="fa fa-tags"/>
-                        
+                        <p:menuitem value="Appeal Management" outcome="/systemAdministration/appealManagement.xhtml" icon="fa fa-tags"/>            
                     </p:submenu>
-                    
                 </p:menu>
             </h:form>
         </nav>

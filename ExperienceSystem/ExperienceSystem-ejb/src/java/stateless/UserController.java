@@ -161,7 +161,8 @@ public class UserController implements UserControllerLocal {
             throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
         }
     }
-
+    
+    
     @Override
     public List<Experience> retrieveAllExperience(Long id) { //completed exp
         User user = em.find(User.class, id);

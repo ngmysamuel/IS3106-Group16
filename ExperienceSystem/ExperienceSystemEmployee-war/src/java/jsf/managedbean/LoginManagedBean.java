@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package jsf.managedbean;
 
 import entity.Employee;
-import java.awt.event.ActionEvent;
+import javax.faces.event.ActionEvent;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -27,7 +22,7 @@ import util.exception.InvalidLoginCredentialException;
 
 public class LoginManagedBean {
 
-    @EJB(name = "EmployeeControllerLocal")
+    @EJB
     private EmployeeControllerLocal employeeControllerLocal;
 
     private String username;
@@ -43,7 +38,7 @@ public class LoginManagedBean {
             FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentStaffEntity", currentStaffEntity);
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("dashboard.xhtml");
         }
         catch(InvalidLoginCredentialException ex)
         {
@@ -71,7 +66,4 @@ public class LoginManagedBean {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
-    
 }

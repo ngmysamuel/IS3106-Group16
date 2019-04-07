@@ -6,16 +6,19 @@
 package Singleton;
 
 import entity.Category;
+import entity.Employee;
 import entity.Language;
 import entity.Location;
 import entity.Type;
 import entity.User;
+import enumerated.JobRoleEnum;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import stateless.CategoryControllerLocal;
+import stateless.EmployeeControllerLocal;
 import stateless.LanguageControllerLocal;
 import stateless.LocationControllerLocal;
 import stateless.TypeControllerLocal;
@@ -32,6 +35,8 @@ import util.exception.InputDataValidationException;
 public class DataInitBean {
 
     @EJB
+    private EmployeeControllerLocal employeeController;
+    @EJB
     private UserControllerLocal userController;
     @EJB
     private LanguageControllerLocal languageController;
@@ -41,10 +46,35 @@ public class DataInitBean {
     private CategoryControllerLocal categoryController;
     @EJB
     private LocationControllerLocal locationController;
-
+    
+    
     @PostConstruct
     public void postConstruct() {
         System.out.println("******** DataInitBean: postConstruct() ********");
+        
+        if(employeeController.retrieveAllEmployees() == null || employeeController.retrieveAllEmployees().isEmpty()) {
+            try {
+                System.out.println("    **** initializing employees");
+                
+                Employee employee1 = new Employee();
+                employee1.setJobRole(JobRoleEnum.CUSTOMER_OFFICER);
+                employee1.setUsername("customer_officer");
+                employee1.setPassword("password");
+                employeeController.createNewEmployee(employee1);
+                
+                Employee employee2 = new Employee();
+                employee2.setJobRole(JobRoleEnum.EXPERIENCE_MANAGER);
+                employee2.setUsername("experience_manager");
+                employee2.setPassword("password");
+                employeeController.createNewEmployee(employee2);
+                
+            } catch (InputDataValidationException ex) {
+                System.err.println("********** DataInitializationSessionBean.initializeData(): " + ex.getMessage());
+            } catch (Exception ex) {
+                System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
+            }
+        }
+        
         
         if(userController.retrieveAllUsers() == null || userController.retrieveAllUsers().isEmpty()) {
             try {

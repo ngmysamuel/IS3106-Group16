@@ -2,6 +2,11 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/zhangruichun/Desktop/IS3106-Group16/ExperienceSystem/ExperienceSystemEmployee-war/web/dashboard.xhtml</file>
+            <file>file:/Users/zhangruichun/Desktop/IS3106-Group16/ExperienceSystem/ExperienceSystemEmployee-war/web/index.xhtml</file>
+            <file>file:/Users/zhangruichun/Desktop/IS3106-Group16/ExperienceSystem/ExperienceSystemEmployee-war/src/java/jsf/managedbean/LoginManagedBean.java</file>
+            <file>file:/Users/zhangruichun/Desktop/IS3106-Group16/ExperienceSystem/ExperienceSystemEmployee-war/web/mainmenu.xhtml</file>
+        </group>
     </open-files>
 </project-private>

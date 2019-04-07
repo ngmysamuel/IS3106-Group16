@@ -93,6 +93,12 @@ public class EmployeeController implements EmployeeControllerLocal {
     }
     
     @Override
+    public List<Employee> retrieveAllEmployees() {
+        Query query = em.createQuery("SELECT a FROM Employee a ORDER BY a.employeeId DESC");
+        return query.getResultList();
+    }
+    
+    @Override
     public Appeal retrieveAppealById(Long appealId){
         return em.find(Appeal.class, appealId);
     }
@@ -127,4 +133,6 @@ public class EmployeeController implements EmployeeControllerLocal {
         
         return msg;
     }
+
+    
 }

@@ -30,4 +30,7 @@ public interface EmployeeControllerLocal {
     public Appeal retrieveAppealById(Long appealId);
 
     public void processAppeal(Long appealId, String reply, Long employeeId) throws AppealNotFoundException, EmployeeNotFoundException;
+
+    public List<Employee> retrieveAllEmployees();
+
 }
