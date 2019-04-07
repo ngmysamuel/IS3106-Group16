@@ -6,20 +6,30 @@
 package Singleton;
 
 import entity.Category;
+import entity.Experience;
+import entity.ExperienceDate;
 import entity.Language;
 import entity.Location;
 import entity.Type;
 import entity.User;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import stateless.CategoryControllerLocal;
+import stateless.ExperienceControllerLocal;
+import stateless.ExperienceDateControllerLocal;
 import stateless.LanguageControllerLocal;
 import stateless.LocationControllerLocal;
 import stateless.TypeControllerLocal;
 import stateless.UserControllerLocal;
+import util.exception.CreateNewExperienceDateException;
+import util.exception.CreateNewExperienceException;
 import util.exception.InputDataValidationException;
 
 /**
@@ -32,6 +42,10 @@ import util.exception.InputDataValidationException;
 public class DataInitBean {
 
     @EJB
+    private ExperienceDateControllerLocal experienceDateController;
+    @EJB
+    private ExperienceControllerLocal experienceController;
+    @EJB
     private UserControllerLocal userController;
     @EJB
     private LanguageControllerLocal languageController;
@@ -41,6 +55,7 @@ public class DataInitBean {
     private CategoryControllerLocal categoryController;
     @EJB
     private LocationControllerLocal locationController;
+    
 
     @PostConstruct
     public void postConstruct() {
@@ -196,6 +211,35 @@ public class DataInitBean {
             } catch (Exception ex) {
                 System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
             }
+        }
+        Experience e = new Experience();
+        e.setTitle("DDD");
+        e.setAddress("eeee");
+        e.setActive(true);
+        e.setCategory(categoryController.retrieveCategoryById(Long.parseLong("1")));
+        e.setType(typeController.retrieveTypeById(Long.parseLong("1")));
+        e.setLocation(locationController.retrieveLocationById(Long.parseLong("1")));
+        e.setLanguage(languageController.retrieveLanguageById(Long.parseLong("1")));
+        try {
+            e = experienceController.createNewExperience(e);
+        } catch (CreateNewExperienceException ex) {
+            Logger.getLogger(DataInitBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InputDataValidationException ex) {
+            Logger.getLogger(DataInitBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ExperienceDate ed1 = new ExperienceDate();
+        ed1.setActive(true);
+        ed1.setCapacity(5);
+        ed1.setStartDate(new Date());
+        ed1.setSpotsAvailable(5);
+        ed1.setPrice(new BigDecimal("2.5"));
+        ed1.setExperience(e);
+        try {
+            experienceDateController.createNewExperienceDate(ed1);
+        } catch (CreateNewExperienceDateException ex) {
+            Logger.getLogger(DataInitBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InputDataValidationException ex) {
+            Logger.getLogger(DataInitBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

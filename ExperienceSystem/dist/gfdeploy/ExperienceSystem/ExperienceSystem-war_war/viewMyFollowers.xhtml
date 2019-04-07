@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template='templates/defaultTemplate.xhtml'>
+    <ui:define name='content'>
+
+        <h:head></h:head>
+        
+        <h:body>
+            <h:outputText value="fj"/>
+            <p:spinner/>
+        </h:body>
+        
+        <h:form>
+            <p:panelGrid columns="2">
+                <h:outputText value='22'/>
+                <p:inputText id="name" required="true" />
+                <h:inputSecret value='ff'/>
+                <p:password feedback='true'/>
+            </p:panelGrid>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

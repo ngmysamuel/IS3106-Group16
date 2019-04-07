@@ -25,7 +25,9 @@ import javax.ws.rs.core.Response;
 import stateless.ExperienceControllerLocal;
 import util.exception.ExperienceNotFoundException;
 import datamodel.ws.rest.RetrieveAllExperiencesExpResrc;
+import datamodel.ws.rest.RetrieveListOfExperienceDates;
 import datamodel.ws.rest.UpdateExperience;
+import entity.ExperienceDate;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.QueryParam;
@@ -81,6 +83,23 @@ public class ExperienceResource {
 //        return Response.status(Response.Status.NOT_FOUND).entity("Experience not found").build();
         List<Experience> ls = experienceController.retrieveAllHostExperienceByHostId(id);
         return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesExpResrc(ls)).build();
+    }
+    
+    @Path("getExperienceDatesFromExperience/{id}")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getExperienceDatesFromExperience(@PathParam("id")Long id) {
+        Experience e;
+        try {
+            e = experienceController.retrieveExperienceById(id);
+        } catch (ExperienceNotFoundException ex) {
+            Logger.getLogger(ExperienceResource.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(Response.Status.NOT_FOUND).entity("Experience not found").build();
+        }
+        List<ExperienceDate> ls = experienceController.retrieveAllExperienceDates(e);
+        RetrieveListOfExperienceDates r = new RetrieveListOfExperienceDates(ls);
+        return Response.status(Response.Status.OK).entity(r).build();
     }
     
     @Path("createExperience")
