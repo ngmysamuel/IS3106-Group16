@@ -22,12 +22,14 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Asus
  */
 @Entity
+@XmlRootElement
 public class Booking implements Serializable {
 
   
@@ -35,9 +37,9 @@ public class Booking implements Serializable {
     @ManyToOne
     private User guest;
 
-    @NotNull
+//    @NotNull
     private boolean userEvaluated;
-    @NotNull
+//    @NotNull
     private boolean hostEvaluated;
     
     private static final long serialVersionUID = 1L;

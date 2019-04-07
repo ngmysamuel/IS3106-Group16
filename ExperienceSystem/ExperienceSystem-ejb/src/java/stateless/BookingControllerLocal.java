@@ -19,7 +19,7 @@ import util.exception.InputDataValidationException;
 public interface BookingControllerLocal {
     public Booking createNewBooking(Booking newBooking) throws CreateNewBookingException, InputDataValidationException;
     
-    public void update(Booking b);
+        public void update(Booking b) throws InputDataValidationException;
     
     public Booking retrieveBookingByBookingId(Long id);
     

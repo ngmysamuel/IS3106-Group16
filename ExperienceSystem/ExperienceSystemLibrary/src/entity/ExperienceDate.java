@@ -21,12 +21,15 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Asus
  */
 @Entity
+@XmlRootElement
 public class ExperienceDate implements Serializable, Comparable<ExperienceDate> {
 
     private static final long serialVersionUID = 1L;
@@ -70,6 +73,7 @@ public class ExperienceDate implements Serializable, Comparable<ExperienceDate> 
         this.experienceDateCancellationReport = experienceDateCancellationReport;
     }
 
+    @XmlTransient
     public List<Booking> getBookings() {
         return bookings;
     }

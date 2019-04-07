@@ -14,12 +14,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author Asus
  */
 @Entity
+@XmlRootElement
 public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,6 +65,7 @@ public class Notification implements Serializable {
         this.isSeen = isSeen;
     }
 
+    @XmlTransient
     public List<User> getUsers() {
         return users;
     }

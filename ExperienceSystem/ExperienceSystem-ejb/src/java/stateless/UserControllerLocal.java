@@ -27,6 +27,7 @@ public interface UserControllerLocal {
     public User register(User user) throws InputDataValidationException, RegisterUserException;
     
     public void update(User user) throws InputDataValidationException, UpdateUserException;
+    public void updateForRest(Long idToUpdate, String username, String password, String email, String firstName, String lastName, Boolean premium) throws InputDataValidationException, UpdateUserException;
     
     public User login(String username, String password) throws InvalidLoginCredentialException;
 
