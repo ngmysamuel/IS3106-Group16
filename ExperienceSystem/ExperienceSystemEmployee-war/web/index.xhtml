@@ -3,41 +3,122 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                template="/templates/defaultTemplate.xhtml"
+                template="./templates/defaultTemplate.xhtml"
                 xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
                 xmlns:p="http://primefaces.org/ui">
 
-    
-
-    
-
     <ui:define name="content">
         
-        <ez:Breadcrumb pageName="index"/>
-        
-        <h:panelGroup rendered ="#{sessionScope.isLogin == false}">
-            <article>
+        <style>
+            #slider{
+                overflow: hidden;
+                position: relative;
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+            }
+            #sliderBox{
+                position: absolute;
+                width: 500%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                left: 0;
+                animation: 15s slider infinite;
+            }
+            #loginBox{
+                position: absolute;
+                left: 200px;
+                margin: 0;
+                z-index: 1;
+            }
+            #formLogin{
+                max-width: 250px;
+                padding: 16px;
+                background-color: rgba(255,255,255,0.8);
+            }
+            .slide{
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .slide img{
+                display: inline;
+                float: left;
+                margin: 0;
+                padding: 0;
+            }
+            @keyframes slider{
+                0% {
+                    left: 0;
+                }
+                20% {
+                    left: 0;
+                }
+                25% {
+                    left: -100%;
+                }
+                45% {
+                    left: -100%;
+                }
+                50% {
+                    left: -200%;
+                }
+                70% {
+                    left: -200%;
+                }
+                75% {
+                    left: -300%;
+                }
+                95% {
+                    left: -300%;
+                }
+                100% {
+                    left: -400%;
+                }
+            }
+        </style>
+            <div id="slider">
+                <div id="sliderBox">
+                    <span class="slide">
+                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
+                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/R6wtAtN.jpg" />
+                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/slbHL1Z.jpg" />
+                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/SQiLyd4.jpg" />
+                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
+                    </span>
+                </div>
                 
-                <h3>Welcome</h3>
-                <p>
-                    Welcome to Experience System Employee 
-                </p>
-                
-            </article>
-        </h:panelGroup>
-        
-        
-        <h:panelGroup rendered="#{sessionScope.isLogin == true}">
-            <article>
-                
-                <h3>
-                    Message of the day 
-                </h3>
-                
-                
-            </article>
-        </h:panelGroup>
+                <div id="loginBox">
+                    <h:form id="formLogin" >
+                        <p:growl id="messageIndexSearchExperience" />
+                        <p:outputLabel value="Log in"/>
+                        <br/>
+                        <br/>
+                        
+                        <p:outputLabel for="username" value="username: " />
+                        <br/>
+                        <p:inputText id="username" value="#{loginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
+                            <f:validateLength minimum="4" />
+                        </p:inputText>
+                        <br/>
+                        <br/>
+                        
+                        <p:outputLabel for="password" value="Password" />&nbsp;
+                        <p:password id="password" value="#{loginManagedBean.password}" size="16" required="true" requiredMessage="Password is required" maxlength="32">
+                            <f:validateLength minimum="4" />
+                        </p:password>
+                        <br/>
+                        <br/>
+                        
+                        
+                        <p:commandButton type="reset" value="Clear" icon="fa fa-undo" />&nbsp;
+                        <p:commandButton type="submit" value="Login" actionListener="#{loginManagedBean.login}" icon="fa fa-sign-in" />
+                    </h:form>
+                </div>
+            </div>
+
     </ui:define>
-
-
 </ui:composition>

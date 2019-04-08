@@ -6,50 +6,26 @@
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
-        <h:outputStylesheet name="/css/default.css"/>
-        <title>Experience System Employee</title>
+        <title>ExperLife Employee System</title>
     </h:head>
 
     <h:body>
-        
-        <p:layout fullPage="true">
-            
-            <p:layoutUnit position="north" size="120">
-                <h1> Experience System Employee</h1>
-                
-                <ui:insert name ="header">
-                    <ui:include src="/header.xhtml"/>
-                </ui:insert>
-                
-            </p:layoutUnit>
-            
-            <p:layoutUnit position="west" size="240">
-                
-                <ui:insert>
-                    <ui:include src="/mainmenu.xhtml"/>
-                </ui:insert>
-                
-                
-            </p:layoutUnit>
-            
-            <p:layoutUnit position="center">
-                
-                <ui:insert name="content">
-                    Content
-                </ui:insert>
-                
-            </p:layoutUnit>
-            
-            <p:layoutUnit position="south" size="70">
-                
-                <ui:insert name="footer">
-                    <ui:include src="/footer.xhtml"/>
-                </ui:insert>
-                
-            </p:layoutUnit>
-            
-        </p:layout>
-        
+
+        <div id="top">
+            <ui:insert name="top">
+                <ui:include src="/header.xhtml"/>
+            </ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content">Content</ui:insert>
+        </div>
+
+        <div id="bottom">
+            <ui:insert name="bottom">
+                <ui:include src="/footer.xhtml"/>
+            </ui:insert>
+        </div>
 
     </h:body>
 
