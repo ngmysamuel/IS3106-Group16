@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import stateless.EmployeeControllerLocal;
+import stateless.UserControllerLocal;
 
 /**
  *
@@ -21,6 +22,9 @@ import stateless.EmployeeControllerLocal;
 @Named(value = "accountManagementManagedBean")
 @ViewScoped
 public class AccountManagementManagedBean implements Serializable{
+
+    @EJB
+    private UserControllerLocal userController;
 
     @EJB
     private EmployeeControllerLocal employeeControllerLocal;

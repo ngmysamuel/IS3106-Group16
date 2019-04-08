@@ -92,31 +92,33 @@
                 </div>
                 
                 <div id="loginBox">
-                    <h:form id="formLogin" >
-                        <p:growl id="messageIndexSearchExperience" />
-                        <p:outputLabel value="Log in"/>
-                        <br/>
-                        <br/>
+<!--                    <h:panelGroup rendered="#{sessionScope.isLogin == false}">-->
+                        <h:form id="formLogin">
+                            
+                            <p:outputLabel value="Log in"/>
+                            <br/>
+                            <br/>
                         
-                        <p:outputLabel for="username" value="username: " />
-                        <br/>
-                        <p:inputText id="username" value="#{loginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
-                            <f:validateLength minimum="4" />
-                        </p:inputText>
-                        <br/>
-                        <br/>
+                            <p:outputLabel for="username" value="username: " />
+                            <br/>
+                            <p:inputText id="username" value="#{loginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
+                                <f:validateLength minimum="4" />
+                            </p:inputText>
+                            <br/>
+                            <br/>
                         
-                        <p:outputLabel for="password" value="Password" />&nbsp;
-                        <p:password id="password" value="#{loginManagedBean.password}" size="16" required="true" requiredMessage="Password is required" maxlength="32">
-                            <f:validateLength minimum="4" />
-                        </p:password>
-                        <br/>
-                        <br/>
-                        
-                        
-                        <p:commandButton type="reset" value="Clear" icon="fa fa-undo" />&nbsp;
-                        <p:commandButton type="submit" value="Login" actionListener="#{loginManagedBean.login}" icon="fa fa-sign-in" />
-                    </h:form>
+                            <p:outputLabel for="password" value="Password" />&nbsp;
+                            <p:password id="password" value="#{loginManagedBean.password}" size="16" required="true" requiredMessage="Password is required" maxlength="32">
+                                <f:validateLength minimum="4" />
+                            </p:password>
+                            <br/>
+                            <br/>
+                            <p:commandButton type="reset" value="Clear" icon="fa fa-undo" />&nbsp;
+                            <p:commandButton type="submit" value="Login" actionListener="#{loginManagedBean.login}" icon="fa fa-sign-in" />
+                            
+                            
+                        </h:form>
+<!--                    </h:panelGroup>-->
                 </div>
             </div>
 
