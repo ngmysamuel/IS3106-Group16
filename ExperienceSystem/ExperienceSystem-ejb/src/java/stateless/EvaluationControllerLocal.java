@@ -20,4 +20,6 @@ public interface EvaluationControllerLocal {
     public Evaluation create(Evaluation e);
     public void delete(Long id);
     public void update(Evaluation e);
+
+    public List<Evaluation> retrieveEvaluationsByBookingId(Long bookingId);
 }

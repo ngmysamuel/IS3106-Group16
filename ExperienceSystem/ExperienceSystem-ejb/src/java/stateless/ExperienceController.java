@@ -193,7 +193,7 @@ System.out.println(newExperience.getAddress());
         Query query = em.createQuery("SELECT e FROM Experience e ORDER BY e.experienceId ASC");
         List<Experience> exps = query.getResultList();
         for(Experience e: exps){
-            e.getExperienceDates();
+            e.getExperienceId();
         }
         return exps;
     }
@@ -203,16 +203,24 @@ System.out.println(newExperience.getAddress());
     public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId) { 
         Query query = em.createQuery("SELECT e FROM Experience e WHERE e.host.userId = :inHostUserId");
         query.setParameter("inHostUserId", hostUserId);
-
+        
         List<Experience> hostExperiences = query.getResultList();
+
+        if(hostExperiences == null || hostExperiences.isEmpty() || hostExperiences.get(0) == null){
+            return new ArrayList<>();
+        }
+        for(Experience e: hostExperiences){
+            e.getExperienceDates();
+        }
         return hostExperiences;
     }
     
     @Override
     public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException{
+        System.out.println("RETRIEVE EXPERIENCE BY ID: " + id);
         Experience e = em.find(Experience.class, id);
         if(e == null){
-            throw new ExperienceNotFoundException();
+            throw new ExperienceNotFoundException("Experience with id "+id+" not found!");
         }
         e.getExperienceDates().size();
         e.getFollowers();
@@ -316,7 +324,7 @@ System.out.println(newExperience.getAddress());
             return new ArrayList();
         }
         for(Experience e: exps){
-            e.getExperienceDates();
+            e.getExperienceId();
         }
         return exps;
     }

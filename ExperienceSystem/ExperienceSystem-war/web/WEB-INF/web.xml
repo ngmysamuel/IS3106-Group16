@@ -46,6 +46,8 @@
         <ejb-ref-type>Session</ejb-ref-type>
         <local>stateless.ExperienceDateControllerLocal</local>
         <ejb-link>ExperienceSystem-ejb.jar#ExperienceDateController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
         <ejb-ref-name>BookingController</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>stateless.BookingControllerLocal</local>
@@ -110,5 +112,17 @@
         <ejb-ref-type>Session</ejb-ref-type>
         <local>stateless.UserControllerLocal</local>
         <ejb-link>ExperienceSystem-ejb.jar#UserController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ExperienceController1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.ExperienceControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#ExperienceController</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ExperienceDateController1</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>stateless.ExperienceDateControllerLocal</local>
+        <ejb-link>ExperienceSystem-ejb.jar#ExperienceDateController</ejb-link>
     </ejb-local-ref>
 </web-app>

@@ -18,15 +18,17 @@ public class CreateNewEval {
     private Long userId, bookingId;
     private Date date;
     private BigDecimal score;
+    private String remark;
 
-    public CreateNewEval() {
-    }
-
-    public CreateNewEval(Long userId, Long bookingId, Date date, BigDecimal score) {
+    public CreateNewEval(Long userId, Long bookingId, Date date, BigDecimal score, String remark) {
         this.userId = userId;
         this.bookingId = bookingId;
         this.date = date;
         this.score = score;
+        this.remark = remark;
+    }
+
+    public CreateNewEval() {
     }
 
     public Long getUserId() {
@@ -61,5 +63,14 @@ public class CreateNewEval {
         this.score = score;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    
     
 }

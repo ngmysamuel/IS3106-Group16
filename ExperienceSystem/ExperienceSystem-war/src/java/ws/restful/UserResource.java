@@ -5,6 +5,7 @@
  */
 package ws.restful;
 
+import datamodel.ws.rest.ErrorRsp;
 import datamodel.ws.rest.RegisterNewUser;
 import entity.Experience;
 import entity.User;
@@ -33,6 +34,7 @@ import util.exception.UserNotFoundException;
 import datamodel.ws.rest.RetrieveAllExperiencesExpResrc;
 import datamodel.ws.rest.UpdateUser;
 import datamodel.ws.rest.UserLogin;
+import entity.ExperienceDate;
 
 /**
  *
@@ -45,13 +47,43 @@ public class UserResource {
 
     @Path("getUser/{id}")
     @GET
-    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("id") Long id) {
         try {
-            return Response.status(Response.Status.OK).entity(userController.retrieveUserById(id)).build();
+            User user = userController.retrieveUserById(id);
+            
+            for(User u: user.getBlockers()){
+                u.getBlocks().clear();
+            }
+            
+            for(User u: user.getBlocks()){
+                u.getBlockers().clear();
+            }
+            
+            for(User u: user.getFollowers()){
+                u.getFollows().clear();
+            }
+            
+            for(User u: user.getFollows()){
+                u.getFollowers().clear();
+            }
+            
+            user.setBookings(null);
+            user.setExperienceHosted(null);
+            user.setEvaluationsForUserAsGuest(null);
+            user.setEvaluationsForUserAsHost(null);
+            user.setMessagesReplied(null);
+            user.setMessagesSent(null);
+            user.setNotifications(null);
+            user.getAppeals().clear();
+            user.setFollowedExperiences(null);
+            return Response.status(Response.Status.OK).entity(user).build();
         } catch (UserNotFoundException ex) {
-            return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+        } catch (Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
 
@@ -60,7 +92,42 @@ public class UserResource {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserByUsername(@PathParam("username") String username) throws UserNotFoundException {
-        return Response.status(Response.Status.OK).entity(userController.retrieveUserByUsername(username)).build();
+        try {
+            User user = userController.retrieveUserByUsername(username);
+            
+            for(User u: user.getBlockers()){
+                u.getBlocks().clear();
+            }
+            
+            for(User u: user.getBlocks()){
+                u.getBlockers().clear();
+            }
+            
+            for(User u: user.getFollowers()){
+                u.getFollows().clear();
+            }
+            
+            for(User u: user.getFollows()){
+                u.getFollowers().clear();
+            }
+            
+            user.setBookings(null);
+            user.setExperienceHosted(null);
+            user.setEvaluationsForUserAsGuest(null);
+            user.setEvaluationsForUserAsHost(null);
+            user.setMessagesReplied(null);
+            user.setMessagesSent(null);
+            user.setNotifications(null);
+            user.getAppeals().clear();
+            user.setFollowedExperiences(null);
+            return Response.status(Response.Status.OK).entity(user).build();
+        } catch (UserNotFoundException ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+        } catch (Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
     }
     
     @Path("login")
@@ -74,7 +141,11 @@ public class UserResource {
             u.setCreditCardDetails(null);
             return Response.status(Response.Status.OK).entity(new UserLogin(u)).build();
         } catch (InvalidLoginCredentialException ex) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Wrong Credentials").build();
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.UNAUTHORIZED).entity(errorRsp).build();
+        } catch (Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
     
@@ -94,7 +165,11 @@ public class UserResource {
             u = userController.register(u);
             return Response.status(Response.Status.OK).entity(new UserLogin(u)).build();
         } catch (InputDataValidationException | RegisterUserException ex) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Wrong input").build();
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.UNAUTHORIZED).entity(errorRsp).build();
+        } catch (Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
 
@@ -103,20 +178,77 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(UpdateUser updateUser) throws InputDataValidationException, UpdateUserException {
-        userController.updateForRest(updateUser.getUserId(), updateUser.getUsername(), updateUser.getPassword(), updateUser.getEmail(), updateUser.getFirstName(), updateUser.getLastName(), updateUser.getPremium());
-        return Response.status(Response.Status.OK).entity("OK").build();
+        try{
+            User user = userController.updateForRest(updateUser.getUserId(), updateUser.getUsername(), updateUser.getPassword(), updateUser.getEmail(), updateUser.getFirstName(), updateUser.getLastName(), updateUser.getPremium());
+            
+            for(User u: user.getBlockers()){
+                u.getBlocks().clear();
+            }
+            
+            for(User u: user.getBlocks()){
+                u.getBlockers().clear();
+            }
+            
+            for(User u: user.getFollowers()){
+                u.getFollows().clear();
+            }
+            
+            for(User u: user.getFollows()){
+                u.getFollowers().clear();
+            }
+            
+            user.setBookings(null);
+            user.setExperienceHosted(null);
+            user.setEvaluationsForUserAsGuest(null);
+            user.setEvaluationsForUserAsHost(null);
+            user.setMessagesReplied(null);
+            user.setMessagesSent(null);
+            user.setNotifications(null);
+            user.getAppeals().clear();
+            user.setFollowedExperiences(null);
+            
+            return Response.status(Response.Status.OK).entity(user).build();
+        } catch(InputDataValidationException ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+        } catch (Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
     }
     
-    @Path("unfollowUser/{id}")
+    @Path("followUser")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response unfollowUser (@QueryParam("user") User user, @PathParam("id") Long id) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response followUser (@QueryParam("userId") Long userId, @QueryParam("followId") Long followId) {
         try {
-            userController.unfollowUser(user.getUserId(),id);
+            userController.followUser(userId, followId);
+            return Response.status(Response.Status.OK).entity("OK").build();
         } catch (UserNotFoundException ex) {
-            return Response.status(Response.Status.NOT_FOUND).entity("No user").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("No user").build();
+        } catch (Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
-        return Response.status(Response.Status.OK).entity("OK").build();
+        
+    }
+    
+    @Path("unfollowUser")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response unfollowUser (@QueryParam("userId") Long userId, @QueryParam("unfollowId") Long unfollowId) {
+        try {
+            userController.unfollowUser(userId,unfollowId);
+            return Response.status(Response.Status.OK).entity("OK").build();
+        } catch (UserNotFoundException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("No user").build();
+        } catch (Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+        
     }
     
     @Path("retrieveAllExperiences")
@@ -125,9 +257,28 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllExperiences(@QueryParam("username") String username) {
         try {       
-            User u = userController.retrieveUserByUsername(username);
-            List<Experience> ls = userController.retrieveAllExperience(u.getUserId());
-            return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesExpResrc(ls)).build();
+            User user = userController.retrieveUserByUsername(username);
+            List<Experience> experiences = userController.retrieveAllExperience(user.getUserId());
+            for(Experience exp: experiences){
+                
+                exp.getCategory().getExperiences().clear();
+                
+                exp.getType().getExperiences().clear();
+                
+                exp.getLocation().getExperiences().clear();
+                
+                exp.getLanguage().getExperiences().clear();
+                
+                for(ExperienceDate expDate: exp.getExperienceDates()){
+                    expDate.setExperience(null);
+                }
+                for(User u: exp.getFollowers()){
+                    u.getFollowedExperiences().clear();
+                }
+                
+                exp.getHost().getExperienceHosted().clear();
+            }
+            return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesExpResrc(experiences)).build();
         } catch (UserNotFoundException ex) {
             return Response.status(Response.Status.NOT_FOUND).entity("No user").build();
         }

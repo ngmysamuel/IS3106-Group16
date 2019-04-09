@@ -5,11 +5,7 @@
  */
 package datamodel.ws.rest;
 
-import entity.Category;
 import entity.Experience;
-import entity.Language;
-import entity.Location;
-import entity.Type;
 
 /**
  *
@@ -17,108 +13,79 @@ import entity.Type;
  */
 
 public class CreateNewExperience {
-    private String title;
-    private String address;
-    private Boolean active;
-    private Long cat, type, location, lang, host;
-            
-    public CreateNewExperience(String title, String address, Boolean active) {
-        this.title = title;
-        this.address = address;
-        this.active = active;
-System.out.println("genesis: "+address);        
-    }
+    private String username;
+    private String password;
+    private Experience experienceEntity;
+    private Long categoryId, locationId, languageId, typeId;
 
+    public CreateNewExperience(String username, String password, Experience experienceEntity, Long categoryId, Long locationId, Long languageId, Long typeId) {
+        this.username = username;
+        this.password = password;
+        this.experienceEntity = experienceEntity;
+        this.categoryId = categoryId;
+        this.locationId = locationId;
+        this.languageId = languageId;
+        this.typeId = typeId;
+    }
 
     public CreateNewExperience() {
     }
-    
-    public CreateNewExperience(Experience e) {
-        this.title = e.getTitle();
-        this.address = e.getAddress();
-        this.active = e.isActive();
-        this.cat = e.getCategory().getCategoryId();
-        this.type = e.getType().getTypeId();
-        this.location = e.getLocation().getLocationId();
-        this.lang = e.getLanguage().getLanguageId();
-        this.host = e.getHost().getUserId();
+
+    public String getUsername() {
+        return username;
     }
 
-    public CreateNewExperience(String title, String address, Boolean active, Long cat, Long type, Long location, Long lang, Long host) {
-        this.title = title;
-        this.address = address;
-        this.active = active;
-        this.cat = cat;
-        this.type = type;
-        this.location = location;
-        this.lang = lang;
-        this.host = host;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getTitle() {
-        return title;
+    public String getPassword() {
+        return password;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getAddress() {
-        return address;
+    public Experience getExperienceEntity() {
+        return experienceEntity;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setExperienceEntity(Experience experienceEntity) {
+        this.experienceEntity = experienceEntity;
     }
 
-    public Boolean getActive() {
-        return active;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public Long getCat() {
-        return cat;
+    public Long getLocationId() {
+        return locationId;
     }
 
-    public void setCat(Long cat) {
-        this.cat = cat;
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
     }
 
-    public Long getType() {
-        return type;
+    public Long getLanguageId() {
+        return languageId;
     }
 
-    public void setType(Long type) {
-        this.type = type;
+    public void setLanguageId(Long languageId) {
+        this.languageId = languageId;
     }
 
-    public Long getLocation() {
-        return location;
+    public Long getTypeId() {
+        return typeId;
     }
 
-    public void setLocation(Long location) {
-        this.location = location;
+    public void setTypeId(Long typeId) {
+        this.typeId = typeId;
     }
-
-    public Long getLang() {
-        return lang;
-    }
-
-    public void setLang(Long lang) {
-        this.lang = lang;
-    }
-
-    public Long getHost() {
-        return host;
-    }
-
-    public void setHost(Long host) {
-        this.host = host;
-    }
-
     
     
 }

@@ -14,19 +14,17 @@ import entity.User;
 public class RegisterNewUser {
     private String username, password, firstName, lastName, email;
     private Boolean premium;
-    private User user;
 
     public RegisterNewUser() {
     }
 
-    public RegisterNewUser(String username, String password, String firstName, String lastName, String email, Boolean premium, User user) {
+    public RegisterNewUser(String username, String password, String firstName, String lastName, String email, Boolean premium) {
         this.username = username;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.premium = premium;
-        this.user = user;
     }
 
 
@@ -61,14 +59,6 @@ public class RegisterNewUser {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getEmail() {

@@ -117,6 +117,7 @@ public class UserController implements UserControllerLocal {
     public User retrieveUserById(Long id) throws UserNotFoundException {
         User user = em.find(User.class, id);
         if (user != null) {
+            user.getEmail();
             return user;
         } else {
             throw new UserNotFoundException("Staff ID " + id + " does not exist!");
@@ -145,7 +146,7 @@ public class UserController implements UserControllerLocal {
     }
 
     //TODO: Add all fields
-    public void updateForRest(Long idToUpdate, String username, String password, String email, String firstName, String lastName, Boolean premium) throws InputDataValidationException, UpdateUserException {
+    public User updateForRest(Long idToUpdate, String username, String password, String email, String firstName, String lastName, Boolean premium) throws InputDataValidationException, UpdateUserException {
         User userToUpdate = new User();
         try {
             userToUpdate = retrieveUserById(idToUpdate);
@@ -164,7 +165,7 @@ public class UserController implements UserControllerLocal {
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
-
+        return userToUpdate;
     }
 
     // TODO:
@@ -295,16 +296,24 @@ public class UserController implements UserControllerLocal {
 
     @Override
     public User unfollowUser(Long userId, Long unfollowId) throws UserNotFoundException {
-        User unfollow = em.find(User.class, unfollowId);
-        if (unfollow == null) {
-            throw new UserNotFoundException();
-        }
+        User unfollow = this.retrieveUserById(userId);
+        User user = this.retrieveUserById(unfollowId);
         if (isFollowingUser(userId, unfollowId)) {
-            User user = em.find(User.class, userId);
             user.getFollows().remove(unfollow);
             unfollow.getFollowers().remove(user);
         }
         return unfollow;
+    }
+    
+    public User followUser(Long userId, Long followId) throws UserNotFoundException{
+        User user = this.retrieveUserById(userId);
+        User follow = this.retrieveUserById(followId);
+        if(!isFollowingUser(userId, followId)){
+            user.getFollows().add(follow);
+            follow.getFollowers().add(user);
+        }
+        
+        return follow;
     }
 
     @Override

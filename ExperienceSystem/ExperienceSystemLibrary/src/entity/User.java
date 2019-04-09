@@ -15,6 +15,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -65,8 +67,14 @@ public class User implements Serializable {
     private Language preferredLanguage;
     
     @ManyToMany
+    @JoinTable(name="BLOCK_USER", 
+            joinColumns=@JoinColumn(name="BLOCKER_ID", referencedColumnName="USERID"),
+            inverseJoinColumns=@JoinColumn(name="BLOCK_ID", referencedColumnName="USERID"))
     private List<User> blocks; // Other users blocked by this user
     @ManyToMany
+    @JoinTable(name="FOLLOW_USER", 
+            joinColumns=@JoinColumn(name="FOLLOWER_ID", referencedColumnName="USERID"),
+            inverseJoinColumns=@JoinColumn(name="FOLLOW_ID", referencedColumnName="USERID"))
     private List<User> follows; // Follow other users  
     @ManyToMany(mappedBy = "follows")
     private List<User> followers;

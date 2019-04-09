@@ -7,6 +7,7 @@ package stateless;
 
 import entity.Evaluation;
 import entity.Experience;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -28,12 +29,34 @@ public class EvaluationController implements EvaluationControllerLocal {
     }
     
     public Evaluation retrieveEvaluationById(Long id) {
-        return em.find(Evaluation.class, id);
+        Evaluation eval =  em.find(Evaluation.class, id);
+        eval.getEvaluationTime();
+        return eval;
     }
     
     public List<Evaluation> retrieveAllEvaluations(){
         Query query = em.createQuery("SELECT e FROM Evaluation e");
         List<Evaluation> exps = query.getResultList();
+        if(exps == null || exps.isEmpty() || exps.get(0) == null){
+            return new ArrayList<>();
+        }
+        for(Evaluation eval: exps){
+            eval.getEvaluationTime();
+        }
+        return exps;
+    }
+    
+    public List<Evaluation> retrieveEvaluationsByBookingId(Long bookingId){
+        Query query = em.createQuery("SELECT e FROM Evaluation e WHERE e.booking.bookingId = :inBookingId");
+        query.setParameter("inBookingId", bookingId);
+        List<Evaluation> exps = query.getResultList();
+        if(exps == null || exps.isEmpty() || exps.get(0) == null){
+            return new ArrayList<>();
+        }
+        
+        for(Evaluation eval: exps){
+            eval.getEvaluationTime();
+        }
         return exps;
     }
 

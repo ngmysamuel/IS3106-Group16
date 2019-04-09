@@ -6,6 +6,7 @@
 package ws.restful;
 
 import datamodel.ws.rest.CreateNewEval;
+import datamodel.ws.rest.ErrorRsp;
 import datamodel.ws.rest.RetrieveAllEvaluations;
 import entity.Evaluation;
 import java.util.List;
@@ -45,20 +46,77 @@ public class EvaluationResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllEvaluations() {
-        List<Evaluation> ls = evaluationController.retrieveAllEvaluations();
-        RetrieveAllEvaluations r = new RetrieveAllEvaluations(ls);
-        return Response.status(Response.Status.OK).entity(r).build();
+        try{
+            List<Evaluation> ls = evaluationController.retrieveAllEvaluations();
+            
+            for(Evaluation e: ls){
+                e.getBooking().setEvaluationByGuest(null);
+                
+                e.getBooking().setEvaluationByHost(null);
+                
+                e.getUserEvaluating().getEvaluationsForUserAsGuest().clear();
+                
+                e.getUserEvaluating().getEvaluationsForUserAsHost().clear();
+            }
+            
+            RetrieveAllEvaluations r = new RetrieveAllEvaluations(ls);
+            return Response.status(Response.Status.OK).entity(r).build();
+        } catch(Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
     }
     
     @Path("getEvalById/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEvaluationById(@PathParam("id")Long id) {
-        Evaluation l = evaluationController.retrieveEvaluationById(id);
-        if (l == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("No language").build();
+        try{
+            Evaluation e = evaluationController.retrieveEvaluationById(id);
+            
+            if(e == null){
+                return Response.status(Response.Status.BAD_REQUEST).entity("Evaluation not found!").build();
+            }
+            
+            e.getBooking().setEvaluationByGuest(null);
+                
+            e.getBooking().setEvaluationByHost(null);
+
+            e.getUserEvaluating().getEvaluationsForUserAsGuest().clear();
+
+            e.getUserEvaluating().getEvaluationsForUserAsHost().clear();
+            
+            return Response.status(Response.Status.OK).entity(e).build();
+        } catch(Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
-        return Response.status(Response.Status.OK).entity(l).build();
+    }
+    
+    @Path("getEvalByBookingId/{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEvaluationByBookingId(@PathParam("id")Long id) {
+        try{
+            
+            List<Evaluation> ls = evaluationController.retrieveEvaluationsByBookingId(id);
+            
+            for(Evaluation e: ls){
+                e.getBooking().setEvaluationByGuest(null);
+                
+                e.getBooking().setEvaluationByHost(null);
+                
+                e.getUserEvaluating().getEvaluationsForUserAsGuest().clear();
+                
+                e.getUserEvaluating().getEvaluationsForUserAsHost().clear();
+            }
+            
+            RetrieveAllEvaluations r = new RetrieveAllEvaluations(ls);
+            return Response.status(Response.Status.OK).entity(r).build();
+        } catch(Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
     }
     
     @Path("createEval")
@@ -66,28 +124,42 @@ public class EvaluationResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createEvaluation(CreateNewEval createNewEval) throws UserNotFoundException {
-        Evaluation l = new Evaluation();
-        l.setBooking(bookingController.retrieveBookingByBookingId(createNewEval.getBookingId()));
-        l.setEvaluationTime(createNewEval.getDate());
-        l.setScore(createNewEval.getScore());
-        System.out.println(createNewEval.getUserId());
-//        try {
+        try{
+            Evaluation l = new Evaluation();
+            l.setBooking(bookingController.retrieveBookingByBookingId(createNewEval.getBookingId()));
+            l.setRemark(createNewEval.getRemark());
+            l.setEvaluationTime(createNewEval.getDate());
+            l.setScore(createNewEval.getScore());
+            System.out.println(createNewEval.getUserId());
             l.setUserEvaluating(userController.retrieveUserById(createNewEval.getUserId()));
-//        } catch (UserNotFoundException ex) {
-//            System.out.println(ex);
-//            return Response.status(Response.Status.NOT_FOUND).entity("No user").build();
-//            
-//        }
-        evaluationController.create(l);
-        return Response.status(Response.Status.OK).entity(new CreateNewEval(l.getUserEvaluating().getUserId(), createNewEval.getBookingId(), createNewEval.getDate(), createNewEval.getScore())).build();
+            
+            Evaluation e = evaluationController.create(l);
+            e.getBooking().setEvaluationByGuest(null);
+                
+            e.getBooking().setEvaluationByHost(null);
+
+            e.getUserEvaluating().getEvaluationsForUserAsGuest().clear();
+
+            e.getUserEvaluating().getEvaluationsForUserAsHost().clear();
+            return Response.status(Response.Status.OK).entity(e).build();
+        } catch(Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
     }
     
     @Path("deleteEval/{id}")
     @DELETE
     @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteEvaluation(@PathParam("id")Long id) {
-        evaluationController.delete(id);
-        return Response.status(Response.Status.OK).entity("Success").build();
+        try{
+            evaluationController.delete(id);
+            return Response.status(Response.Status.OK).entity("Success").build();
+        } catch(Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
     }
 
     private EvaluationControllerLocal lookupEvaluationControllerLocal() {

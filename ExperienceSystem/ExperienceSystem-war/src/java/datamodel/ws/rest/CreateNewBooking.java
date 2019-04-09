@@ -15,7 +15,7 @@ import java.util.Date;
  * @author samue
  */
 public class CreateNewBooking {
-    private Long guestId;
+    private Long guestId, experienceDateId;
     private Integer numOfPeople;
     private BigDecimal price;
     private Date date;
@@ -24,8 +24,9 @@ public class CreateNewBooking {
     public CreateNewBooking() {
     }
 
-    public CreateNewBooking(Long guestId, Integer numOfPeople, BigDecimal price, Date date, String status) {
+    public CreateNewBooking(Long guestId, Long experienceDateId, Integer numOfPeople, BigDecimal price, Date date, String status) {
         this.guestId = guestId;
+        this.experienceDateId = experienceDateId;
         this.numOfPeople = numOfPeople;
         this.price = price;
         this.date = date;
@@ -71,11 +72,13 @@ public class CreateNewBooking {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
 
-   
+    public Long getExperienceDateId() {
+        return experienceDateId;
+    }
 
-    
+    public void setExperienceDateId(Long experienceDateId) {
+        this.experienceDateId = experienceDateId;
+    }
     
 }

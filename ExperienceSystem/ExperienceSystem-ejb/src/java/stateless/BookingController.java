@@ -6,6 +6,8 @@
 package stateless;
 
 import entity.Booking;
+import entity.ExperienceDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +58,9 @@ public class BookingController implements BookingControllerLocal {
             try {
                 em.persist(newBooking);
                 em.flush();
+                ExperienceDate ed = newBooking.getExperienceDate();
+                ed.getBookings().add(newBooking);
+                ed.setSpotsAvailable(ed.getSpotsAvailable()-newBooking.getNumberOfPeople());
                 return newBooking;
             } catch (Exception ex) {
                 throw new CreateNewBookingException("An unexpected error has occurred: " + ex.getMessage());
@@ -68,7 +73,9 @@ public class BookingController implements BookingControllerLocal {
     public Booking retrieveBookingByBookingId(Long id) {
         Query query = em.createQuery("SELECT b FROM Booking b WHERE b.bookingId = :id");
         query.setParameter("id", id);
-        return (Booking) query.getSingleResult();
+        Booking b = (Booking) query.getSingleResult();
+        b.getBookingDate();
+        return b;
     }
     
     @Override
@@ -90,7 +97,18 @@ public class BookingController implements BookingControllerLocal {
     public List<Booking> retrieveAllBookingsByExperienceId(Long experienceId) {
         Query query = em.createQuery("SELECT b FROM Booking b WHERE b.experienceDate.experience.experienceId = :experienceId ORDER BY b.bookingId DESC");
         query.setParameter("experienceId", experienceId);
-        return query.getResultList();
+        
+        List<Booking> bookings = query.getResultList();
+        
+        if(bookings == null || bookings.isEmpty() || bookings.get(0) == null){
+            return new ArrayList();
+        }
+        
+        for(Booking b: bookings){
+            b.getBookingDate();
+        }
+        
+        return bookings;
     }
     
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Booking>>constraintViolations)

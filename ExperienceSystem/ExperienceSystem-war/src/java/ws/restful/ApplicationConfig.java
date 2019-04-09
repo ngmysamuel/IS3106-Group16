@@ -28,14 +28,13 @@ public class ApplicationConfig extends Application
         resources.add(ws.restful.BookingResource.class);
 //        resources.add(ws.restful.EmployeeResource.class);
 //        resources.add(ws.restful.EmployeeResource.class);
+        resources.add(ws.restful.CategoryResource.class);
         resources.add(ws.restful.EvaluationResource.class);
+        resources.add(ws.restful.ExperienceDateResource.class);
         resources.add(ws.restful.ExperienceResource.class);
         resources.add(ws.restful.LanguageResource.class);
-        resources.add(ws.restful.UserResource.class);
-        resources.add(ws.restful.CategoryResource.class);
-        resources.add(ws.restful.ExperienceDateService.class);
-        resources.add(ws.restful.ExperienceService.class);
         resources.add(ws.restful.LocationResource.class);
         resources.add(ws.restful.TypeResource.class);
+        resources.add(ws.restful.UserResource.class);
     }    
 }
