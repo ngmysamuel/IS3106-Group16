@@ -8,8 +8,6 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <ez:Breadcrumb pageName="customerManagement"/>
-        
         <div>
             <h3>Customer Management</h3>
             
@@ -235,13 +233,11 @@
                     <p:panelGrid>
                         <p:row>
                             <p:column>
-                                
-                                <p:outputLabel for="Current Status" value="Status: "/>
-                                
+                                <p:outputLabel for="status" value="Status: "/>
                             </p:column>
                             
                             <p:column>
-                                <p:inputText id="status" value="#{customerManagementManagedBean.selectedCustomerToUpdate.premium}"/>
+                                <p:inputText id="status" value="#{customerManagementManagedBean.selectedUserToUpdate.premium}"/>
                             </p:column>
                             
                             <p:column>
@@ -254,13 +250,9 @@
                                 <p:commandButton value="Update Customer" update="@form formAllCustomers:dataTableAllCustomers" actionListener="#{customerManagementManagedBean.updateCustomer}" oncomplete="PF('dialogUpdateCustomer').show();" />
                             </p:column>
                         </p:row>
-                        
                     </p:panelGrid>
                 </p:dialog>
             </h:form>
-            
         </div>
-            
     </ui:define>
-
 </ui:composition>

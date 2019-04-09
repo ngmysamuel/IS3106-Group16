@@ -40,9 +40,9 @@
                     </p:column>
                     
                     <p:column headerText="Action">
-                        <p:commandButton update="formViewCategory" oncomplete="PF('dialogViewCategory').show()" icon="ui-icon-document" title="View">
+<!--                        <p:commandButton update="formViewCategory" oncomplete="PF('dialogViewCategory').show()" icon="ui-icon-document" title="View">
                             <f:setPropertyActionListener value="#{category}" target="#{categoryManagementManagedBean.selectedCategoryToView}" />
-                        </p:commandButton>
+                        </p:commandButton>-->
                         <p:commandButton actionListener="#{categoryManagementManagedBean.doUpdateCategory}" update="formUpdateCategory" oncomplete="PF('dialogUpdateCategory').show()" icon="ui-icon-pencil" title="Update">
                             <f:attribute name="categoryToUpdate" value="#{categoryToUpdate}" />
                         </p:commandButton>

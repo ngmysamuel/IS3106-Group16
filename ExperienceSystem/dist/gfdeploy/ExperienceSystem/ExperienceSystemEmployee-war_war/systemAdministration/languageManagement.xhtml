@@ -43,9 +43,9 @@
                     </p:column>
                     
                     <p:column headerText="Action">
-                        <p:commandButton update="formViewLanguage" oncomplete="PF('dialogViewLanguage').show()" icon="ui-icon-document" title="View">
+<!--                        <p:commandButton update="formViewLanguage" oncomplete="PF('dialogViewLanguage').show()" icon="ui-icon-document" title="View">
                             <f:setPropertyActionListener value="#{language}" target="#{languageManagementManagedBean.selectedLanguageToView}" />
-                        </p:commandButton>
+                        </p:commandButton>-->
                         <p:commandButton actionListener="#{languageManagementManagedBean.doUpdateLanguage}" update="formUpdateLanguage" oncomplete="PF('dialogUpdateLanguage').show()" icon="ui-icon-pencil" title="Update">
                             <f:attribute name="languageToUpdate" value="#{language}" />
                         </p:commandButton>

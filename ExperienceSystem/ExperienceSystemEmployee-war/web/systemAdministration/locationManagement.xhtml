@@ -4,7 +4,6 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/templates/defaultTemplate.xhtml"
-                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
@@ -27,31 +26,29 @@
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
                     <f:facet name="header">
                         <p:outputPanel style="text-align: right;">
-                            
                             <h:outputText value="Search all fields:" />
                             <p:inputText id="globalFilter" onkeyup="PF(dataTableAllLocations).filter()" style="width:300px" placeholder="Enter keyword"/>
-                            
                         </p:outputPanel>
                     </f:facet>
                     
                     <p:column headerText="Location ID" sortBy="#{location.locationId}" filterBy="#{location.locationId}" filterMatchMode="contains">
-                        <h:outputText value="location.locationId"/>
+                        <h:outputText value="#{location.locationId}"/>
                     </p:column>
                     
                     <p:column headerText="Location Name" sortBy="#{location.name}" filterBy="#{location.name}" filterMatchMode="contains">
-                        <h:outputText value="location.locationId"/>
+                        <h:outputText value="#{location.name}"/>
                     </p:column>
                     
                     <p:column headerText="Action">
-                        <p:commandButton update="formViewLocation" oncomplete="PF('dialogViewLocation').show()" icon="ui-icon-document" title="View">
+<!--                        <p:commandButton update="formViewLocation" oncomplete="PF('dialogViewLocation').show()" icon="ui-icon-document" title="View">
                             <f:setPropertyActionListener value="#{location}" target="#{locationManagementManagedBean.selectedLocationToView}" />
-                        </p:commandButton>
+                        </p:commandButton>-->
                         <p:commandButton actionListener="#{locationManagementManagedBean.doUpdateLocation}" update="formUpdateLocation" oncomplete="PF('dialogUpdateLocation').show()" icon="ui-icon-pencil" title="Update">
-                            <f:attribute name="loctionToUpdate" value="#{location}" />
+                            <f:attribute name="loctionToUpdate" value="#{location}" /> 
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" actionListener="#{locationManagementManagedBean.deleteLocation}" update="formAllCategories:dataTableAllCategories formAllCategories:messages">
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{locationManagementManagedBean.deleteLocation}" update="formAllLocations:dataTableAllLocations formAllLocations:messages">
                             <f:attribute name="locationToDelete" value="#{location}" />
-                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{location.name} ?" icon="ui-icon-alert" />
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{location.name}?" icon="ui-icon-alert" />
                         </p:commandButton>
                     </p:column>
                 </p:dataTable>
@@ -107,15 +104,6 @@
                             </p:column>
                             <p:column>
                                 <h:outputText value="#{locationManagementManagedBean.selectedLocationToView.name}"/>
-                            </p:column>
-                        </p:row>
-                        
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel value="Experiences"/>
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{locationManagementManagedBean.selectedLocationToView.experiences}"/>
                             </p:column>
                         </p:row>
                     </p:panelGrid>

@@ -93,7 +93,7 @@
                 
                 <div id="loginBox">
 <!--                    <h:panelGroup rendered="#{sessionScope.isLogin == false}">-->
-                        <h:form id="formLogin">
+                        <h:form id="formLogin" rendered="#{sessionScope.isLogin == null or sessionScope.isLogin == false}">
                             
                             <p:outputLabel value="Log in"/>
                             <br/>

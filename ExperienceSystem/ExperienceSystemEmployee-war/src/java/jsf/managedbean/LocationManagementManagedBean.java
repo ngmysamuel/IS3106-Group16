@@ -5,7 +5,6 @@
  */
 package jsf.managedbean;
 
-import entity.Category;
 import entity.Location;
 import java.io.IOException;
 import java.io.Serializable;
@@ -27,10 +26,8 @@ import stateless.LocationControllerLocal;
 @ViewScoped
 public class LocationManagementManagedBean implements Serializable{
 
-    @EJB(name = "LocationControllerLocal")
+    @EJB
     private LocationControllerLocal locationControllerLocal;
-    
-    
     
     private List<Location> locations;
     
@@ -153,8 +150,4 @@ public class LocationManagementManagedBean implements Serializable{
     public void setSelectedLocationToDelete(Location selectedLocationToDelete) {
         this.selectedLocationToDelete = selectedLocationToDelete;
     }
-    
-    
-    
-    
 }
