@@ -8,24 +8,22 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <ez:Breadcrumb pageName="languageManagement"/>
-        
         <div>
             <h3>Language Management</h3>
             
-            <h:form>
+<!--            <h:form>
                 <p:menubar>
                     <p:submenu label="File" icon="ui-icon-document">
                         <p:menuitem value="Create New Language" onclick="PF('dialogCreateNewLanguage').show()" icon="fa fa-plus"/>
                     </p:submenu>
                 </p:menubar>
-            </h:form>
+            </h:form>-->
             
             <h:form id="formAllLanguages">
                 <p:messages id="messages" redisplay="false" closable="true"/>
-                <p:dataTable id="dataTableAllLanguages" widgetVar="dataTableAllLanguages" value="languageManagementManagedBean.languages" var="language" rowKey="#{language.languageId}" rowIndexVar="row"
+                <p:dataTable id="dataTableAllLanguages" widgetVar="dataTableAllLanguages" value="#{languageManagementManagedBean.languages}" var="language" rowKey="#{language.languageId}" rowIndexVar="row"
                              filteredValue="#{languageManagementManagedBean.filteredLanguages}"
-                             rows="10" paginator="true"paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
                     
                     <f:facet name="header">
                         <p:outputPanel style="text-align: right;">
@@ -37,11 +35,11 @@
                     </f:facet>
                     
                     <p:column headerText="Language ID" sortBy="#{language.languageId}" filterBy="#{language.languageId}" filterMatchMode="contains">
-                        <h:outputText value="language.languageId"/>
+                        <h:outputText value="#{language.languageId}"/>
                     </p:column>
                     
                     <p:column headerText="Name" sortBy="#{language.name}" filterBy="#{language.name}" filterMatchMode="contains">
-                        <h:outputText value="language.name"/>
+                        <h:outputText value="#{language.name}"/>
                     </p:column>
                     
                     <p:column headerText="Action">
@@ -97,7 +95,7 @@
                                 <h:outputLabel value="Language ID:"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToView.languageId}"
+                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToView.languageId}"/>
                             </p:column>
                         </p:row>
                         
@@ -106,7 +104,7 @@
                                 <h:outputLabel value="Name"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToView.name}"
+                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToView.name}"/>
                             </p:column>
                         </p:row>
                         
@@ -115,7 +113,7 @@
                                 <h:outputLabel value="Experiences"/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToView.experiences}"
+                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToView.experiences}"/>
                             </p:column>
                         </p:row>
                         
@@ -133,7 +131,7 @@
                                 <h:outputLabel value="Language ID: "/>
                             </p:column>
                             <p:column>
-                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToUpdate.languageId}"
+                                <h:outputText value="#{languageManagementManagedBean.selectedLanguageToUpdate.languageId}"/>
                             </p:column>
                             <p:column>
                                 &nbsp;
@@ -145,10 +143,10 @@
                                 <h:outputLabel value="Language Name: "/>
                             </p:column>
                             <p:column>
-                                <h:inputText value="#{languageManagementManagedBean.selectedLanguageToUpdate.name}"
+                                <h:inputText id="nameToUpdate" value="#{languageManagementManagedBean.selectedLanguageToUpdate.name}"/>
                             </p:column>
                             <p:column>
-                                <p:message for="name"/>
+                                <p:message for="nameToUpdate"/>
                             </p:column>
                         </p:row>
                         

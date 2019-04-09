@@ -8,25 +8,23 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <ez:Breadcrumb pageName="locationManagement" />
-        
         <div>
             <h3>Location Management</h3>
             
-            <h:form>
+<!--            <h:form>
                 <p:menubar>
                     <p:submenu label="File" icon="ui-icon-document">
                         <p:menuitem value="Create New Location" onclick="PF('dialogCreateNewLocation').show()" icon="fa fa-plus"/>
                     </p:submenu>
                 </p:menubar>
-            </h:form>
+            </h:form>-->
             
             <h:form id="formAllLocations">
                 <p:messages id="messages" redisplay="false" closable="true"/>
                 
-                <p:dataTable id="dataTableAllLocations" widgetVar="dataTableAllLocations" value="locationManagementManagedBean.locations" var="location" rowKey="#{location.locationId}" rowIndexVar="row"
+                <p:dataTable id="dataTableAllLocations" widgetVar="dataTableAllLocations" value="#{locationManagementManagedBean.locations}" var="location" rowKey="#{location.locationId}" rowIndexVar="row"
                              filteredValue="#{locationManagementManagedBean.filteredLocations}"
-                             rows="10" paginator="true"paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
                     <f:facet name="header">
                         <p:outputPanel style="text-align: right;">
                             
@@ -51,7 +49,7 @@
                         <p:commandButton actionListener="#{locationManagementManagedBean.doUpdateLocation}" update="formUpdateLocation" oncomplete="PF('dialogUpdateLocation').show()" icon="ui-icon-pencil" title="Update">
                             <f:attribute name="loctionToUpdate" value="#{location}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" actionListener="#{categoryManagementManagedBean.deleteCategory}" update="formAllCategories:dataTableAllCategories formAllCategories:messages">
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{locationManagementManagedBean.deleteLocation}" update="formAllCategories:dataTableAllCategories formAllCategories:messages">
                             <f:attribute name="locationToDelete" value="#{location}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to delete #{location.name} ?" icon="ui-icon-alert" />
                         </p:commandButton>
@@ -134,7 +132,7 @@
                                 <h:outputLabel value="Location ID: "/> 
                             </p:column>
                             <p:column>
-                                <h:outputText value="#{locationManagementManagedBean.selectedLocationToUpdate.locationId}" 
+                                <h:outputText value="#{locationManagementManagedBean.selectedLocationToUpdate.locationId}" />
                             </p:column>
                             <p:column>
                                 &nbsp;
