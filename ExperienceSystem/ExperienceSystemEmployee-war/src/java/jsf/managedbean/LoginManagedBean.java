@@ -6,13 +6,13 @@
 package jsf.managedbean;
 
 import entity.Employee;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 import stateless.EmployeeControllerLocal;
 import util.exception.EmployeeNotFoundException;
@@ -37,12 +37,13 @@ public class LoginManagedBean {
     }
     
     public void login(ActionEvent event) throws IOException, EmployeeNotFoundException{
+        System.out.println("Employee is trying to login");
         try
         {
             Employee currentStaffEntity = employeeControllerLocal.employeeLogin(username, password);
             FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentStaffEntity", currentStaffEntity);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", currentStaffEntity);
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
         }
         catch(InvalidLoginCredentialException ex)

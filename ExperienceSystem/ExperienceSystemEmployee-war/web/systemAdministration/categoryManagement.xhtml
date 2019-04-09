@@ -9,29 +9,15 @@
 
 
     <ui:define name="content">
-        <ez:Breadcrumb pageName="categoryManagement" />
         
         <div>
             <h3>Category Management</h3>
-            
-            <h:form>
-                <p:menubar>
-                    <p:submenu label="File" icon="ui-icon-document">
-                        
-                        <p:menuitem value="Create New Category" onclick="PF('dialogCreateNewCategory').show()" icon="fa fa-plus"/>
-                        
-                    </p:submenu>
-                </p:menubar>
-                
-                <br/>
-            </h:form>
-            
             <h:form id="formAllCategories">
                 <p:messages id="messages" redisplay="false" closable="true"/>
                 
-                <p:dataTable id="dataTableAllCategories" widgetVar="dataTableAllCategories" value="categoryManagementManagedBean.categories" var="category" rowKey="#{category.categoryId}" rowIndexVar="row"
+                <p:dataTable id="dataTableAllCategories" widgetVar="dataTableAllCategories" value="#{categoryManagementManagedBean.categories}" var="category" rowKey="#{category.categoryId}" rowIndexVar="row"
                              filteredValue="#{categoryManagementManagedBean.filteredCategories}"
-                             rows="10" paginator="true"paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50" >
                     <f:facet name="header">
                         <p:outputPanel style="text-align: right;">
                             
@@ -42,27 +28,27 @@
                     </f:facet>
                     
                     <p:column headerText="Category ID" sortBy="#{category.categoryId}" filterBy="#{category.categoryId}" filterMatchMode="contains">
-                        <h:outputText value="category.categoryId"/>
+                        <h:outputText value="#{category.categoryId}"/>
                     </p:column>
                     
                     <p:column headerText="Name" sortBy="#{category.name}" filterBy="#{category.name}" filterMatchMode="contains">
-                       <h:outputText value="category.name"/> 
+                        <h:outputText value="#{category.name}"/> 
                     </p:column>
                     
                     <p:column headerText="Description" sortBy="#{category.description}" filterBy="#{category.description}" filterMatchMode="contains">
-                        <h:outputText value="category.description"/>
+                        <h:outputText value="#{category.description}"/>
                     </p:column>
                     
                     <p:column headerText="Action">
-                        <p:commandButton update="formViewCategory" oncomplete="PF('dialogViewCategory').show()" icon="ui-icon-document" title="View">
+<!--                        <p:commandButton update="formViewCategory" oncomplete="PF('dialogViewCategory').show()" icon="ui-icon-document" title="View">
                             <f:setPropertyActionListener value="#{category}" target="#{categoryManagementManagedBean.selectedCategoryToView}" />
-                        </p:commandButton>
+                        </p:commandButton>-->
                         <p:commandButton actionListener="#{categoryManagementManagedBean.doUpdateCategory}" update="formUpdateCategory" oncomplete="PF('dialogUpdateCategory').show()" icon="ui-icon-pencil" title="Update">
-                            <f:attribute name="categoryToUpdate" value="#{category}" />
+                            <f:attribute name="categoryToUpdate" value="#{categoryToUpdate}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" actionListener="#{categoryManagementManagedBean.deleteCategory}" update="formAllCategories:dataTableAllCategories formAllCategories:messages">
-                            <f:attribute name="categoryToDelete" value="#{category}" />
-                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{category.name} ?" icon="ui-icon-alert" />
+                            <f:attribute name="categoryToDelete" value="#{categoryToDelete}" />
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{categoryToDelete.name} ?" icon="ui-icon-alert" />
                         </p:commandButton>
                     </p:column>    
                 
@@ -161,7 +147,7 @@
                                 <h:outputLabel value="Category ID: "/> 
                             </p:column>
                             <p:column>
-                                <h:outputText value="#{categoryManagementManagedBean.selectedCategoryToUpdate.categoryId}" 
+                                <h:outputText value="#{categoryManagementManagedBean.selectedCategoryToUpdate.categoryId}"/> 
                             </p:column>
                             <p:column>
                                 &nbsp;

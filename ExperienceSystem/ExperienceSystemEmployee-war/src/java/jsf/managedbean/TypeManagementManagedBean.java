@@ -5,7 +5,6 @@
  */
 package jsf.managedbean;
 
-import entity.Category;
 import entity.Type;
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,7 +22,7 @@ import stateless.TypeControllerLocal;
  *
  * @author zhangruichun
  */
-@Named(value = "typeManagementManagedBean")
+@Named
 @ViewScoped
 public class TypeManagementManagedBean implements Serializable{
 
