@@ -52,4 +52,6 @@ public interface UserControllerLocal {
     public List<User> retrieveAllUsers();
 
     public User followUser(Long userId, Long followId) throws UserNotFoundException;
+
+    public List<User> retrieveAllFollowers(Long userId) throws UserNotFoundException;
 }

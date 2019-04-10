@@ -12,70 +12,20 @@ import entity.User;
  * @author samue
  */
 public class RegisterNewUser {
-    private String username, password, firstName, lastName, email;
-    private Boolean premium;
+    private User userEntity;
 
     public RegisterNewUser() {
     }
 
-    public RegisterNewUser(String username, String password, String firstName, String lastName, String email, Boolean premium) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.premium = premium;
+    public RegisterNewUser(User userEntity) {
+        this.userEntity = userEntity;
     }
 
-
-
-    public String getUsername() {
-        return username;
+    public User getUserEntity() {
+        return userEntity;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserEntity(User userEntity) {
+        this.userEntity = userEntity;
     }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Boolean getPremium() {
-        return premium;
-    }
-
-    public void setPremium(Boolean premium) {
-        this.premium = premium;
-    }
-    
-    
 }

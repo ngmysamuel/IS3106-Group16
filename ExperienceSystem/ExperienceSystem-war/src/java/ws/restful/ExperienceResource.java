@@ -39,10 +39,14 @@ import stateless.LanguageControllerLocal;
 import stateless.LocationControllerLocal;
 import stateless.TypeControllerLocal;
 import stateless.UserControllerLocal;
+import util.exception.CategoryNotFoundException;
 import util.exception.CreateNewExperienceException;
 import util.exception.DeleteExperienceException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.LanguageNotFoundException;
+import util.exception.LocationNotFoundException;
+import util.exception.TypeNotFoundException;
 import util.exception.UpdateEperienceInfoException;
 import util.exception.UserNotFoundException;
 
@@ -78,14 +82,6 @@ public class ExperienceResource {
             
             newExperience.setHost(host);
             
-            newExperience.setCategory(categoryController.retrieveCategoryById(createNewExperience.getCategoryId()));
-
-            newExperience.setLanguage(languageController.retrieveLanguageById(createNewExperience.getLanguageId()));
-
-            newExperience.setType(typeController.retrieveTypeById(createNewExperience.getTypeId()));
-
-            newExperience.setLocation(locationController.retrieveLocationById(createNewExperience.getLocationId()));
-        
             Experience exp = experienceController.createNewExperience(newExperience);
             
             exp.getCategory().getExperiences().clear();
@@ -128,14 +124,6 @@ public class ExperienceResource {
         
         try {
             Experience newExperience = updateExperience.getExperienceEntity();
-
-            newExperience.setCategory(categoryController.retrieveCategoryById(updateExperience.getCategoryId()));
-
-            newExperience.setLanguage(languageController.retrieveLanguageById(updateExperience.getLanguageId()));
-
-            newExperience.setType(typeController.retrieveTypeById(updateExperience.getTypeId()));
-
-            newExperience.setLocation(locationController.retrieveLocationById(updateExperience.getLocationId()));
         
             experienceController.updateExperienceInformation(newExperience);
             

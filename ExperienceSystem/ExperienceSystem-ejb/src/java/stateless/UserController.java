@@ -281,6 +281,19 @@ public class UserController implements UserControllerLocal {
         }
         return following;
     }
+    
+    @Override
+    public List<User> retrieveAllFollowers(Long userId) throws UserNotFoundException {
+        User user = em.find(User.class, userId);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        List<User> followers = user.getFollowers();
+        for (User u : followers) {
+            u.getUserId();
+        }
+        return followers;
+    }
 
     @Override
     public boolean isFollowingUser(Long userId, Long followingId) throws UserNotFoundException {

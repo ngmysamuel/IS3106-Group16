@@ -131,7 +131,7 @@ public class UserResource {
     }
     
     @Path("login")
-    @POST
+    @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@QueryParam("username")String username, @QueryParam("password")String password) {
@@ -154,15 +154,8 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response register(RegisterNewUser registerNewUser) {
-        User u = new User();
-        u.setPassword(registerNewUser.getPassword());
-        u.setUsername(registerNewUser.getUsername());
-        u.setFirstName(registerNewUser.getFirstName());
-        u.setLastName(registerNewUser.getLastName());
-        u.setEmail(registerNewUser.getEmail());
-        u.setPremium(registerNewUser.getPremium());
         try {
-            u = userController.register(u);
+            User u = userController.register(registerNewUser.getUserEntity());
             return Response.status(Response.Status.OK).entity(new UserLogin(u)).build();
         } catch (InputDataValidationException | RegisterUserException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
