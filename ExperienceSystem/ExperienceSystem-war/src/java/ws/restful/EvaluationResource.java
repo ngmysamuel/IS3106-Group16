@@ -75,7 +75,7 @@ public class EvaluationResource {
             Evaluation e = evaluationController.retrieveEvaluationById(id);
             
             if(e == null){
-                return Response.status(Response.Status.BAD_REQUEST).entity("Evaluation not found!").build();
+                return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorRsp("Evaluation not found!")).build();
             }
             
             e.getBooking().setEvaluationByGuest(null);
@@ -155,7 +155,7 @@ public class EvaluationResource {
     public Response deleteEvaluation(@PathParam("id")Long id) {
         try{
             evaluationController.delete(id);
-            return Response.status(Response.Status.OK).entity("Success").build();
+            return Response.status(Response.Status.OK).entity(new ErrorRsp("Success")).build();
         } catch(Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();

@@ -13,78 +13,21 @@ import entity.User;
  */
 //Can add ALL fields in the furture
 public class UpdateUser {
-    private String username, password, firstName, lastName, email;
-    private Boolean premium;
-    private Long userId;
+    private User userEntity;
 
     public UpdateUser() {
     }
 
-    public UpdateUser(String username, String password, String firstName, String lastName, String email, Boolean premium, Long userId) {
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.premium = premium;
-        this.userId = userId;
+    public UpdateUser(User userEntity) {
+        this.userEntity = userEntity;
     }
 
-    public String getUsername() {
-        return username;
+    public User getUserEntity() {
+        return userEntity;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserEntity(User userEntity) {
+        this.userEntity = userEntity;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Boolean getPremium() {
-        return premium;
-    }
-
-    public void setPremium(Boolean premium) {
-        this.premium = premium;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    
 }

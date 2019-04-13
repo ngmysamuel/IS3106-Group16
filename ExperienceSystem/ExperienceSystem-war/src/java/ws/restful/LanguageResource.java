@@ -69,7 +69,7 @@ public class LanguageResource {
             Language l = languageController.retrieveLanguageById(id);
 
             if (l == null) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("No language").build();
+                return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorRsp("No language")).build();
             }
             for(Experience e: l.getExperiences()){
                 e.setLanguage(null);

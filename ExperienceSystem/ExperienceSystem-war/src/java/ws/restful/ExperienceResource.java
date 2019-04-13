@@ -124,7 +124,7 @@ public class ExperienceResource {
         
         try {
             Experience newExperience = updateExperience.getExperienceEntity();
-        
+
             experienceController.updateExperienceInformation(newExperience);
             
             return Response.status(Response.Status.OK).entity(new RetrieveExperienceRsp(newExperience)).build();
@@ -160,7 +160,7 @@ public class ExperienceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllExperiences(){
         try{
-            List<Experience> experiences = experienceController.retrieveAllExperiences();
+            List<Experience> experiences = experienceController.retrieveAllActiveExperiences();
             
             for(Experience exp: experiences){
                 

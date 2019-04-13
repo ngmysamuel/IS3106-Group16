@@ -199,6 +199,16 @@ System.out.println(newExperience.getAddress());
         return exps;
     }
     
+    @Override
+    public List<Experience> retrieveAllActiveExperiences(){
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.active = true ORDER BY e.experienceId ASC");
+        List<Experience> exps = query.getResultList();
+        for(Experience e: exps){
+            e.getExperienceId();
+        }
+        return exps;
+    }
+    
     //Retrieve all host experiences hosted by a given user
     @Override
     public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId) { 

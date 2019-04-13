@@ -73,4 +73,6 @@ public interface ExperienceControllerLocal {
 
     public List<User> retrieveExperienceFollowers(Long experienceId);
 
+    public List<Experience> retrieveAllActiveExperiences();
+
 }
