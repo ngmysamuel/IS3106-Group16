@@ -173,35 +173,35 @@ System.out.println(registerNewUser.getUserEntity());
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(UpdateUser updateUser) throws InputDataValidationException, UpdateUserException {
         try{
-            User user = userController.updateForRest(updateUser.getUserId(), updateUser.getUsername(), updateUser.getPassword(), updateUser.getEmail(), updateUser.getFirstName(), updateUser.getLastName(), updateUser.getPremium());
+            userController.update(updateUser.getUserEntity());
             
-            for(User u: user.getBlockers()){
-                u.getBlocks().clear();
-            }
+//            for(User u: user.getBlockers()){
+//                u.getBlocks().clear();
+//            }
+//            
+//            for(User u: user.getBlocks()){
+//                u.getBlockers().clear();
+//            }
+//            
+//            for(User u: user.getFollowers()){
+//                u.getFollows().clear();
+//            }
+//            
+//            for(User u: user.getFollows()){
+//                u.getFollowers().clear();
+//            }
+//            
+//            user.setBookings(null);
+//            user.setExperienceHosted(null);
+//            user.setEvaluationsForUserAsGuest(null);
+//            user.setEvaluationsForUserAsHost(null);
+//            user.setMessagesReplied(null);
+//            user.setMessagesSent(null);
+//            user.setNotifications(null);
+//            user.getAppeals().clear();
+//            user.setFollowedExperiences(null);
             
-            for(User u: user.getBlocks()){
-                u.getBlockers().clear();
-            }
-            
-            for(User u: user.getFollowers()){
-                u.getFollows().clear();
-            }
-            
-            for(User u: user.getFollows()){
-                u.getFollowers().clear();
-            }
-            
-            user.setBookings(null);
-            user.setExperienceHosted(null);
-            user.setEvaluationsForUserAsGuest(null);
-            user.setEvaluationsForUserAsHost(null);
-            user.setMessagesReplied(null);
-            user.setMessagesSent(null);
-            user.setNotifications(null);
-            user.getAppeals().clear();
-            user.setFollowedExperiences(null);
-            
-            return Response.status(Response.Status.OK).entity(user).build();
+            return Response.status(Response.Status.OK).entity(updateUser.getUserEntity()).build();
         } catch(InputDataValidationException ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
@@ -218,9 +218,9 @@ System.out.println(registerNewUser.getUserEntity());
     public Response followUser (@QueryParam("userId") Long userId, @QueryParam("followId") Long followId) {
         try {
             userController.followUser(userId, followId);
-            return Response.status(Response.Status.OK).entity("OK").build();
+            return Response.status(Response.Status.OK).entity(new ErrorRsp("OK")).build();
         } catch (UserNotFoundException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No user").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorRsp("No user")).build();
         } catch (Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
@@ -235,9 +235,9 @@ System.out.println(registerNewUser.getUserEntity());
     public Response unfollowUser (@QueryParam("userId") Long userId, @QueryParam("unfollowId") Long unfollowId) {
         try {
             userController.unfollowUser(userId,unfollowId);
-            return Response.status(Response.Status.OK).entity("OK").build();
+            return Response.status(Response.Status.OK).entity(new ErrorRsp("OK")).build();
         } catch (UserNotFoundException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("No user").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorRsp("No user")).build();
         } catch (Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
@@ -274,30 +274,9 @@ System.out.println(registerNewUser.getUserEntity());
             }
             return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesExpResrc(experiences)).build();
         } catch (UserNotFoundException ex) {
-            return Response.status(Response.Status.NOT_FOUND).entity("No user").build();
+            return Response.status(Response.Status.NOT_FOUND).entity(new ErrorRsp("No user")).build();
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     private UserControllerLocal lookupUserControllerLocal() {
         try {

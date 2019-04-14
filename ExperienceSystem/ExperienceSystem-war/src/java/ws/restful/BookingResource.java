@@ -133,16 +133,10 @@ public class BookingResource {
 System.out.println("In BookingResource: createNewBooking");
         try{
             ExperienceDate ed = experienceDateController.retrieveExperienceDateByDateId(createNewBooking.getExperienceDateId());
-            Booking l = new Booking();
-            l.setExperienceDate(ed);
-            l.setBookingDate(createNewBooking.getDate());
-            l.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
-            l.setNumberOfPeople(createNewBooking.getNumOfPeople());
-            l.setTotalPrice(createNewBooking.getPrice());
-            l.setStatus(StatusEnum.valueOf(createNewBooking.getStatus()));
-System.out.println("About to go into the Booking Controller");
-            Booking newBooking = bookingController.createNewBooking(l);
-System.out.println("Back from the Booking Controller");
+            Booking newBooking = createNewBooking.getBooking();
+            newBooking.setExperienceDate(ed);
+            newBooking.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
+            newBooking = bookingController.createNewBooking(newBooking);
             return Response.status(Response.Status.OK).entity(newBooking).build();
         } catch (UserNotFoundException | CreateNewBookingException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
@@ -160,14 +154,12 @@ System.out.println("Back from the Booking Controller");
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateBooking(@PathParam("id")Long id, CreateNewBooking createNewBooking) throws  InputDataValidationException{
         try{
-            Booking l = bookingController.retrieveBookingByBookingId(id);
-            l.setBookingDate(createNewBooking.getDate());
-            l.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
-            l.setNumberOfPeople(createNewBooking.getNumOfPeople());
-            l.setTotalPrice(createNewBooking.getPrice());
-            l.setStatus(StatusEnum.valueOf(createNewBooking.getStatus()));
-            bookingController.update(l);
-            return Response.status(Response.Status.OK).entity(l).build();
+            ExperienceDate ed = experienceDateController.retrieveExperienceDateByDateId(createNewBooking.getExperienceDateId());
+            Booking b = createNewBooking.getBooking();
+            b.setExperienceDate(ed);
+            b.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
+            bookingController.update(b);
+            return Response.status(Response.Status.OK).entity(b).build();
         } catch (UserNotFoundException | InputDataValidationException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();

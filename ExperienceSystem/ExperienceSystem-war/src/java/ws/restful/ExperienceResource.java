@@ -124,7 +124,7 @@ System.out.println("newExp is:"+newExperience);
         
         try {
             Experience newExperience = updateExperience.getExperienceEntity();
-        
+
             experienceController.updateExperienceInformation(newExperience);
             
             return Response.status(Response.Status.OK).entity(new RetrieveExperienceRsp(newExperience)).build();
@@ -161,8 +161,7 @@ System.out.println("newExp is:"+newExperience);
     public Response retrieveAllExperiences(){
         
         try{
-            List<Experience> experiences = experienceController.retrieveAllExperiences();
-            int i = 0;
+            List<Experience> experiences = experienceController.retrieveAllActiveExperiences();
             for(Experience exp: experiences){
                 
                 exp.getCategory().getExperiences().clear();
