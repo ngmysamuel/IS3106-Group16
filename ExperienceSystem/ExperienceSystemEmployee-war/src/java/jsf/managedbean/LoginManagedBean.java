@@ -43,6 +43,7 @@ public class LoginManagedBean {
             Employee currentStaffEntity = employeeControllerLocal.employeeLogin(username, password);
             FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("jobRole", currentStaffEntity.getJobRole().toString());
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", currentStaffEntity);
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
         }

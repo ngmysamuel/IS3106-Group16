@@ -83,30 +83,24 @@
                     <h:button styleClass="header_menu_item" value="About Us" outcome="/aboutUs.xhtml" />
                     
                     <div class="dropdown">
-                        <h:button styleClass="header_menu_item" value="Appeals" rendered="#{sessionScope.isLogin == true}"/>
+                        <h:button styleClass="header_menu_item" value="Appeals" rendered="#{sessionScope.isLogin == true and sessionScope.jobRole == 'CUSTOMER_OFFICER'}"/>
                         <div class="dropdown-content">
                             <p:link outcome="/systemAdministration/appealManagement.xhtml" value="Manage Appeal"/>
                         </div>
                     </div>
                     
                     <div class="dropdown">
-                        <h:button styleClass="header_menu_item" value="Experience" rendered="#{sessionScope.isLogin == true}"/>
+                        <h:button styleClass="header_menu_item" value="Management" rendered="#{sessionScope.isLogin == true}"/>
                         <div class="dropdown-content">
-                            <p:link outcome="/systemAdministration/searchExperience.xhtml" value="Manage Experience"/>
-                            <p:link outcome="/systemAdministration/categoryManagement.xhtml" value="Manage Category"/>
-                            <p:link outcome="/systemAdministration/languageManagement.xhtml" value="Manage Language"/>
-                            <p:link outcome="/systemAdministration/locationManagement.xhtml" value="Manage Location"/>
-                            <p:link outcome="/systemAdministration/typeManagement.xhtml" value="Manage Type"/>
+                            <p:link outcome="/customerOfficer/customerManagement.xhtml" value="Customer" rendered="#{sessionScope.isLogin == true and sessionScope.jobRole == 'CUSTOMER_OFFICER'}"/>
+                            <p:link outcome="/systemAdministration/experienceManagement.xhtml" value="Experience" rendered="#{sessionScope.isLogin == true and sessionScope.jobRole == 'EXPERIENCE_MANAGER'}"/>
+                            <p:link outcome="/systemAdministration/categoryManagement.xhtml" value="Category" rendered="#{sessionScope.isLogin == true and sessionScope.jobRole == 'EXPERIENCE_MANAGER'}"/>
+                            <p:link outcome="/systemAdministration/languageManagement.xhtml" value="Language" rendered="#{sessionScope.isLogin == true and sessionScope.jobRole == 'EXPERIENCE_MANAGER'}"/>
+                            <p:link outcome="/systemAdministration/locationManagement.xhtml" value="Location" rendered="#{sessionScope.isLogin == true and sessionScope.jobRole == 'EXPERIENCE_MANAGER'}"/>
+                            <p:link outcome="/systemAdministration/typeManagement.xhtml" value="Type" rendered="#{sessionScope.isLogin == true and sessionScope.jobRole == 'EXPERIENCE_MANAGER'}"/>
                         </div>
                     </div>
                     
-                    <div class="dropdown">
-                        <h:button styleClass="header_menu_item" value="Customers" rendered="#{sessionScope.isLogin == true}"/>
-                        <div class="dropdown-content">
-                            <p:link outcome="/customerOfficer/customerManagement.xhtml" value="Manage Customer"/>
-                        </div>
-                    </div>
-
                     <span class="dropdown"> 
                         <h:button styleClass="header_menu_item" value="My Account" rendered="#{sessionScope.isLogin == true}"/>
                         <div class="dropdown-content">

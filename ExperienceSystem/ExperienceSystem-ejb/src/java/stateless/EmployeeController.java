@@ -87,33 +87,9 @@ public class EmployeeController implements EmployeeControllerLocal {
     }
     
     @Override
-    public List<Appeal> retrieveAllAppeals() {
-        Query query = em.createQuery("SELECT a FROM Appeal a ORDER BY a.appealId DESC");
+    public List<Employee> retrieveAllEmployees(){
+        Query query = em.createQuery("SELECT e FROM Employee e ORDER BY e.employeeId");
         return query.getResultList();
-    }
-    
-    @Override
-    public Appeal retrieveAppealById(Long appealId){
-        return em.find(Appeal.class, appealId);
-    }
-    
-    public void processAppeal(Long appealId, String reply, Long employeeId) throws AppealNotFoundException, EmployeeNotFoundException {
-        Appeal appeal = em.find(Appeal.class, appealId);
-        if (appeal == null) {
-            throw new AppealNotFoundException("Appeal with ID " + appealId + " does not exist!");
-        }
-        
-        Employee employee = em.find(Employee.class, employeeId);
-        if (employee == null) {
-            throw new EmployeeNotFoundException("Employee with ID " + employeeId + " does not exist!");
-        }
-        
-        appeal.setReply(reply);
-        appeal.setEmployee(employee);
-        appeal.setIsProcessed(true);
-        employee.getAppeals().add(appeal);
-        
-        // TODO: send notification to the user that the appeal has been processed
     }
     
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Employee>>constraintViolations)

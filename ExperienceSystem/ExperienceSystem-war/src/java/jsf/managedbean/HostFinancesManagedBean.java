@@ -40,9 +40,8 @@ public class HostFinancesManagedBean implements Serializable {
         currentUser = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUserEntity");
     }
     
-    public int numOfExpHosted() {
-        int i = userController.retrieveAllExperience(currentUser.getUserId()).size();
-        return i;
+    public void numOfExpHosted() {
+
     }
     
     

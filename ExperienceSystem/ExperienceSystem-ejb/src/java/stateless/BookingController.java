@@ -7,12 +7,13 @@ package stateless;
 
 import entity.Booking;
 import entity.ExperienceDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
@@ -20,7 +21,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exception.BookingNotFoundException;
 import util.exception.CreateNewBookingException;
+import util.exception.ExperienceDateNotFoundException;
 import util.exception.InputDataValidationException;
 
 /**
@@ -30,6 +33,9 @@ import util.exception.InputDataValidationException;
 @Stateless
 public class BookingController implements BookingControllerLocal {
 
+    @EJB
+    private ExperienceDateControllerLocal experienceDateControllerLocal;
+    
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
     
@@ -39,57 +45,66 @@ public class BookingController implements BookingControllerLocal {
     public BookingController() {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
-    }
-    
-    public void update(Booking b) throws InputDataValidationException{
-        Set<ConstraintViolation<Booking>> constraintViolations = validator.validate(b);
-        if (constraintViolations.isEmpty()) {
-            em.merge(b);
-        } else {
-            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-        }
-    }
+    } 
 
     @Override
     public Booking createNewBooking(Booking newBooking) throws CreateNewBookingException, InputDataValidationException {
+        System.out.println("******** BookingController: createNewBooking()");
         Set<ConstraintViolation<Booking>> constraintViolations = validator.validate(newBooking);
-System.out.println("Validated New Booking");        
+        
         if (constraintViolations.isEmpty()) {
             try {
-                em.persist(newBooking);
-                em.flush();
-                ExperienceDate ed = newBooking.getExperienceDate();
-                ed.getBookings().add(newBooking);
-                ed.setSpotsAvailable(ed.getSpotsAvailable()-newBooking.getNumberOfPeople());
-                return newBooking;
-            } catch (Exception ex) {
+                //set bidirectional relationship and update experience date slots information
+                Integer numOfPeople = newBooking.getNumberOfPeople();
+                System.out.println("**** numOfPeople: " + numOfPeople);
+                ExperienceDate experienceDate = experienceDateControllerLocal.retrieveExperienceDateByExperienceDateId(newBooking.getExperienceDate().getExperienceDateId());
+                System.out.println("**** this booking is made for experience date ID: " + experienceDate.getExperienceDateId());
+                if (experienceDate.getSpotsAvailable() < numOfPeople) {
+                    System.out.println("**** Not enough slots available");
+                    throw new CreateNewBookingException("Not enough slots available");
+                } else {
+                    System.out.println("**** setting bidirecational relationships");
+                    experienceDate.setSpotsAvailable(experienceDate.getSpotsAvailable() - numOfPeople);
+                    experienceDate.getBookings().add(newBooking);
+
+                    em.persist(newBooking);
+                    em.flush();
+
+                    return newBooking;
+                }
+            } catch(ExperienceDateNotFoundException ex) {
+                throw new CreateNewBookingException("An error has occurred: " + ex.getMessage());
+            }catch (Exception ex) {
+                System.out.println("**** unexpected error....");
+                ex.printStackTrace();
                 throw new CreateNewBookingException("An unexpected error has occurred: " + ex.getMessage());
             }
         } else {
+            System.out.println("**** InputDataValidationException");
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
     
-    public Booking retrieveBookingByBookingId(Long id) {
+    
+    // Retrieval
+    
+    @Override
+    public Booking retrieveBookingByBookingId(Long id) throws BookingNotFoundException {
         Query query = em.createQuery("SELECT b FROM Booking b WHERE b.bookingId = :id");
         query.setParameter("id", id);
-        Booking b = (Booking) query.getSingleResult();
-        b.getBookingDate();
-        return b;
+        try {
+            Booking booking = (Booking)query.getSingleResult();
+            return booking;
+        } catch (NoResultException ex) {
+            throw new BookingNotFoundException("Booking does not exist!");
+        }
+        
     }
     
     @Override
     public List<Booking> retrieveAllBookingsByGuestId(Long userId) {
-        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.guest.userId = :inUserId ORDER BY b.bookingId DESC");
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.user.userId = :inUserId ORDER BY b.bookingId DESC");
         query.setParameter("inUserId", userId);
-        return query.getResultList();
-    }
-    
-    @Override
-    public List<Booking> retrieveAllUpcomingBookingsByGuestId(Long userId) {
-        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.guest.userId = :inUserId AND b.experienceDate.startDate > :currentMoment BY b.bookingId DESC");
-        query.setParameter("inUserId", userId);
-        query.setParameter("currentMoment", new Date(), TemporalType.TIMESTAMP);
         return query.getResultList();
     }
     
@@ -97,18 +112,17 @@ System.out.println("Validated New Booking");
     public List<Booking> retrieveAllBookingsByExperienceId(Long experienceId) {
         Query query = em.createQuery("SELECT b FROM Booking b WHERE b.experienceDate.experience.experienceId = :experienceId ORDER BY b.bookingId DESC");
         query.setParameter("experienceId", experienceId);
-        
-        List<Booking> bookings = query.getResultList();
-        
-        if(bookings == null || bookings.isEmpty() || bookings.get(0) == null){
-            return new ArrayList();
+        return query.getResultList();
+    }
+    
+    @Override
+    public void update(Booking b) throws InputDataValidationException { 
+        Set<ConstraintViolation<Booking>> constraintViolations = validator.validate(b);
+        if (constraintViolations.isEmpty()) {
+            em.merge(b);
+        } else {
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
-        
-        for(Booking b: bookings){
-            b.getBookingDate();
-        }
-        
-        return bookings;
     }
     
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Booking>>constraintViolations)

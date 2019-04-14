@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <cc:interface>
+        <cc:attribute name="formName" required="true" />
+    </cc:interface>
+
+    <cc:implementation>
+
+        <h:form id="formLogIn" rendered="#{sessionScope.isLogin == false}">
+
+            <p:dialog id="dialogLogIn" widgetVar="dialogLogIn" closable="true" header="#{cc.attrs.formName}" resizable="false">
+                <p:messages id="messagesLogIn" redisplay="false" />
+                <p:panelGrid style="width:100%;"> 
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Username" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{userLoginManagedBean.username}" requiredMessage="Please enter your username" >
+                                <f:validateLength minimum="6" />
+                            </p:inputText>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Password" />
+                        </p:column>
+                        <p:column> 
+                            <p:password value="#{userLoginManagedBean.password}" required="true" requiredMessage="Please enter your password" >
+                                <f:validateLength minimum="8" maximum="32" />
+                            </p:password>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:commandButton value="Log In" update="@all" actionListener="#{userLoginManagedBean.login}" icon="fa fa-sign-in" oncomplete="PF('dialogLogIn').show();" />
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+            </p:dialog>
+
+        </h:form>
+
+    </cc:implementation>
+</html>

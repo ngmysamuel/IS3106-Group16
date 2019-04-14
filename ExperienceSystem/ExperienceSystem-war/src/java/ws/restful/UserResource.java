@@ -173,7 +173,7 @@ System.out.println(registerNewUser.getUserEntity());
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(UpdateUser updateUser) throws InputDataValidationException, UpdateUserException {
         try{
-            userController.update(updateUser.getUserEntity());
+            userController.updateAccount(updateUser.getUserEntity());
             
 //            for(User u: user.getBlockers()){
 //                u.getBlocks().clear();
@@ -243,39 +243,6 @@ System.out.println(registerNewUser.getUserEntity());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
         
-    }
-    
-    @Path("retrieveAllExperiences")
-    @GET
-    @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response retrieveAllExperiences(@QueryParam("username") String username) {
-        try {       
-            User user = userController.retrieveUserByUsername(username);
-            List<Experience> experiences = userController.retrieveAllExperience(user.getUserId());
-            for(Experience exp: experiences){
-                
-                exp.getCategory().getExperiences().clear();
-                
-                exp.getType().getExperiences().clear();
-                
-                exp.getLocation().getExperiences().clear();
-                
-                exp.getLanguage().getExperiences().clear();
-                
-                for(ExperienceDate expDate: exp.getExperienceDates()){
-                    expDate.setExperience(null);
-                }
-                for(User u: exp.getFollowers()){
-                    u.getFollowedExperiences().clear();
-                }
-                
-                exp.getHost().getExperienceHosted().clear();
-            }
-            return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesExpResrc(experiences)).build();
-        } catch (UserNotFoundException ex) {
-            return Response.status(Response.Status.NOT_FOUND).entity(new ErrorRsp("No user")).build();
-        }
     }
     
     private UserControllerLocal lookupUserControllerLocal() {

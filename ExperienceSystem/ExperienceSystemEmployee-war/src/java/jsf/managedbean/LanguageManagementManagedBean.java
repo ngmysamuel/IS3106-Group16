@@ -18,6 +18,8 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import stateless.LanguageControllerLocal;
+import util.exception.DeleteLanguageException;
+import util.exception.LanguageNotFoundException;
 
 /**
  *
@@ -63,6 +65,7 @@ public class LanguageManagementManagedBean implements Serializable{
         try{
             
             Language lg = languageControllerLocal.createNewLanguage(newLanguage);
+            languages.add(lg);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New Language created successfully (Language ID: " + lg.getLanguageId()+ ")", null));
         
         }catch(Exception ex){
@@ -94,8 +97,7 @@ public class LanguageManagementManagedBean implements Serializable{
             languages.remove(selectedLanguageToDelete);
             
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Language deleted successfully", null));
-            
-        }catch(Exception ex){
+        }catch(DeleteLanguageException | LanguageNotFoundException ex){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting language: " + ex.getMessage(), null));
         }
         

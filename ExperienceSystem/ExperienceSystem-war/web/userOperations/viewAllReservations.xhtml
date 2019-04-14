@@ -50,8 +50,8 @@
                     <f:facet name="header">
                         All My Upcoming Experiences
                     </f:facet>
-                    <p:panel header="#{hostExperience.title}" style="text-align:center">
-                        <p:panelGrid style="width:100%">
+                    
+<!--                        <p:panelGrid style="width:100%">
                              <p:row>
                                 <p:column colspan="2">
                                     <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/2hocHvd.jpg"/> 
@@ -68,33 +68,39 @@
                             <p:row>
                                 <p:column>
                                     <p:commandButton action="/userOperations/viewExperienceDetails.xhtml" title="View Experience Details" />
-<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
-                            </p:commandButton>-->
+                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
+                            </p:commandButton>
                                 </p:column>
                                 <p:column>
                                     <p:commandButton action="#" update="formBookingDetails" oncomplete="PF('dialogBookingDetails').show()" title="View Booking Details" />
-<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
-                            </p:commandButton>-->
+                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
+                            </p:commandButton>
                                 </p:column>
                             </p:row>
                             
                             <p:row>
                                 <p:column>
                                     <p:commandButton action="#" title="Cancel Reservations" />
-<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
-                            </p:commandButton>-->
+                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
+                            </p:commandButton>
                                 </p:column>
                                 <p:column>
                                     <p:commandButton action="/userOperations/#.xhtml" title="Contact Host" />
-<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
-                            </p:commandButton>-->
+                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
+                            </p:commandButton>
                                 </p:column>
                             </p:row>
+                        </p:panelGrid>-->
+                        <p:panel header="#{upcomingExperience.title}" style="text-align:center">
+                        <p:panelGrid style="width:100%">
+                            <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/2hocHvd.jpg"/> 
+                            <p:commandButton actionListener="#{viewAllUpcomingExperiencesManagedBean.viewUpcomingExperienceDetails}" title="View Details" >
+                                    <f:attribute name="upcomingExperienceToView" value="#{upcomingExperience}" />
+                                </p:commandButton>  
                         </p:panelGrid>
-                    </p:panel>
+                        </p:panel>
                 </p:dataList>
             </h:form>
-            
         </div>
         <h:form id="formBookingDetails">
             <p:dialog id="dialogBookingDetails" widgetVar="dialogBookingDetails" closable="true" resizable="false">

@@ -261,43 +261,40 @@ public class DataInitBean {
                 System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
             }
         }
-        
-        if(experienceDateController.retrieveAllExperienceDates().isEmpty()){
-            try{
-                Experience e1 = experienceController.retrieveExperienceById(new Long(1));
-                ExperienceDate ed1 = new ExperienceDate();
-                ed1.setExperience(e1);
-                ed1.setCapacity(10);
-                ed1.setPrice(new BigDecimal(67));
-                ed1.setSpotsAvailable(10);
-                ed1.setStartDate(new Date(118,10,30,9,30,27));
-                experienceDateController.createNewExperienceDate(ed1);
-                e1.getExperienceDates().add(ed1);
-                
-                ExperienceDate ed2 = new ExperienceDate();
-                ed2.setExperience(e1);
-                ed2.setCapacity(12);
-                ed2.setPrice(new BigDecimal(70.3));
-                ed2.setSpotsAvailable(12);
-                ed2.setStartDate(new Date(118,11,1,9,30,27));
-                experienceDateController.createNewExperienceDate(ed2);
-                e1.getExperienceDates().add(ed2);
-                
-                Experience e2 = experienceController.retrieveExperienceById(new Long(2));
-                ExperienceDate ed3 = new ExperienceDate();
-                ed3.setExperience(e2);
-                ed3.setCapacity(5);
-                ed3.setPrice(new BigDecimal(30.30));
-                ed3.setSpotsAvailable(5);
-                ed3.setStartDate(new Date(118,11,1,10,32,27));
-                experienceDateController.createNewExperienceDate(ed3);
-                e2.getExperienceDates().add(ed3);
-            } catch (ExperienceNotFoundException | CreateNewExperienceDateException | InputDataValidationException ex) {
-                System.err.println("********** DataInitializationSessionBean.initializeData(): " + ex.getMessage());
-            } catch (Exception ex){
-                System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
-            }
-        }
+//        try{
+//            Experience e1 = experienceController.retrieveExperienceById(new Long(1));
+//            ExperienceDate ed1 = new ExperienceDate();
+//            ed1.setExperience(e1);
+//            ed1.setCapacity(10);
+//            ed1.setPrice(new BigDecimal(67));
+//            ed1.setSpotsAvailable(10);
+//            ed1.setStartDate(new Date(118,10,30,9,30,27));
+//            experienceDateController.createNewExperienceDate(ed1);
+//            e1.getExperienceDates().add(ed1);
+//
+//            ExperienceDate ed2 = new ExperienceDate();
+//            ed2.setExperience(e1);
+//            ed2.setCapacity(12);
+//            ed2.setPrice(new BigDecimal(70.3));
+//            ed2.setSpotsAvailable(12);
+//            ed2.setStartDate(new Date(118,11,1,9,30,27));
+//            experienceDateController.createNewExperienceDate(ed2);
+//            e1.getExperienceDates().add(ed2);
+//
+//            Experience e2 = experienceController.retrieveExperienceById(new Long(2));
+//            ExperienceDate ed3 = new ExperienceDate();
+//            ed3.setExperience(e2);
+//            ed3.setCapacity(5);
+//            ed3.setPrice(new BigDecimal(30.30));
+//            ed3.setSpotsAvailable(5);
+//            ed3.setStartDate(new Date(118,11,1,10,32,27));
+//            experienceDateController.createNewExperienceDate(ed3);
+//            e2.getExperienceDates().add(ed3);
+//        } catch (ExperienceNotFoundException | CreateNewExperienceDateException | InputDataValidationException ex) {
+//            System.err.println("********** DataInitializationSessionBean.initializeData(): " + ex.getMessage());
+//        } catch (Exception ex){
+//            System.err.println("********** DataInitializationSessionBean.initializeData(): An error has occurred while loading initial test data: " + ex.getMessage());
+//        }
     }
 
 }

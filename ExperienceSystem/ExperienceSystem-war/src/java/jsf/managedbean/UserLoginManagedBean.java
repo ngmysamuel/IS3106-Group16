@@ -41,15 +41,14 @@ public class UserLoginManagedBean {
             User user = userController.login(username, password);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", user);
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
         } catch(InvalidLoginCredentialException ex){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
         }
     }
     
     public void logout(ActionEvent event) throws IOException {
-        ((HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
-        FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin",false);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("/ExperienceSystem-war/index.xhtml");
     }
 
     public String getUsername() {

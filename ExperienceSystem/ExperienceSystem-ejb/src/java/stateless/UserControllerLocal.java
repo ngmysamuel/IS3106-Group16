@@ -10,7 +10,6 @@ import entity.Experience;
 import entity.ExperienceDate;
 import entity.User;
 import java.util.List;
-import util.exception.ExperienceNotActiveException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
 import util.exception.RegisterUserException;
@@ -25,33 +24,18 @@ import util.exception.UserNotFoundException;
 public interface UserControllerLocal {
     
     public User register(User user) throws InputDataValidationException, RegisterUserException;
-    
-    public void update(User user) throws InputDataValidationException, UpdateUserException;
-    public User updateForRest(Long idToUpdate, String username, String password, String email, String firstName, String lastName, Boolean premium) throws InputDataValidationException, UpdateUserException;
-    
     public User login(String username, String password) throws InvalidLoginCredentialException;
+    public void updateAccount(User user) throws InputDataValidationException, UpdateUserException;
 
+    // Social network
+    public void followUser(Long userIdFollowing, Long userIdFollowed) throws UserNotFoundException;        
+    public void unfollowUser(Long userIdFollowing, Long userIdFollowed) throws UserNotFoundException;   
+    public void blockUser(Long userIdBlocking, Long userIdBlocked) throws UserNotFoundException;
+    public void unblockUser(Long userIdBlocking, Long userIdBlocked) throws UserNotFoundException;
+    
+    // retrieval
+    public List<User> retrieveAllUsers();
     public User retrieveUserByUsername(String username) throws UserNotFoundException;
     public User retrieveUserById(Long id) throws UserNotFoundException;
-    public List<Experience> retrieveAllExperience(Long id);
-    public List<Experience> retrieveAllUpcomingExperienceDates(Long id);
-    public List<ExperienceDate> retrieveAllHostExperience(Long id);
-    public List<ExperienceDate> retrieveAllUpcomingHostExperienceDates(Long id);
-    public void deleteHostExperienceDate(Long expId, Long id, String r) throws InvalidLoginCredentialException;
-
-    List<User> retrieveAllFollowingUsers(Long guestId) throws UserNotFoundException;
-
-    boolean isFollowingUser(Long userId, Long followingId) throws UserNotFoundException;
-
-    User unfollowUser(Long userId, Long unfollowId) throws UserNotFoundException;
-
-    Appeal createAppeal(Long userId, Appeal appeal) throws UserNotFoundException;
-
-    User updatePersonalInformation(User user);
-
-    public List<User> retrieveAllUsers();
-
-    public User followUser(Long userId, Long followId) throws UserNotFoundException;
-
-    public List<User> retrieveAllFollowers(Long userId) throws UserNotFoundException;
+  
 }

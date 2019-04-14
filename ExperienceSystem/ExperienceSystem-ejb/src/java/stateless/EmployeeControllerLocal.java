@@ -24,10 +24,6 @@ public interface EmployeeControllerLocal {
     public Employee employeeLogin(String userName, String password) throws EmployeeNotFoundException, InvalidLoginCredentialException;
 
     public Employee createNewEmployee(Employee newEmployee) throws CreateNewEmployeeException, InputDataValidationException;
-    
-    public List<Appeal> retrieveAllAppeals();
 
-    public Appeal retrieveAppealById(Long appealId);
-
-    public void processAppeal(Long appealId, String reply, Long employeeId) throws AppealNotFoundException, EmployeeNotFoundException;
+    public List<Employee> retrieveAllEmployees();
 }

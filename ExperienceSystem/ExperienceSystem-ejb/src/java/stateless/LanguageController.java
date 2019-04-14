@@ -88,7 +88,7 @@ public class LanguageController implements LanguageControllerLocal {
         }
         
         // check whether there's another Type with the same name
-        Query query = em.createQuery("SELECT l FROM Language l WHERE l.language = :inLanguageName");
+        Query query = em.createQuery("SELECT l FROM Language l WHERE l.name = :inLanguageName");
         query.setParameter("inLanguageName", language.getName());
         try{
             Language duplicateLanguage = (Language)query.getSingleResult();

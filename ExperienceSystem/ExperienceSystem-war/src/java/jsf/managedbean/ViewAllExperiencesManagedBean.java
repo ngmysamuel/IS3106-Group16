@@ -70,6 +70,7 @@ public class ViewAllExperiencesManagedBean implements Serializable{
     @PostConstruct
     public void postConstruct(){
         System.out.println("******** ViewAllExperiencesManagedBean: postConstruct()");
+        System.out.println("-----------------------------");
         categories = categoryControllerLocal.retrieveAllCategories();
         types = typeControllerLocal.retrieveAllTypes();
         locations = locationControllerLocal.retrieveAllLocations();
@@ -113,6 +114,8 @@ public class ViewAllExperiencesManagedBean implements Serializable{
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchNumOfPeople", numOfPeople);
         if(numOfPeople != null) {
             filteredExperiences = experienceControllerLocal.filterExperienceBySlotsAvailable(filteredExperiences, numOfPeople);
+        } else {
+            filteredExperiences = experienceControllerLocal.filterExperienceBySlotsAvailable(filteredExperiences, 1);
         }
         // Category
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchCategoryId", selectedCategoryId);
@@ -136,7 +139,9 @@ public class ViewAllExperiencesManagedBean implements Serializable{
         }
 //        if(searchString != null && searchString.trim().length() > 0){
 //            allExperiences = experienceController.retrieveExperienceByName(searchString);
-//        } else {allExperiences = experienceController.retrieveAllExperiences();}     
+//        } else {allExperiences = experienceController.retrieveAllExperiences();}   
+        System.out.println("**** SUMMARY: remaining experience size: " + filteredExperiences.size());
+        System.out.println("-----------------------------");
 
     }
     

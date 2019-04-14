@@ -7,21 +7,88 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #searchArea{
+                width: 65%;
+                margin: auto;
+            }
+            #searchInputBox, #searchResultsArea, #searchResultsDataTable {
+                width: 90%;
+                margin: auto;
+            }
+            #searchInputRow{
+                width: 100%;
+                margin: auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            #ui-inputgroup-addon{
+                display: inline-block;
+                text-align: center;
+                min-width: 1.5em;
+                border-width: 1px;
+                border-style: solid;
+            }
+            #numOfPeopleBox{
+                display:inline;
+            }
+            table {
+                display: table;
+                border-collapse: separate;
+                border-spacing: 2px;
+                border-color: grey;
+            }
+            .ui-dataview-list .ui-dataview-list-container {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            .ui-dataview-list .ui-dataview-row {
+                border-bottom: 1px solid #A8A8A8;
+                padding: 25px 10px;
+            }
+        </style>
         
-        <div>
-            <h3>Type Management</h3>
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">EXPERIENCES</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+        
+        <div id="searchArea">
             
-<!--            <h:form>
+            
+            <h:form>
                 <p:menubar>
-                    <p:submenu label="File" icon="ui-icon-document">
-                        
-                        <p:menuitem value="Create New Type" onclick="PF('dialogCreateNewType').show()" icon="fa fa-plus"/>
-                        
-                    </p:submenu>
+                    <p:menuitem value="Create New Type" onclick="PF('dialogCreateNewType').show()" update="formAllTypes"/>
                 </p:menubar>
-                
                 <br/>
-            </h:form>-->
+            </h:form>
+
             
             <h:form id="formAllTypes">
                 <p:messages id="messages" redisplay="false" closable="true"/>
@@ -47,14 +114,11 @@
                     </p:column>
                    
                     <p:column headerText="Action">
-<!--                        <p:commandButton update="formViewType" oncomplete="PF('dialogViewType').show()" icon="ui-icon-document" title="View">
-                            <f:setPropertyActionListener value="#{type}" target="#{typeManagementManagedBean.selectedTypeToView}" />
-                        </p:commandButton>-->
                         <p:commandButton actionListener="#{typeManagementManagedBean.doUpdateType}" update="formUpdateType" oncomplete="PF('dialogUpdateType').show()" icon="ui-icon-pencil" title="Update">
                             <f:attribute name="typeToUpdate" value="#{type}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" actionListener="#{typeManagementManagedBean.deleteType}" update="formAllTypes:dataTableAllTypes formAllTypes:messages">
-                            <f:attribute name="typeToDelete" value="#{type}" />
+                            <f:attribute name="selectedTypeToDelete" value="#{type}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to delete #{type.name} ?" icon="ui-icon-alert" />
                         </p:commandButton>
                     </p:column>    

@@ -90,7 +90,7 @@ public class LocationController implements LocationControllerLocal {
         }
         
         // check whether there's another Type with the same name
-        Query query = em.createQuery("SELECT l FROM Location l WHERE l.location = :inLocationName");
+        Query query = em.createQuery("SELECT l FROM Location l WHERE l.name = :inLocationName");
         query.setParameter("inLocationName", location.getName());
         try{
             Location duplicateLocation = (Location)query.getSingleResult();

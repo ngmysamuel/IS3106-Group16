@@ -8,6 +8,7 @@ package stateless;
 import entity.Booking;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.BookingNotFoundException;
 import util.exception.CreateNewBookingException;
 import util.exception.InputDataValidationException;
 
@@ -19,13 +20,11 @@ import util.exception.InputDataValidationException;
 public interface BookingControllerLocal {
     public Booking createNewBooking(Booking newBooking) throws CreateNewBookingException, InputDataValidationException;
     
-        public void update(Booking b) throws InputDataValidationException;
-    
-    public Booking retrieveBookingByBookingId(Long id);
+    public Booking retrieveBookingByBookingId(Long id) throws BookingNotFoundException;
     
     public List<Booking> retrieveAllBookingsByGuestId(Long userId);
     
-    public List<Booking> retrieveAllUpcomingBookingsByGuestId(Long userId);
-    
     public List<Booking> retrieveAllBookingsByExperienceId(Long experienceId);
+    
+    public void update(Booking b) throws InputDataValidationException;
 }

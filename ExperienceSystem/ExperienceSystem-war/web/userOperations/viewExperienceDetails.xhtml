@@ -5,7 +5,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
 
     <ui:define name="content">
         <style>
@@ -69,21 +70,6 @@
             
             
         </style>
-        
-        <h:outputScript>
-            //<![CDATA[
-            function disableAllTheseDays(date) {
-                var disabledDays = ["4-15-2019", "4-5-2019"];
-                var m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
-                for (i = 0; i < disabledDays.length; i++) {
-                    if ($.inArray((m + 1) + '-' + d + '-' + y, disabledDays) != -1) {
-                        return [false,''];
-                    }
-                }
-                return [true,''];
-            }
-            //]]>
-        </h:outputScript>
             
         <div id="topBox">
             <div id="blackBox">
@@ -106,8 +92,8 @@
                     <p:outputLabel value="#{viewExperienceDetailsManagedBean.experience.title}" style="font-size: 30px;"/>
                 </span>
                 <span style="margin-left: 10px;">
-                    <p:commandButton id="favourateExperienceButton" value="Follow this experience" icon="ui-icon-heart"  update="@form" rendered="#{viewExperienceDetailsManagedBean.currentUser != null and !viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" actionListener="#{viewExperienceDetailsManagedBean.addFavoriteExperience}" />
-                    <p:commandButton id="unfavourateExperienceButton" value="Unfollow this experience" icon="ui-icon-closethick" update="@form" rendered="#{viewExperienceDetailsManagedBean.currentUser != null and viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" actionListener="#{viewExperienceDetailsManagedBean.removeFavoriteExperience}" />
+                    <p:commandButton id="favourateExperienceButton" value="Follow this experience" icon="ui-icon-heart"  update="@form" rendered="#{sessionScope.isLogin != null and sessionScope.isLogin != false and !viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" actionListener="#{viewExperienceDetailsManagedBean.addFavoriteExperience}" />
+                    <p:commandButton id="unfavourateExperienceButton" value="Unfollow this experience" icon="ui-icon-closethick" update="@form" rendered="#{sessionScope.isLogin != null and sessionScope.isLogin != false and viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" actionListener="#{viewExperienceDetailsManagedBean.removeFavoriteExperience}" />
                 </span>
             </div>
         </h:form> 
@@ -181,7 +167,7 @@
                 
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Host" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.host.username}" />  
+                    <p:link outcome="#{viewExperienceDetailsManagedBean.viewOtherUserInfo()}" value="#{viewExperienceDetailsManagedBean.experience.host.username}" />  
                 </p:panelGrid>
                 <br />
             </div>
@@ -199,30 +185,137 @@
                     <br />
                     <div style="width:85%; margin:auto;">
                         <p:outputLabel for="bookDate" value="Experience Date" />
-                        <p:calendar id="bookDate" value="Choose a Date" showOn="button" inputStyle="width:140px;" beforeShowDay="disableAllTheseDays" />
+                        <p:growl id="messageBookExperience" showDetail="true" />
+                        
+                        <p:selectOneMenu id="bookDate" value="#{viewExperienceDetailsManagedBean.selectedExperienceDateIdToBook}" style="width:160px;" required="true" requiredMessage="Please select a date" >
+                            <f:selectItem itemValue="null" itemLabel="Select" noSelectionOption="true" />
+                            <f:selectItems value="#{viewExperienceDetailsManagedBean.experience.experienceDates}" var="experienceDate" itemValue="#{experienceDate.experienceDateId}" itemLabel="#{viewExperienceDetailsManagedBean.convertDateToString(experienceDate.startDate)}" />
+                            <p:ajax update="@form" />
+                        </p:selectOneMenu>
+                        <p:message for="bookDate" />
                         <br/>
                         <br/>
                         
-                        <p:outputLabel for="bookNumOfTickets" value="Number of People" />
+                        <p:outputLabel for="bookNumOfTickets" value="Number of People" rendered="#{viewExperienceDetailsManagedBean.selectedExperienceDate != null}" />
                         <br/>
-                        <p:spinner id="bookNumOfTickets" value="#{viewExperienceDetailsManagedBean.numOfPeople}" min="1" max="10" />
+                        <p:spinner id="bookNumOfTickets" label="Select" value="#{viewExperienceDetailsManagedBean.numOfPeopleForBooking}" min="1" max="#{viewExperienceDetailsManagedBean.selectedExperienceDate.spotsAvailable}" required="true" requiredMessage="Please select the number of ticket(s)" rendered="#{viewExperienceDetailsManagedBean.selectedExperienceDate != null}" >
+                            <p:ajax update="@form" />
+                        </p:spinner>
                         <br/>
                         <br/>
                         
-                        <p:commandButton id="bookNow" update="growl" value="Book Now" actionListener="#" oncomplete="if(!#{viewExperienceDetailsManagedBean.availability}){PF('dialogCheckout').show()}"/>
-                        <p:growl id="growl" showDetail="true" life="5000"/>
+                        <p:panelGrid style="width:100%;" rendered="#{viewExperienceDetailsManagedBean.selectedExperienceDate != null and viewExperienceDetailsManagedBean.numOfPeopleForBooking != null}">
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Price Before Tax" style="font-size: 15px;font-weight:bold;" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="$" />
+                                    <h:outputText value="#{viewExperienceDetailsManagedBean.selectedExperienceDate.price * viewExperienceDetailsManagedBean.numOfPeopleForBooking}" style="font-size: 15px;" >
+                                        <f:convertNumber type="number" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Tax" style="font-size: 15px;font-weight:bold;" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="$" />
+                                    <h:outputText value="#{viewExperienceDetailsManagedBean.selectedExperienceDate.price * viewExperienceDetailsManagedBean.numOfPeopleForBooking * 0.07}" style="font-size: 15px;" >
+                                        <f:convertNumber type="number" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Total Price" style="font-size: 15px;font-weight:bold;" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="$" />
+                                    <h:outputText value="#{viewExperienceDetailsManagedBean.selectedExperienceDate.price * viewExperienceDetailsManagedBean.numOfPeopleForBooking * 1.07}" style="font-size: 15px;" >
+                                        <f:convertNumber type="number" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br/>
+                        
+                        <p:commandButton id="bookNowLogin" update="messageBookExperience formCheckout" value="Book Now" actionListener="#{viewExperienceDetailsManagedBean.proceedToCheckOut}" oncomplete="PF('dialogCheckout').show()" rendered="#{(sessionScope.isLogin != null and sessionScope.isLogin == true) and viewExperienceDetailsManagedBean.selectedExperienceDateIdToBook != null and viewExperienceDetailsManagedBean.numOfPeopleForBooking != null}" />
+                        <p:commandButton id="bookNowNotLogin" update="messageBookExperience" value="Book Now" oncomplete="{PF('dialogLogIn').show()}" rendered="#{(sessionScope.isLogin == null or sessionScope.isLogin == false) and viewExperienceDetailsManagedBean.selectedExperienceDateIdToBook != null and viewExperienceDetailsManagedBean.numOfPeopleForBooking != null}" /> 
                     </div>
 
                 </h:form>
             </div>
-        </div>
+        </div>     
         
         <h:form id="formCheckout">
             <p:dialog id="dialogCheckout" widgetVar="dialogCheckout" header="Checkout" closable="true" width="500" blockScroll="true">
-                <p:messages id="messagesCheckout" redisplay="false" />
-                
+                <p:growl id="messagesCheckout" redisplay="false" />
+                <p:ajax event="close" listener="#{viewExperienceDetailsManagedBean.initializeBookingState}" />
+                <div style="overflow: scroll; max-height: 100%;">
+                    <p:outputLabel value="Order Summary" />
+                    <hr />
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                        <p:outputLabel value="Experience Title" style="font-weight:bold;" />
+                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.experience.title}" />
+                        
+                        <p:outputLabel value="Date" style="font-weight:bold;" />
+                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.convertDateToString(viewExperienceDetailsManagedBean.selectedExperienceDate.startDate)}" />
+                        
+                        <p:outputLabel value="Guests" style="font-weight:bold;" />
+                        <p:outputLabel value="#{viewExperienceDetailsManagedBean.numOfPeopleForBooking}" />
+                        
+                    </p:panelGrid>
+                    <hr />
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid" rendered="#{viewExperienceDetailsManagedBean.subtotal != null}">
+                        <h:outputText value="Subtotal:" style="font-weight:bold;" />
+                        <h:outputText value="#{viewExperienceDetailsManagedBean.subtotal}"  >
+                            <f:convertNumber type="currency" currencySymbol="$" maxIntegerDigits="5" maxFractionDigits="2"/>
+                        </h:outputText>
+                        
+                        <h:outputText value="Tax(7%):" style="font-weight:bold;" />
+                        <h:outputText value="#{viewExperienceDetailsManagedBean.tax}"  >
+                            <f:convertNumber type="currency" currencySymbol="$" maxIntegerDigits="5" maxFractionDigits="2"/>
+                        </h:outputText>
+                        
+                    </p:panelGrid>
+                    <hr />
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                        <h:outputText value="Total:" style="font-weight:bold;" />
+                        <h:outputText value="#{viewExperienceDetailsManagedBean.total}"  >
+                            <f:convertNumber type="currency" currencySymbol="$" maxIntegerDigits="5" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </p:panelGrid>
+                    <br />
+                    
+                    <p:outputLabel value="Guest Details" style="font-weight:bold;" />
+                    <hr />
+                    <h:outputText value="We use your account personal information as your guest details for every booking. Please go to your account settings to make sure you fill in all the information, otherwise this booking won't be made." />
+                    <br />
+                    <br />
+                    <p:panelGrid columns="2" style="width:100%;" layout="grid">
+                        <p:outputLabel value="First Name" style="font-weight:bold;" />
+                        <h:outputText value="#{viewExperienceDetailsManagedBean.currentUser.firstName}" />
+
+                        <p:outputLabel value="Last Name" style="font-weight:bold;" />
+                        <h:outputText value="#{viewExperienceDetailsManagedBean.currentUser.lastName}" />
+
+                        <p:outputLabel value="Email Address" style="font-weight:bold;" />
+                        <h:outputText value="#{viewExperienceDetailsManagedBean.currentUser.email}" />
+
+                        <p:outputLabel value="Phone Number" style="font-weight:bold;" />
+                        <h:outputText value="#{viewExperienceDetailsManagedBean.currentUser.phoneNumber}" />
+
+                    </p:panelGrid>
+                    <br />
+                    <p:commandButton value="Book Now" rendered="#{viewExperienceDetailsManagedBean.newBooking.bookingId == null}" update="@form" actionListener="#{viewExperienceDetailsManagedBean.checkout}" oncomplete="PF('dialogCheckout').show()" />
+
+                    <br />
+                </div>
             </p:dialog>
         </h:form>
+        
     </ui:define>
 
 </ui:composition>

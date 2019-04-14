@@ -46,16 +46,15 @@
 
         <div style="width: 65%; position:relative;margin: auto;">
             <h:form id="formAllMyFavouriteExperiences">
-                <p:dataList value="#{viewAllHostExperiencesManagedBean.hostExperiences}" var="hostExperience" paginator="true" rows="10" styleClass="paginated">
+                <p:dataList value="#{viewAllFavouriteManagedBean.favouriteExperiences}" var="favouriteExperience" paginator="true" rows="10" styleClass="paginated">
                     <f:facet name="header">
                         All My Favourite Experiences
                     </f:facet>
-                    <p:panel header="#{hostExperience.title}" style="text-align:center">
-                        <p:panelGrid style="width:100%">
+                    <p:panel header="#{favouriteExperience.title}" style="text-align:center">
+                        <p:panelGrid columns="1" style="width:100%">
                              <p:row>
                                 <p:column colspan="2">
                                     <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/2hocHvd.jpg"/> 
-
                                 </p:column>
                             </p:row>
                             
@@ -67,14 +66,14 @@
 
                             <p:row>
                                 <p:column>
-                                    <p:commandButton action="/userOperations/viewExperienceDetails.xhtml" title="View Details" />
-<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
-                            </p:commandButton>-->
+                                    <p:commandButton actionListener="#{viewAllFavouriteManagedBean.viewFavouriteExperienceDetails}" title="View Details">
+                                        <f:attribute name="favouriteExperienceToView" value="#{favouriteExperience}" />
+                                    </p:commandButton>
                                 </p:column>
                                 <p:column>
-                                    <p:commandButton action="#" title="Unfavourite" />
-<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
-                            </p:commandButton>-->
+                                    <p:commandButton actionListener="#{viewAllExperiencesManagedBean.unfavouriteExperience}" title="Unfavourite" >
+                                        <f:attribute name="unfavouriteExperience" value="#{favouriteExperience}"/>
+                                    </p:commandButton>
                                 </p:column>
                             </p:row>
                         </p:panelGrid>

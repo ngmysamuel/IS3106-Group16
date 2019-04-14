@@ -161,7 +161,7 @@ System.out.println("newExp is:"+newExperience);
     public Response retrieveAllExperiences(){
         
         try{
-            List<Experience> experiences = experienceController.retrieveAllActiveExperiences();
+            List<Experience> experiences = experienceController.filterExperienceByActiveState(experienceController.retrieveAllExperiences());
             for(Experience exp: experiences){
                 
                 exp.getCategory().getExperiences().clear();
@@ -197,7 +197,9 @@ System.out.println("newExp is:"+newExperience);
         try{
             userController.retrieveUserById(userId);
             
-            List<Experience> experiences = experienceController.retrieveAllHostExperienceByHostId(userId);
+            List<Experience> experiences = experienceController.retrieveAllHostExperiencesByHostId(userId);
+            
+            System.out.println("RETRIEVE HOST EXPERIENCE ********");
             
             for(Experience exp: experiences){
                 
@@ -215,9 +217,6 @@ System.out.println("newExp is:"+newExperience);
                 for(User u: exp.getFollowers()){
                     u.getFollowedExperiences().clear();
                 }
-                List<User> followers = exp.getFollowers();
-                exp.getFollowers().clear();
-                exp.setFollowers(followers);
                 
                 exp.getHost().getExperienceHosted().clear();
             }
@@ -282,10 +281,6 @@ System.out.println("WAGAG");
             experienceController.addFollowerToExperience(experienceId, userId);
             return Response.status(Response.Status.OK).build();
         }
-        catch(UserNotFoundException |  ExperienceNotFoundException ex){
-            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        }
         catch(Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
@@ -301,10 +296,6 @@ System.out.println("WAGAG");
             experienceController.removeFollowerFromExperience(experienceId, userId);
             return Response.status(Response.Status.OK).build();
         }
-        catch(UserNotFoundException |  ExperienceNotFoundException ex){
-            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        }
         catch(Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
@@ -316,7 +307,7 @@ System.out.println("WAGAG");
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveFavoriteExperiences(@QueryParam("userId") Long userId){
         try{
-            List<Experience> experiences = experienceController.retrieveFavoriteExperiences(userId);
+            List<Experience> experiences = experienceController.retrieveFavouriteExperiences(userId);
             
             for(Experience exp: experiences){
                 

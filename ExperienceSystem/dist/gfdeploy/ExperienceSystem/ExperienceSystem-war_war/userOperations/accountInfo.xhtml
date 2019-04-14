@@ -125,7 +125,36 @@
                 
                 <p:commandButton value="Update Account Info" update="formUpdateAccountInfo" oncomplete="PF('dialogUpdateAccountInfo').show()" />
                 <p:commandButton value="Upgrade To Premium Account" action="#"/>
-            </h:form>    
+            </h:form>   
+            <br />
+            <p:accordionPanel>
+                <p:tab title="Reviews From #{accountManagementManagedBean.numOfReviewsFromHosts} hosts: #{accountManagementManagedBean.averageScoreFromHosts} / 5.0">
+                    <ui:repeat value="#{accountManagementManagedBean.reviewsFromHosts}" var="reviewFromHost">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{reviewFromHost.userEvaluating.username}: &quot; #{reviewFromHost.remark} &quot;" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br />
+                    </ui:repeat>
+                </p:tab>
+            </p:accordionPanel>
+            <p:accordionPanel>
+                <p:tab title="Reviews From #{accountManagementManagedBean.numOfReviewsFromGuests} Guests: #{accountManagementManagedBean.averageScoreFromGuests} / 5.0">
+                    <ui:repeat value="#{accountManagementManagedBean.reviewsFromGuests}" var="reviewFromGuest">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{reviewFromGuest.userEvaluating.username}: &quot; #{reviewFromGuest.remark} &quot;" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br />
+                    </ui:repeat>
+                </p:tab>
+            </p:accordionPanel>
         </div>  
         
         <h:form id="formUpdateAccountInfo">

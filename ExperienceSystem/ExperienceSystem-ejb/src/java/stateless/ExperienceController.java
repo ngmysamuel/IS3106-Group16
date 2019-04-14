@@ -15,10 +15,10 @@ import entity.Location;
 import entity.Type;
 import entity.User;
 import enumerated.StatusEnum;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -26,7 +26,6 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -37,16 +36,11 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.CreateNewExperienceException;
 import util.exception.DeleteExperienceException;
-import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UpdateEperienceInfoException;
-import util.exception.UserNotFoundException;
 
-/**
- *
- * @author samue
- */
+
 @Stateless
 public class ExperienceController implements ExperienceControllerLocal {
 
@@ -62,23 +56,24 @@ public class ExperienceController implements ExperienceControllerLocal {
     private ExperienceDateCancellationReportControllerLocal experienceDateCancellationReportControllerLocal;
     @EJB
     private ExperienceDateControllerLocal experienceDateControllerLocal;
-    
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
-    
+
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
-    
-    public ExperienceController(){
+
+    public ExperienceController() {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
+
     
+    // Create, Update, Delete section
     
     // When an experience is successfully created, it will be attached to the host's experience list
     @Override
-    public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException{
+    public Experience createNewExperience(Experience newExperience) throws CreateNewExperienceException, InputDataValidationException {
         Category category = categoryControllerLocal.retrieveCategoryById(newExperience.getCategory().getCategoryId());
         Type type = typeControllerLocal.retrieveTypeById(newExperience.getType().getTypeId());
         Language language = languageControllerLocal.retrieveLanguageById(newExperience.getLanguage().getLanguageId());
@@ -92,23 +87,23 @@ public class ExperienceController implements ExperienceControllerLocal {
         newExperience.setType(type);
         newExperience.setLanguage(language);
         newExperience.setLocation(location);
-System.out.println(newExperience.getAddress());
+
         newExperience.setActive(true);
-        
+
         Set<ConstraintViolation<Experience>> constraintViolations = validator.validate(newExperience);
-        if(constraintViolations.isEmpty()){
-            try{
+        if (constraintViolations.isEmpty()) {
+            try {
                 em.persist(newExperience);
                 em.flush();
                 User host = newExperience.getHost();
                 host.getExperienceHosted().add(newExperience);
                 return newExperience;
-            }catch(PersistenceException ex){
-                if(ex.getCause() != null
+            } catch (PersistenceException ex) {
+                if (ex.getCause() != null
                         && ex.getCause().getCause() != null
                         && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException")) {
                     throw new CreateNewExperienceException("Experience with the same title already exists");
-                }else{
+                } else {
                     throw new CreateNewExperienceException("An unexpected error has occurred: " + ex.getMessage());
                 }
             } catch (Exception ex) {
@@ -122,7 +117,7 @@ System.out.println(newExperience.getAddress());
     @Override
     public void updateExperienceInformation(Experience experience) throws UpdateEperienceInfoException {
         try {
-//            Experience experienceToUpdate = retrieveExperienceById(experience.getExperienceId());
+            Experience experienceToUpdate = retrieveExperienceById(experience.getExperienceId());
             Category category = categoryControllerLocal.retrieveCategoryById(experience.getCategory().getCategoryId());
             Type type = typeControllerLocal.retrieveTypeById(experience.getType().getTypeId());
             Language language = languageControllerLocal.retrieveLanguageById(experience.getLanguage().getLanguageId());
@@ -132,27 +127,26 @@ System.out.println(newExperience.getAddress());
                 throw new UpdateEperienceInfoException("Category/Type/Language/Location information is not provided!");
             }
 
-            experience.setCategory(category);
-            experience.setType(type);
-            experience.setLanguage(language);
-            experience.setLocation(location);
+            experienceToUpdate.setCategory(category);
+            experienceToUpdate.setType(type);
+            experienceToUpdate.setLanguage(language);
+            experienceToUpdate.setLocation(location);
 
             Set<ConstraintViolation<Experience>> constraintViolations = validator.validate(experience);
             if (constraintViolations.isEmpty()) {
-//                experienceToUpdate.setTitle(experience.getTitle());
-//                experienceToUpdate.setDescription(experience.getDescription());
-//                experienceToUpdate.setProvidingItems(experience.getProvidingItems());
-//                experienceToUpdate.setRequiringItems(experience.getRequiringItems());
-               em.merge(experience);
+                experienceToUpdate.setTitle(experience.getTitle());
+                experienceToUpdate.setDescription(experience.getDescription());
+                experienceToUpdate.setProvidingItems(experience.getProvidingItems());
+                experienceToUpdate.setRequiringItems(experience.getRequiringItems());
             } else {
                 throw new UpdateEperienceInfoException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        } catch (Exception ex) {
+        } catch (ExperienceNotFoundException ex) {
             throw new UpdateEperienceInfoException(ex.getMessage());
         }
 
     }
-    
+
     // TODO: send notifications to the guest of originally upcoming ExperienceDate + refund guests
     @Override
     public void deleteExperience(Long experienceId) throws DeleteExperienceException {
@@ -178,7 +172,11 @@ System.out.println(newExperience.getAddress());
                             rpt.setBooking(b);
                             rpt.setExperienceDate(date);
                             rpt.setCancellationReason("The host of this experience cancels the whole experience.");
-                            experienceDateCancellationReportControllerLocal.createNewExperienceDateCancellationReport(rpt);
+                            try{
+                                experienceDateCancellationReportControllerLocal.createNewExperienceDateCancellationReport(rpt);
+                            }catch(InputDataValidationException ex) {
+                                throw new DeleteExperienceException(ex.getMessage());
+                            }
                         }
                     }
                 }
@@ -188,51 +186,20 @@ System.out.println(newExperience.getAddress());
         }
 
     }
-    
-    @Override
-    public List<Experience> retrieveAllExperiences(){
-        Query query = em.createQuery("SELECT e FROM Experience e ORDER BY e.experienceId ASC");
-        List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceId();
-        }
-        return exps;
-    }
-    
-    @Override
-    public List<Experience> retrieveAllActiveExperiences(){
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.active = true ORDER BY e.experienceId ASC");
-        List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceId();
-        }
-        return exps;
-    }
-    
-    //Retrieve all host experiences hosted by a given user
-    @Override
-    public List<Experience> retrieveAllHostExperienceByHostId(Long hostUserId) { 
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.host.userId = :inHostUserId");
-        query.setParameter("inHostUserId", hostUserId);
-        
-        List<Experience> hostExperiences = query.getResultList();
 
-        if(hostExperiences == null || hostExperiences.isEmpty() || hostExperiences.get(0) == null){
-            return new ArrayList<>();
-        }
-        for(Experience e: hostExperiences){
-            e.getExperienceDates();
-        }
-        return hostExperiences;
-    }
+    
+    
+    // Retrieving section
     
     @Override
-    public Experience retrieveExperienceById(Long id) throws ExperienceNotFoundException{
-        System.out.println("RETRIEVE EXPERIENCE BY ID: " + id);
-        Experience e = em.find(Experience.class, id);
-        if(e == null){
-            throw new ExperienceNotFoundException("Experience with id "+id+" not found!");
+    public Experience retrieveExperienceById(Long experienceId) throws ExperienceNotFoundException {
+        System.out.println("******** ExperienceController: retrieveExperienceById");
+        Experience e = em.find(Experience.class, experienceId);
+        if (e == null) {
+            throw new ExperienceNotFoundException();
         }
+        System.out.println("**** this experience has " + e.getExperienceDates().size() + " experience dates");
+        System.out.println("-----------------------------");
         e.getExperienceDates().size();
         e.getFollowers();
         e.getProvidingItems();
@@ -242,155 +209,123 @@ System.out.println(newExperience.getAddress());
     }
     
     @Override
-    public Experience retrieveExperienceByTitle(String title) throws ExperienceNotFoundException{
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.title = :inExperienceName");
-        query.setParameter("inExperienceName", title);
-        if((Experience) query.getSingleResult()!=null){
-            return (Experience) query.getSingleResult();
-        }else{
-            throw new ExperienceNotFoundException("Experience" + title + "does not exist!");
-        }
-    }
-    
-    public List<Experience> retrieveExperienceByName(String title){
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.title LIKE '%:inExperienceName5'");
-        query.setParameter("inExperienceName", title);
+    public List<Experience> retrieveAllExperiences() {
+        System.out.println("******** ExperienceController: retrieveAllExperiences()");
+        Query query = em.createQuery("SELECT e FROM Experience e ORDER BY e.experienceId ASC");
         List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceDates();
+        System.out.println("    **** experience size: " + exps.size());
+        for (Experience e : exps) {
+            System.out.println("....");
+            System.out.println("**** experience: " + e.getTitle());
+            System.out.println("**** experience date size: " + e.getExperienceDates().size());
+            e.getExperienceDates().size();
         }
         return exps;
     }
-    
-    public List<Experience> retrieveExperienceByType(Type type){
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.type.typeId = :inTypeId ORDER BY e.experienceId DESC");
-        query.setParameter("inTypeId", type.getTypeId());
-        List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceDates();
-        }
-        return exps;
-    }
-    
-    public List<Experience> retrieveExperienceByCategory(Category category){
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.category.categoryId = :inCategoryId ORDER BY e.experienceId DESC");
-        query.setParameter("inCategoryId", category.getCategoryId());
-        List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceDates();
-        }
-        return exps;
-    }
-    
+
+    //Retrieve all host experiences hosted by a given user
     @Override
-    public List<Experience> retrieveTopRatedExperience(){
-        Query query = em.createQuery("SELECT DISTINCT e FROM Experience e WHERE e.host.premium = true OR e.averageScore >= 7.0 ORDER BY e.experienceId DESC");
-        List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceDates();
-        }
-        return exps;
+    public List<Experience> retrieveAllHostExperiencesByHostId(Long hostUserId) {
+        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.host.userId = :inHostUserId ORDER BY e.experienceId ASC");
+        query.setParameter("inHostUserId", hostUserId);
+
+        List<Experience> hostExperiences = query.getResultList();
+        return hostExperiences;
     }
-    
+
+    //Retrieve all active host experiences hosted by a given user
     @Override
-    public List<Experience> retrieveExperienceByLocation(Location location){
-        Query query = em.createQuery("SELECT DISTINCT e FROM Experience e WHERE e.location.locationId = :inLocationId ORDER BY e.experienceId DESC");
-        query.setParameter("inLocationId", location.getLocationId());
-        List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceDates();
-        }
-        return exps;
-    }
-    
-    @Override
-    public List<Experience> retrieveExperienceByPrice(BigDecimal minPrice, BigDecimal maxPrice){
-        List<Experience> allExperiences = this.retrieveAllExperiences();
-        List<Experience> selectedExperiences = null;
-        for(Experience e: allExperiences){
-            if(e.getAveragePrice() != null && e.getAveragePrice().compareTo(minPrice) >= 0 && e.getAveragePrice().compareTo(maxPrice) <= 0){
-                boolean add = selectedExperiences.add(e);
+    public List<Experience> retrieveAllActiveHostExperiencesByHostId(Long hostUserId) {
+        List<Experience> hostExperiences = retrieveAllHostExperiencesByHostId(hostUserId);
+        ListIterator listIterator = hostExperiences.listIterator();
+        while (listIterator.hasNext()) {
+            Experience experience = (Experience) listIterator.next();
+            if (!experience.isActive()) {
+                listIterator.remove();
             }
         }
-        return selectedExperiences;
+        return hostExperiences;
     }
-    
+
     @Override
-    public List<Experience> retrieveExperienceByLanguage(Language language){
-        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.language.languageId = :inLanguageId ORDER BY e.experienceId DESC");
-        query.setParameter("inLanguageId", language.getLanguageId());
-        List<Experience> exps = query.getResultList();
-        for(Experience e: exps){
-            e.getExperienceDates();
-        }
-        return exps;
+    public List<Experience> retrieveFavouriteExperiences(Long userId){
+        Query query = em.createQuery("SELECT e FROM Experience e, IN (e.followers) f WHERE f.userId = :inUserId");
+        query.setParameter("inUserId", userId);
+        
+        List<Experience> favouriteExperiences = query.getResultList();
+        return favouriteExperiences; 
     }
     
     @Override
     public List<Experience> retrievePastExperiences(Long userId){
-        Query query = em.createQuery("SELECT u.bookings.experienceDate.experience FROM Experience e, User u WHERE u.bookings.experienceDate.startDate < :currentDate");
-        query.setParameter("currentDate", new Date(), TemporalType.TIMESTAMP);
-        List<Experience> exps = query.getResultList();
-        if(exps == null || exps.isEmpty() || exps.get(0) == null){
-            return new ArrayList();
-        }
-        for(Experience e: exps){
-            e.getExperienceId();
-        }
-        return exps;
-    }
-    
-    // this function shoud not work properly
-//    @Override
-//    public List<Experience> retrieveExperienceBySingleDate(Date date) {
-//        Query query = em.createQuery("SELECT e FROM Experience e WHERE e.experienceDates.startDate = :inDate");
-//        query.setParameter("inDate", date);
-//        List<Experience> experiences = query.getResultList();
-//        for(Experience e: experiences){
-//            e.getExperienceDates();
-//        }
-//              
-//        return experiences;
-//    }
-    
-    @Override
-    public List<Experience> retrieveExperienceByDate(Date startDate){
-        List<Experience> allExperiences = null;
-        allExperiences = this.retrieveAllExperiences();
-        List<Experience> selectedExperiences = null; 
-        for(Experience experience: allExperiences){
-            List<ExperienceDate> dates = this.retrieveAllExperienceDates(experience);
-            for(ExperienceDate date: dates){
-                
-                Date start = date.getStartDate();
-                
-                if(start.after(startDate)){
-                    selectedExperiences.add(date.getExperience());
-                    break;
-                }
-                
+        Query query = em.createQuery("SELECT b FROM Booking b JOIN b.guest k JOIN b.experienceDate e WHERE k.userId = :inUserId AND e.startDate < :today");
+        Calendar todaysDateObject = null;
+        query.setParameter("today", todaysDateObject,TemporalType.DATE);
+        query.setParameter("inUserId", userId);
+        List<Booking> bookings = query.getResultList();
+        
+        List<Experience> experiences = null;  
+        if(!bookings.isEmpty()||bookings.size()!=0){
+            for(Booking booking: bookings){
+                experiences.add(booking.getExperienceDate().getExperience());
             }
         }
         
-        return selectedExperiences; 
+        return experiences;
     }
     
     @Override
-    public List<Experience> retrieveFavoriteExperiences(Long userId){
-        Query query = em.createQuery("SELECT u.followedExperiences FROM Experience e, User u WHERE u.userId = :inUserId");
+    public List<Experience> retrieveUpcomingExperiences(Long userId){
+        Query query = em.createQuery("SELECT b FROM Booking b JOIN b.guest g JOIN b.experienceDate e WHERE g.userId = :inUserId AND e.startDate >= :today");
+        Calendar todaysDateObject = null;
+        query.setParameter("today", todaysDateObject,TemporalType.DATE);
         query.setParameter("inUserId", userId);
-        List<Experience> exps = query.getResultList();
-        if(exps == null || exps.isEmpty() || exps.get(0) == null){
-            return new ArrayList<>();
+        List<Booking> upcomingBookings = query.getResultList();
+        List<Experience> experiences = null;
+        
+        for(Booking booking: upcomingBookings){
+            experiences.add(booking.getExperienceDate().getExperience());
         }
-        for(Experience e: exps){
-            e.getFollowers();
+        return experiences;
+    }
+    
+    @Override
+    public List<Experience> retrieveTopRatedExperience() {
+        Query query = em.createQuery("SELECT DISTINCT e FROM Experience e WHERE e.host.premium = true OR e.averageScore >= 3.5 ORDER BY e.experienceId DESC");
+        List<Experience> exps = query.getResultList();
+        for (Experience e : exps) {
+            e.getExperienceDates();
         }
         return exps;
     }
+
+    
+    // Experience followers section
     
     @Override
-    public List<User> retrieveExperienceFollowers(Long experienceId){
+    public void removeFollowerFromExperience(Long experienceId, Long userId) {
+        Experience experience = em.find(Experience.class, experienceId);
+        User user = em.find(User.class, userId);
+
+        if (experience != null && user != null) {
+            experience.getFollowers().remove(user);
+            user.getFollowedExperiences().remove(experience);
+        }
+    }
+
+    @Override
+    public void addFollowerToExperience(Long experienceId, Long userId) {
+        Experience experience = em.find(Experience.class, experienceId);
+        User user = em.find(User.class, userId);
+
+        if (experience != null && user != null) {
+            experience.getFollowers().add(user);
+            user.getFollowedExperiences().add(experience);
+        }
+    }
+
+    @Override
+    public List<User> retrieveExperienceFollowers(Long experienceId) {
         Query query = em.createQuery("SELECT u FROM User u WHERE u.followedExperiences.experienceId = :inExperienceId");
         query.setParameter("inExperienceId", experienceId);
         
@@ -403,87 +338,14 @@ System.out.println(newExperience.getAddress());
         }
         return followers;
     }
+      
+    // Filtering section
     
-    @Override
-    public List<ExperienceDate> retrieveAllExperienceDates(Experience experience){
-        Query query = em.createQuery("SELECT d FROM ExperienceDate d WHERE d.experience.experienceId = :inExperienceId");
-        query.setParameter("inExperienceId", experience.getExperienceId());
-        List<ExperienceDate> expDates = query.getResultList();
-        for(ExperienceDate ed: expDates){
-            ed.getPrice();
-        }
-        return expDates;
-    }
-    
-    @Override
-    public ExperienceDate checkExperienceDateAvailability(Long experienceId, Date date, int numOfPeople) throws ExperienceDateNotFoundException {
-        Query query = em.createQuery("SELECT ed FROM ExperienceDate ed WHERE ed.experience.experienceId = :inExperienceId AND ed.startDate = :inDate");
-        query.setParameter("inExperienceId", experienceId);
-        query.setParameter("inDate", date);
-        try{
-            ExperienceDate ed = (ExperienceDate) query.getSingleResult();
-            if(ed.getSpotsAvailable() < numOfPeople){
-                throw new ExperienceDateNotFoundException("No slots left for the day");
-            }
-            return ed;
-        } catch(NoResultException ex){
-            throw new ExperienceDateNotFoundException("No Experience for the day");
-        }
-    }
-    
-    @Override
-    public void removeFollowerFromExperience(Long experienceId, Long userId) throws UserNotFoundException, ExperienceNotFoundException{
-        Experience experience = em.find(Experience.class, experienceId);
-        User user = em.find(User.class, userId);
-        
-        if(user == null){
-            throw new UserNotFoundException("User with id: " + userId + " doesn't exist!");
-        }
-        else if(experience == null){
-            throw new ExperienceNotFoundException("Experience with id: " + experienceId + " doesn't exist!");
-        }
-        else {
-            experience.getFollowers().remove(user);
-            user.getFollowedExperiences().remove(experience);
-        }  
-    }
-
-    @Override
-    public void addFollowerToExperience(Long experienceId, Long userId) throws UserNotFoundException, ExperienceNotFoundException{
-        Experience experience = em.find(Experience.class, experienceId);
-        User user = em.find(User.class, userId);
-        
-        if(user == null){
-            throw new UserNotFoundException("User with id: " + userId + " doesn't exist!");
-        }
-        else if(experience == null){
-            throw new ExperienceNotFoundException("Experience with id: " + experienceId + " doesn't exist!");
-        }
-        else {
-            experience.getFollowers().add(user);
-            user.getFollowedExperiences().add(experience);
-        }  
-    }
-
-    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Experience>> constraintViolations) {
-        String msg = "Input data validation error!:";
-            
-        for(ConstraintViolation constraintViolation:constraintViolations)
-        {
-            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
-        }
-        
-        return msg;
-    }
-
-
-    // filtering section
     // return a list of experiences which are active
     @Override
     public List<Experience> filterExperienceByActiveState(List<Experience> experienceList) {
         System.out.println("******** ExperienceController: filterExperienceByActiveState()");
         System.out.println("    **** experienceList.size(): " + experienceList.size());
-
         ListIterator iterator = experienceList.listIterator();
 
         while (iterator.hasNext()) {
@@ -494,83 +356,89 @@ System.out.println(newExperience.getAddress());
             }
         }
 
+        System.out.println("**** remaining experience size: " + experienceList.size());
+        System.out.println("...");
         return experienceList;
     }
-    
+
     // return a list of experiences which have at least one experience dates whose date matches the filtering date
     @Override
-    public List<Experience> filterExperienceByDate(List<Experience> experienceList, Date filteringDate) {  
+    public List<Experience> filterExperienceByDate(List<Experience> experienceList, Date filteringDate) {
         System.out.println("******** ExperienceController: filterExperienceByDate()");
         System.out.println("    **** experienceList.size(): " + experienceList.size());
         System.out.println("    **** filteringDate: " + filteringDate.toString());
-        
         ListIterator iterator = experienceList.listIterator();
-        
-        while(iterator.hasNext()) {
-            Experience experience = (Experience)iterator.next();
-            
+
+        while (iterator.hasNext()) {
+            Experience experience = (Experience) iterator.next();
+
             // retrieve the list of active experience dates of this experience
             List<ExperienceDate> activeExperienceDates = experienceDateControllerLocal.retrieveAllActiveExperienceDatesByExperienceId(experience.getExperienceId());
             List<ExperienceDate> experienceDatesMatched = new ArrayList();
-            
+
             // remove the experience if the experience does not have any active experience date whose date matches the filtering date
-            for(ExperienceDate experienceDate: activeExperienceDates) {
-                if(experienceDate.getStartDate().compareTo(filteringDate) == 0) {
+            for (ExperienceDate experienceDate : activeExperienceDates) {
+                if (experienceDate.getStartDate().compareTo(filteringDate) == 0) {
                     experienceDatesMatched.add(experienceDate);
                 }
             }
-            if(experienceDatesMatched.size() == 0) {
+            if (experienceDatesMatched.size() == 0) {
                 iterator.remove();
             } else {
                 experience.setExperienceDates(experienceDatesMatched);
             }
         }
 
+        System.out.println("**** remaining experience size: " + experienceList.size());
+        System.out.println("...");
         return experienceList;
     }
-    
+
     // return a list of experiences which have at least one experience dates which has the number of slots available
     @Override
-    public List<Experience> filterExperienceBySlotsAvailable(List<Experience> experienceList, Integer numOfPeople) {      
+    public List<Experience> filterExperienceBySlotsAvailable(List<Experience> experienceList, Integer numOfPeople) {
         System.out.println("******** ExperienceController: filterExperienceBySlotsAvailable()");
         System.out.println("    **** experienceList.size(): " + experienceList.size());
         System.out.println("    **** numOfPeople: " + numOfPeople);
-        
         ListIterator iterator = experienceList.listIterator();
-        
-        while(iterator.hasNext()) {
-            Experience experience = (Experience)iterator.next();       
+        System.out.println("....");
+        while (iterator.hasNext()) {
+            Experience experience = (Experience) iterator.next();
+            System.out.println("**** experience: " + experience.getTitle());
+
             List<ExperienceDate> availableExperienceDates = experience.getExperienceDates();
-            
             ListIterator iterator2 = availableExperienceDates.listIterator();
-            while(iterator2.hasNext()) {
-                ExperienceDate experienceDate = (ExperienceDate)iterator2.next();
-                if(experienceDate.getSpotsAvailable() < numOfPeople){
+            while (iterator2.hasNext()) {
+                ExperienceDate experienceDate = (ExperienceDate) iterator2.next();
+                System.out.println("**** experienceDate: " + experienceDate.getExperienceDateId());
+                System.out.println("**** spots available: " + experienceDate.getSpotsAvailable());
+                if (experienceDate.getSpotsAvailable() < numOfPeople) {
                     iterator2.remove();
                 }
             }
-            
+
             // remove the experience if it does not have any active experience date with slots available for the request
-            if(availableExperienceDates.size() == 0) {
+            if (availableExperienceDates.isEmpty()) {
                 iterator.remove();
             }
         }
 
+        System.out.println("**** remaining experience size: " + experienceList.size());
+        System.out.println("...");
         return experienceList;
     }
-    
+
     // return a list of experiences which have the required category
     @Override
     public List<Experience> filterExperienceByCategory(List<Experience> experienceList, Long categoryId) {
         System.out.println("******** ExperienceController: filterExperienceByCategory()");
         System.out.println("    **** experienceList.size(): " + experienceList.size());
         System.out.println("    **** categoryId: " + categoryId);
-        
         if (categoryId != null && categoryId.compareTo(new Long(0)) != 0) {
             ListIterator iterator = experienceList.listIterator();
 
             while (iterator.hasNext()) {
-                Experience experience = (Experience)iterator.next();
+                Experience experience = (Experience) iterator.next();
 
                 if (experience.getCategory().getCategoryId().compareTo(categoryId) != 0) {
                     iterator.remove();
@@ -578,21 +446,22 @@ System.out.println(newExperience.getAddress());
             }
         }
 
+        System.out.println("**** remaining experience size: " + experienceList.size());
+        System.out.println("...");
         return experienceList;
     }
-    
+
     // return a list of experiences which have the required type
     @Override
     public List<Experience> filterExperienceByType(List<Experience> experienceList, Long typeId) {
         System.out.println("******** ExperienceController: filterExperienceByType()");
         System.out.println("    **** experienceList.size(): " + experienceList.size());
         System.out.println("    **** typeId: " + typeId);
-        
         if (typeId != null && typeId.compareTo(new Long(0)) != 0) {
             ListIterator iterator = experienceList.listIterator();
 
             while (iterator.hasNext()) {
-                Experience experience = (Experience)iterator.next();
+                Experience experience = (Experience) iterator.next();
 
                 if (experience.getType().getTypeId().compareTo(typeId) != 0) {
                     iterator.remove();
@@ -600,21 +469,22 @@ System.out.println(newExperience.getAddress());
             }
         }
 
+        System.out.println("**** remaining experience size: " + experienceList.size());
+        System.out.println("...");
         return experienceList;
     }
-    
+
     // return a list of experiences which have the required language
     @Override
     public List<Experience> filterExperienceByLanguage(List<Experience> experienceList, Long languageId) {
         System.out.println("******** ExperienceController: filterExperienceByLanguage()");
         System.out.println("    **** experienceList.size(): " + experienceList.size());
-        System.out.println("    **** languageId: " + languageId); 
-        
+        System.out.println("    **** languageId: " + languageId);
         if (languageId != null && languageId.compareTo(new Long(0)) != 0) {
             ListIterator iterator = experienceList.listIterator();
 
             while (iterator.hasNext()) {
-                Experience experience = (Experience)iterator.next();
+                Experience experience = (Experience) iterator.next();
 
                 if (experience.getLanguage().getLanguageId().compareTo(languageId) != 0) {
                     iterator.remove();
@@ -622,21 +492,23 @@ System.out.println(newExperience.getAddress());
             }
         }
 
+        System.out.println("**** remaining experience size: " + experienceList.size());
+        System.out.println("...");
         return experienceList;
     }
-    
+
     // return a list of experiences which have the required type
     @Override
     public List<Experience> filterExperienceByLocation(List<Experience> experienceList, Long locationId) {
         System.out.println("******** ExperienceController: filterExperienceByLocation()");
         System.out.println("    **** experienceList.size(): " + experienceList.size());
-        System.out.println("    **** locationId: " + locationId); 
+        System.out.println("    **** locationId: " + locationId);
 
         if (locationId != null && locationId.compareTo(new Long(0)) != 0) {
             ListIterator iterator = experienceList.listIterator();
 
             while (iterator.hasNext()) {
-                Experience experience = (Experience)iterator.next();
+                Experience experience = (Experience) iterator.next();
 
                 if (experience.getLocation().getLocationId().compareTo(locationId) != 0) {
                     iterator.remove();
@@ -644,6 +516,19 @@ System.out.println(newExperience.getAddress());
             }
         }
 
+        System.out.println("**** remaining experience size: " + experienceList.size());
+        System.out.println("...");
         return experienceList;
+
+    }
+
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Experience>> constraintViolations) {
+        String msg = "Input data validation error!:";
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+
+        return msg;
     }
 }

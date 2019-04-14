@@ -5,14 +5,24 @@
  */
 package stateless;
 
+import entity.Booking;
 import entity.Evaluation;
-import entity.Experience;
+import enumerated.StatusEnum;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import util.exception.BookingNotFoundException;
+import util.exception.CreateNewEvaluationException;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -21,56 +31,79 @@ import javax.persistence.Query;
 @Stateless
 public class EvaluationController implements EvaluationControllerLocal {
 
+    @EJB
+    private BookingControllerLocal bookingControllerLocal;
+    
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
 
-    public void persist(Object object) {
-        em.persist(object);
+    public EvaluationController() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
     
-    public Evaluation retrieveEvaluationById(Long id) {
-        Evaluation eval =  em.find(Evaluation.class, id);
-        eval.getEvaluationTime();
-        return eval;
+    @Override
+    public Evaluation createNewEvaluationFromHost(Evaluation newEvaluation, Long bookingId) throws InputDataValidationException, CreateNewEvaluationException {
+        try {
+            Booking booking = bookingControllerLocal.retrieveBookingByBookingId(bookingId);
+            newEvaluation.setBooking(booking);
+            
+            Set<ConstraintViolation<Evaluation>> constraintViolations = validator.validate(newEvaluation);
+            if (constraintViolations.isEmpty()) {
+                booking.setEvaluationByHost(newEvaluation);
+                booking.setUserEvaluated(true);
+                
+                em.persist(newEvaluation);
+                em.flush();
+                return newEvaluation;
+            } else {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        } catch (BookingNotFoundException ex) {
+            throw new CreateNewEvaluationException(ex.getMessage());
+        }    
     }
     
-    public List<Evaluation> retrieveAllEvaluations(){
-        Query query = em.createQuery("SELECT e FROM Evaluation e");
-        List<Evaluation> exps = query.getResultList();
-        if(exps == null || exps.isEmpty() || exps.get(0) == null){
-            return new ArrayList<>();
-        }
-        for(Evaluation eval: exps){
-            eval.getEvaluationTime();
-        }
-        return exps;
+    @Override
+    public List<Evaluation> retrieveAllEvaluationsFromHostsByUserId(Long userId) {
+        System.out.println("******** EvaluationController: retrieveAllEvaluationsFromHostsByUserId()");
+        List<Evaluation> evaluations = new ArrayList();
+        
+        Query query = em.createQuery("SELECT e FROM Evaluation e WHERE e.booking.status = :inStatus AND e.booking.userEvaluated = true AND "
+                + "e.booking.guest.userId = :inUserId");
+        query.setParameter("inUserId", userId);
+        query.setParameter("inStatus", StatusEnum.ACTIVE);
+        evaluations = query.getResultList();
+        System.out.println("**** evaluations.size: " + evaluations.size());
+        System.out.println("--------------");
+        return evaluations;
     }
     
-    public List<Evaluation> retrieveEvaluationsByBookingId(Long bookingId){
-        Query query = em.createQuery("SELECT e FROM Evaluation e WHERE e.booking.bookingId = :inBookingId");
-        query.setParameter("inBookingId", bookingId);
-        List<Evaluation> exps = query.getResultList();
-        if(exps == null || exps.isEmpty() || exps.get(0) == null){
-            return new ArrayList<>();
+    @Override
+    public List<Evaluation> retrieveAllEvaluationsFromGuestsByUserId(Long userId) {
+        List<Evaluation> evaluations = new ArrayList();
+        
+        Query query = em.createQuery("SELECT e FROM Evaluation e WHERE e.booking.status = :inStatus AND e.booking.hostEvaluated = true AND "
+                + "e.booking.experienceDate.experience.host.userId = :inUserId");
+        query.setParameter("inUserId", userId);
+        query.setParameter("inStatus", StatusEnum.ACTIVE);
+        evaluations = query.getResultList();
+        
+        return evaluations;
+    }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Evaluation>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
         }
         
-        for(Evaluation eval: exps){
-            eval.getEvaluationTime();
-        }
-        return exps;
-    }
-
-    public Evaluation create(Evaluation e) {
-        em.persist(e);
-        em.flush();
-        return e;
-    }
-    
-    public void delete(Long id) {
-        em.remove(em.find(Evaluation.class,id));
-    }
-    
-    public void update(Evaluation e) {
-        em.merge(e);
+        return msg;
     }
 }

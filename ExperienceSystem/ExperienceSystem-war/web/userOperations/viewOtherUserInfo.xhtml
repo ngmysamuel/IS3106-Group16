@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                template="./../templates/defaultTemplate.xhtml">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #titleHeader{
+                position: relative;
+                width: 65%;
+                height: 100px;
+                margin: auto;
+                display: flex; 
+                justify-content: flex-start;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #detailsBox, #titleHeader{
+                position: relative;
+                width: 65%;
+                margin: auto;
+            }
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">USER INFO</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+        <br />
+
+        <h:form id="formUserInfo">
+            <div id="titleHeader">
+                <p:growl id="msgUserInfo" life="3000"/>
+                <span>
+                    <p:outputLabel value="User Info" style="font-size: 30px;" />
+                </span>
+                <span style="margin-left: 10px;">
+                    <p:commandButton value="Follow This User" update="@form" actionListener="#{viewOtherUserInfoManagedBean.followUser}" rendered="#{viewOtherUserInfoManagedBean.currentUser != null and !viewOtherUserInfoManagedBean.isFollowedByMe}"/>
+                    <p:commandButton value="Unfollow This User" update="@form" actionListener="#{viewOtherUserInfoManagedBean.unfollowUser}" rendered="#{viewOtherUserInfoManagedBean.currentUser != null and viewOtherUserInfoManagedBean.isFollowedByMe}"/>
+                </span>
+                <span style="margin-left: 10px;">
+                <p:commandButton value="Block This User" update="@form" actionListener="#{viewOtherUserInfoManagedBean.blockUser}" rendered="#{viewOtherUserInfoManagedBean.currentUser != null and !viewOtherUserInfoManagedBean.isBlockedByMe}">
+                    <p:confirm header="Confirmation" message="Are you sure you want to block #{viewOtherUserInfoManagedBean.userToView.username}?" icon="ui-icon-alert" />
+                </p:commandButton>
+                <p:commandButton value="Unblock This User" update="@form" actionListener="#{viewOtherUserInfoManagedBean.unblockUser}" rendered="#{viewOtherUserInfoManagedBean.currentUser != null and viewOtherUserInfoManagedBean.isBlockedByMe}"/>
+                </span>
+                <span style="margin-left: 10px;">
+                <p:link style="font-size: 30px;" value="Back" outcome="#{viewOtherUserInfoManagedBean.previousPage}" rendered="#{viewOtherUserInfoManagedBean.previousPage != null}" />
+                </span>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </div>
+        </h:form>    
+
+        <div id="detailsBox">
+
+            <p:panelGrid style="width:100%;">
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Username" /> 
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{viewOtherUserInfoManagedBean.userToView.username}" /> 
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Full Name" /> 
+                    </p:column>
+                    <p:column>
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.firstName != null and viewOtherUserInfoManagedBean.userToView.lastName != null}" value="#{viewOtherUserInfoManagedBean.userToView.firstName} #{viewOtherUserInfoManagedBean.userToView.lastName}" /> 
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.firstName == null or viewOtherUserInfoManagedBean.userToView.lastName == null}" value=" " /> 
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <p:outputLabel value="Gender" /> 
+                    </p:column>
+                    <p:column>
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.gender != null}" value="#{viewOtherUserInfoManagedBean.userToView.gender}" />
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.gender == null}" value=" " />
+                    </p:column>
+                    <p:column>
+                        <p:outputLabel value="Birth Date" /> 
+                    </p:column>
+                    <p:column>
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.birthday != null}" value="#{viewOtherUserInfoManagedBean.userToView.birthday}" >
+                            <f:convertDateTime pattern="dd-MM-yyyy" />
+                        </h:outputText>
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.birthday == null}" value=" " /> 
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="2">
+                        <p:outputLabel value="Self Description" /> 
+                    </p:column>
+                    <p:column colspan="2">
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.selfIntro != null}" value="#{viewOtherUserInfoManagedBean.userToView.selfIntro}" /> 
+                        <h:outputText rendered="#{viewOtherUserInfoManagedBean.userToView.selfIntro == null}" value=" " /> 
+                    </p:column>
+                </p:row>
+
+            </p:panelGrid>
+            <br />
+            <p:outputLabel value="This user is following you :)" rendered="#{viewOtherUserInfoManagedBean.currentUser != null and viewOtherUserInfoManagedBean.isFollowingMe}" />
+            
+            <br />
+            <br />
+            <p:accordionPanel rendered="#{viewOtherUserInfoManagedBean.userIdToView != null}">
+                <p:tab title="Reviews From #{viewOtherUserInfoManagedBean.numOfReviewsFromHosts} hosts: #{viewOtherUserInfoManagedBean.averageScoreFromHosts} / 5.0">
+                    <ui:repeat value="#{viewOtherUserInfoManagedBean.reviewsFromHosts}" var="reviewFromHost">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{reviewFromHost.userEvaluating.username}: &quot; #{reviewFromHost.remark} &quot;" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br />
+                    </ui:repeat>
+                </p:tab>
+            </p:accordionPanel>
+            <p:accordionPanel>
+                <p:tab title="Reviews From #{viewOtherUserInfoManagedBean.numOfReviewsFromGuests} Guests: #{viewOtherUserInfoManagedBean.averageScoreFromGuests} / 5.0">
+                    <ui:repeat value="#{viewOtherUserInfoManagedBean.reviewsFromGuests}" var="reviewFromGuest">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="#{reviewFromGuest.userEvaluating.username}: &quot; #{reviewFromGuest.remark} &quot;" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br />
+                    </ui:repeat>
+                </p:tab>
+            </p:accordionPanel>
+            
+        </div>  
+
+    </ui:define>
+
+</ui:composition>

@@ -140,14 +140,26 @@ public class BookingResource {
     public Response createBooking(CreateNewBooking createNewBooking) throws CreateNewBookingException, InputDataValidationException {
         System.out.println("In BookingResource: createNewBooking");
         try {
-            ExperienceDate ed = experienceDateController.retrieveExperienceDateByDateId(createNewBooking.getExperienceDateId());
+            ExperienceDate ed = experienceDateController.retrieveExperienceDateByExperienceDateId(createNewBooking.getExperienceDateId());
             User u = userController.retrieveUserById(createNewBooking.getGuestId());
             Booking newBooking = createNewBooking.getBooking();
             newBooking.setExperienceDate(ed);
             newBooking.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
             newBooking = bookingController.createNewBooking(newBooking);
             u.getBookings().add(newBooking);
-            userController.update(u);
+            userController.updateAccount(u);
+            if (newBooking.getEvaluationByGuest() != null) {
+                newBooking.getEvaluationByGuest().setBooking(null);
+            }
+            if (newBooking.getEvaluationByHost() != null) {
+                newBooking.getEvaluationByHost().setBooking(null);
+            }
+            if (newBooking.getCancellationReport() != null) {
+                newBooking.getCancellationReport().setBooking(null);
+            }
+            newBooking.getExperienceDate().getBookings().clear();
+            newBooking.getGuest().getBookings().clear();
+            System.out.println("In BookingResource: createNewBooking ERROR!!!");
             return Response.status(Response.Status.OK).entity(newBooking).build();
         } catch (UserNotFoundException | CreateNewBookingException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
@@ -165,7 +177,7 @@ public class BookingResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateBooking(@PathParam("id") Long id, CreateNewBooking createNewBooking) throws InputDataValidationException {
         try {
-            ExperienceDate ed = experienceDateController.retrieveExperienceDateByDateId(createNewBooking.getExperienceDateId());
+            ExperienceDate ed = experienceDateController.retrieveExperienceDateByExperienceDateId(createNewBooking.getExperienceDateId());
             Booking b = createNewBooking.getBooking();
             b.setExperienceDate(ed);
             b.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));

@@ -11,12 +11,11 @@ import entity.ExperienceDate;
 import entity.User;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -29,9 +28,7 @@ import stateless.ExperienceControllerLocal;
 import stateless.ExperienceDateControllerLocal;
 import util.exception.CreateNewBookingException;
 import util.exception.ExperienceDateNotFoundException;
-import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
-import util.exception.UserNotFoundException;
 
 /**
  *
@@ -42,31 +39,32 @@ import util.exception.UserNotFoundException;
 public class ViewExperienceDetailsManagedBean implements Serializable{
 
     @EJB
-    private BookingControllerLocal bookingController;
+    private BookingControllerLocal bookingControllerLocal;
     @EJB
-    private ExperienceDateControllerLocal experienceDateController;
+    private ExperienceDateControllerLocal experienceDateControllerLocal;
     @EJB
-    private ExperienceControllerLocal experienceController;
+    private ExperienceControllerLocal experienceControllerLocal;
     
+    // session info
+    private User currentUser;
+    private Boolean isLogin;
+    
+    // basic Experience details information
     private Experience experience;
     private Boolean isExperienceFavouratedByThisUser;
-    private List<ExperienceDate> experienceDateEntities;
     private List<User> experienceFollowers;
+    private List<String> images;
+    
+    // booking information
+    private Long selectedExperienceDateIdToBook;
+    private Integer numOfPeopleForBooking;
     private ExperienceDate selectedExperienceDate;
     private Booking newBooking;
-
-    private BigDecimal price;
-    private int numOfPeople;
-    private Date selectedDate;
-    private boolean availability;
+    
+    // checkout information  
     private BigDecimal subtotal;
     private BigDecimal tax;
     private BigDecimal total;
-    
-    private User currentUser;
-    private Boolean isLogin;
-    private List<String> images;
-    
 
     public ViewExperienceDetailsManagedBean() {
         images = new ArrayList();
@@ -76,17 +74,17 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
         images.add("https://i.imgur.com/SQiLyd4.jpg");
         
         isExperienceFavouratedByThisUser = false;
+        numOfPeopleForBooking = 1;
+        newBooking = new Booking();
     }
     
     @PostConstruct
     public void postConstruct(){
+        // the experience passed in the session map only contains the experience date listings that are already filtered
         System.out.println("******** ViewExperienceDetailsManagedBean: postConstruct()");
         experience = (Experience)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("experienceToView");
         System.out.println("**** experience: " + experience.getTitle());
-        SimpleDateFormat formatter= new SimpleDateFormat("MM-dd-yyyy");  
-        for(ExperienceDate experienceDate: experience.getExperienceDates()) {
-            System.out.println("**** " + formatter.format(experienceDate.getStartDate()));
-        }
+        
         isLogin = (Boolean)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
         if(isLogin != null && isLogin){
             currentUser = (User) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
@@ -94,63 +92,108 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
                 isExperienceFavouratedByThisUser = true;
             }
         }
-    }
-    
-    public void reserveExperienceDate(){
-        try{
-            bookingController.createNewBooking(newBooking);
-        } catch(CreateNewBookingException ex){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occured while entering your booking: " + ex.getMessage(), null));
-        } catch(InputDataValidationException ex){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "You have inputted wrong data for the booking: " + ex.getMessage(), null));
-        } catch(Exception ex){
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occured: " + ex.getMessage(), null));
+        if(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("selectedExperienceDateIdToBook")) {
+            selectedExperienceDateIdToBook = (Long)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedExperienceDateIdToBook");
+            System.out.println("**** selectedExperienceDateIdToBook: " + selectedExperienceDateIdToBook);
         }
+        if(FacesContext.getCurrentInstance().getExternalContext().getSessionMap().containsKey("numOfPeopleForBooking")) {
+            numOfPeopleForBooking = (Integer)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("numOfPeopleForBooking");
+        }
+        System.out.println("-----------------------------");
     }
     
-    public void checkDateAvailability(ActionEvent event){
-        try
-        {
-            selectedExperienceDate = experienceController.checkExperienceDateAvailability(experience.getExperienceId(), selectedDate, numOfPeople);
-            this.availability = true;
-            this.subtotal = selectedExperienceDate.getPrice().multiply(new BigDecimal(this.numOfPeople));
-            this.tax = subtotal.multiply(new BigDecimal(0.07));
-            this.total = this.subtotal.add(this.tax);
+    public void proceedToCheckOut(ActionEvent event){
+        System.out.println("******** ViewExperienceDetailsManagedBean: proceedToCheckOut()");
+        try {
+            selectedExperienceDate = experienceDateControllerLocal.retrieveExperienceDateByExperienceDateId(selectedExperienceDateIdToBook);
+            System.out.println("**** selectedExperienceDate ID: " + selectedExperienceDate.getExperienceDateId());
+            
+            subtotal = selectedExperienceDate.getPrice().multiply(new BigDecimal(numOfPeopleForBooking));
+            subtotal.setScale(2, RoundingMode.HALF_UP);
+            System.out.println("**** subtotal: " + subtotal);
+            tax = subtotal.multiply(new BigDecimal(0.07));
+            tax.setScale(2, RoundingMode.HALF_UP);
+            System.out.println("**** tax: " + tax);
+            total = subtotal.add(tax);
+            System.out.println("**** total: " + total);
+            
             newBooking.setTotalPrice(total);
-            newBooking.setExperienceDate(selectedExperienceDate);
-            newBooking.setNumberOfPeople(numOfPeople);
+            newBooking.setNumberOfPeople(numOfPeopleForBooking);
             newBooking.setGuest(currentUser);
-        }
-        catch (ExperienceDateNotFoundException ex){
+        } catch (ExperienceDateNotFoundException ex){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
-            this.availability= false;
-        }
-        catch (Exception ex){
+        } catch (Exception ex){
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occured: " + ex.getMessage(), null));
-            this.availability = false;
         }
+        System.out.println("-----------------------------");
+    }
+    
+    public void checkout(ActionEvent event) {
+        System.out.println("******** ViewExperienceDetailsManagedBean: checkout()");
+        System.out.println("-----------------------------");
+        try {
+            newBooking.setBookingDate(new Date());
+            newBooking.setExperienceDate(selectedExperienceDate);
+            newBooking = bookingControllerLocal.createNewBooking(newBooking);          
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Your booking has been made successfully! Booking ID: " + newBooking.getBookingId(), null));
+        } catch (CreateNewBookingException | InputDataValidationException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occured in your booking: " + ex.getMessage(), null));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occured: " + ex.getMessage(), null));
+        }
+    }
+    
+    public void initializeBookingState() {
+        System.out.println("******** ViewExperienceDetailsManagedBean: initializeBookingState()");
+        System.out.println("-----------------------------");
+        newBooking = new Booking();
+        numOfPeopleForBooking = 1;
+        selectedExperienceDateIdToBook = null;
     }
     
     public void addFavoriteExperience(ActionEvent event){
-        try {
-            experienceController.addFollowerToExperience(experience.getExperienceId(), currentUser.getUserId());
-            isExperienceFavouratedByThisUser = true;
-        } catch (UserNotFoundException ex) {
-            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ExperienceNotFoundException ex) {
-            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        System.out.println("******** ViewExperienceDetailsManagedBean: addFavoriteExperience()");
+        configureCurrentUser();
+        experienceControllerLocal.addFollowerToExperience(experience.getExperienceId(), currentUser.getUserId());
+        isExperienceFavouratedByThisUser = true;
     }
     
     public void removeFavoriteExperience(ActionEvent event){
-        try {
-            experienceController.removeFollowerFromExperience(experience.getExperienceId(), currentUser.getUserId());
-            isExperienceFavouratedByThisUser = false;
-        } catch (UserNotFoundException ex) {
-            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ExperienceNotFoundException ex) {
-            Logger.getLogger(ViewExperienceDetailsManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+        experienceControllerLocal.removeFollowerFromExperience(experience.getExperienceId(), currentUser.getUserId());
+        isExperienceFavouratedByThisUser = false;
+    }
+    
+    // Only when there is a user currently logged in and s/he is the host of the current experience will give a redirect to the personal account info page
+    // other conditions all lead to the view other user info page
+    public String viewOtherUserInfo() {
+        System.out.println("******** ViewExperienceDetailsManagedBean: viewOtherUserInfo()");
+        System.out.println("-----------------------------");
+        configureCurrentUser();
+        if(currentUser != null && currentUser.getUserId().equals(experience.getHost().getUserId())) {
+            return "accountInfo.xhtml";
+        } else {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("userIdToView", experience.getHost().getUserId());
         }
+        return "viewOtherUserInfo.xhtml";
+    }
+    
+    public void configureCurrentUser() {
+        isLogin = (Boolean)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin");
+        if(isLogin != null && isLogin){
+            currentUser = (User)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentUser");
+            if(currentUser.getFollowedExperiences().contains(experience)){
+                isExperienceFavouratedByThisUser = true;
+            }
+        }
+    }
+    
+    public String convertDateToString(Date date) {
+        if(date != null) {
+            SimpleDateFormat formatter= new SimpleDateFormat("dd-MM-yyyy");   
+            return formatter.format(date);
+        } else {
+            return null;
+        } 
     }
     
     public List<String> getImages() {
@@ -169,28 +212,12 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
         this.experience = experience;
     }
 
-    public List<ExperienceDate> getExperienceDateEntities() {
-        return experienceDateEntities;
-    }
-
-    public void setExperienceDateEntities(List<ExperienceDate> experienceDateEntities) {
-        this.experienceDateEntities = experienceDateEntities;
-    }
-
     public List<User> getExperienceFollowers() {
         return experienceFollowers;
     }
 
     public void setExperienceFollowers(List<User> experienceFollowers) {
         this.experienceFollowers = experienceFollowers;
-    }
-
-    public Booking getNewBooking() {
-        return newBooking;
-    }
-
-    public void setNewBooking(Booking newBooking) {
-        this.newBooking = newBooking;
     }
 
     public ExperienceDate getSelectedExperienceDate() {
@@ -201,28 +228,36 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
         this.selectedExperienceDate = selectedExperienceDate;
     }
 
-    public int getNumOfPeople() {
-        return numOfPeople;
+    public Booking getNewBooking() {
+        return newBooking;
     }
 
-    public void setNumOfPeople(int numOfPeople) {
-        this.numOfPeople = numOfPeople;
+    public void setNewBooking(Booking newBooking) {
+        this.newBooking = newBooking;
     }
 
-    public boolean isAvailability() {
-        return availability;
+    public Long getSelectedExperienceDateIdToBook() {
+        return selectedExperienceDateIdToBook;
     }
 
-    public void setAvailability(boolean availability) {
-        this.availability = availability;
+    public void setSelectedExperienceDateIdToBook(Long selectedExperienceDateIdToBook) {
+        System.out.println("******** ViewExperienceDetailsManagedBean: setSelectedExperienceDateIdToBook()");
+        try {
+            selectedExperienceDate = experienceDateControllerLocal.retrieveExperienceDateByExperienceDateId(selectedExperienceDateIdToBook);
+        } catch(ExperienceDateNotFoundException ex) {
+            
+        }
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedExperienceDateIdToBook", selectedExperienceDateIdToBook);
+        this.selectedExperienceDateIdToBook = selectedExperienceDateIdToBook;
     }
 
-    public Date getSelectedDate() {
-        return selectedDate;
+    public Integer getNumOfPeopleForBooking() {
+        return numOfPeopleForBooking;
     }
 
-    public void setSelectedDate(Date selectedDate) {
-        this.selectedDate = selectedDate;
+    public void setNumOfPeopleForBooking(Integer numOfPeopleForBooking) {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("numOfPeopleForBooking", numOfPeopleForBooking);
+        this.numOfPeopleForBooking = numOfPeopleForBooking;
     }
 
     public BigDecimal getSubtotal() {
@@ -250,15 +285,8 @@ public class ViewExperienceDetailsManagedBean implements Serializable{
         newBooking.setTotalPrice(total);
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public User getCurrentUser() {
+        configureCurrentUser();
         return currentUser;
     }
 

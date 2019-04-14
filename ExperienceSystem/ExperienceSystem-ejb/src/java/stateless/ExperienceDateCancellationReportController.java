@@ -6,9 +6,15 @@
 package stateless;
 
 import entity.ExperienceDateCancellationReport;
+import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -19,14 +25,38 @@ public class ExperienceDateCancellationReportController implements ExperienceDat
 
     @PersistenceContext(unitName = "ExperienceSystem-ejbPU")
     private EntityManager em;
+    
+    private final ValidatorFactory validatorFactory;
+    private final Validator validator;
+    
+    public ExperienceDateCancellationReportController() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    } 
 
-    public void persist(Object object) {
-        em.persist(object);
+    @Override
+    public ExperienceDateCancellationReport createNewExperienceDateCancellationReport(ExperienceDateCancellationReport rpt) throws InputDataValidationException {
+        Set<ConstraintViolation<ExperienceDateCancellationReport>> constraintViolations = validator.validate(rpt);
+        if(constraintViolations.isEmpty()) {
+            em.persist(rpt);
+            em.flush();
+            return rpt;
+        } else {
+            System.out.println("**** InputDataValidationException");
+            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+        }
+        
     }
-
-   public ExperienceDateCancellationReport createNewExperienceDateCancellationReport(ExperienceDateCancellationReport rpt) {
-       em.persist(rpt);
-       em.flush();
-       return rpt;
-   }
+    
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ExperienceDateCancellationReport>>constraintViolations)
+    {
+        String msg = "Input data validation error!:";
+            
+        for(ConstraintViolation constraintViolation:constraintViolations)
+        {
+            msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
+        }
+        
+        return msg;
+    }
 }

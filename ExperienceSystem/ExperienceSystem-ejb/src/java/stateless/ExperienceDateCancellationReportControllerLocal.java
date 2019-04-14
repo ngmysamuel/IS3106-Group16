@@ -7,6 +7,7 @@ package stateless;
 
 import entity.ExperienceDateCancellationReport;
 import javax.ejb.Local;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -14,5 +15,5 @@ import javax.ejb.Local;
  */
 @Local
 public interface ExperienceDateCancellationReportControllerLocal {
-    public ExperienceDateCancellationReport createNewExperienceDateCancellationReport(ExperienceDateCancellationReport rpt);
+    public ExperienceDateCancellationReport createNewExperienceDateCancellationReport(ExperienceDateCancellationReport rpt) throws InputDataValidationException;
 }

@@ -90,7 +90,7 @@ public class TypeController implements TypeControllerLocal {
         }
         
         // check whether there's another Type with the same name
-        Query query = em.createQuery("SELECT t FROM Type t WHERE t.type = :inTypeName");
+        Query query = em.createQuery("SELECT t FROM Type t WHERE t.name = :inTypeName");
         query.setParameter("inTypeName", type.getName());
         try{
             Type duplicateType = (Type)query.getSingleResult();

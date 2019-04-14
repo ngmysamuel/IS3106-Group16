@@ -60,6 +60,7 @@ public class CategoryManagementManagedBean implements Serializable{
         try{
             
             Category cg = categoryControllerLocal.createNewCategory(newCategory);
+            categories.add(cg);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New Category created successfully (Category ID: " + cg.getCategoryId()+ ")", null));
         
         }catch(Exception ex){

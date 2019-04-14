@@ -42,12 +42,14 @@ public class EvaluationResource {
 
     EvaluationControllerLocal evaluationController = lookupEvaluationControllerLocal();
     
-    @Path("getAllEval")
+    // Retrieve evaluations by hosts for this Guest.
+    @Path("retrieveAllEvalFromHost/{userId}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllEvaluations() {
+    public Response retrieveAllEvalFromHost(@PathParam("userId")Long userId) {
         try{
-            List<Evaluation> ls = evaluationController.retrieveAllEvaluations();
+            
+            List<Evaluation> ls = evaluationController.retrieveAllEvaluationsFromHostsByUserId(userId);
             
             for(Evaluation e: ls){
                 e.getBooking().setEvaluationByGuest(null);
@@ -67,39 +69,14 @@ public class EvaluationResource {
         }
     }
     
-    @Path("getEvalById/{id}")
+    // Retrieve evaluations by guests for this host.
+    @Path("retrieveAllEvalFromGuest/{userId}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEvaluationById(@PathParam("id")Long id) {
-        try{
-            Evaluation e = evaluationController.retrieveEvaluationById(id);
-            
-            if(e == null){
-                return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorRsp("Evaluation not found!")).build();
-            }
-            
-            e.getBooking().setEvaluationByGuest(null);
-                
-            e.getBooking().setEvaluationByHost(null);
-
-            e.getUserEvaluating().getEvaluationsForUserAsGuest().clear();
-
-            e.getUserEvaluating().getEvaluationsForUserAsHost().clear();
-            
-            return Response.status(Response.Status.OK).entity(e).build();
-        } catch(Exception ex){
-            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-        }
-    }
-    
-    @Path("getEvalByBookingId/{id}")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getEvaluationByBookingId(@PathParam("id")Long id) {
+    public Response retrieveAllEvalFromGuest(@PathParam("userId")Long userId) {
         try{
             
-            List<Evaluation> ls = evaluationController.retrieveEvaluationsByBookingId(id);
+            List<Evaluation> ls = evaluationController.retrieveAllEvaluationsFromGuestsByUserId(userId);
             
             for(Evaluation e: ls){
                 e.getBooking().setEvaluationByGuest(null);
@@ -126,14 +103,13 @@ public class EvaluationResource {
     public Response createEvaluation(CreateNewEval createNewEval) throws UserNotFoundException {
         try{
             Evaluation l = new Evaluation();
-            l.setBooking(bookingController.retrieveBookingByBookingId(createNewEval.getBookingId()));
             l.setRemark(createNewEval.getRemark());
             l.setEvaluationTime(createNewEval.getDate());
             l.setScore(createNewEval.getScore());
             System.out.println(createNewEval.getUserId());
             l.setUserEvaluating(userController.retrieveUserById(createNewEval.getUserId()));
             
-            Evaluation e = evaluationController.create(l);
+            Evaluation e = evaluationController.createNewEvaluationFromHost(l, createNewEval.getBookingId());
             e.getBooking().setEvaluationByGuest(null);
                 
             e.getBooking().setEvaluationByHost(null);
@@ -142,20 +118,6 @@ public class EvaluationResource {
 
             e.getUserEvaluating().getEvaluationsForUserAsHost().clear();
             return Response.status(Response.Status.OK).entity(e).build();
-        } catch(Exception ex){
-            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-        }
-    }
-    
-    @Path("deleteEval/{id}")
-    @DELETE
-    @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteEvaluation(@PathParam("id")Long id) {
-        try{
-            evaluationController.delete(id);
-            return Response.status(Response.Status.OK).entity(new ErrorRsp("Success")).build();
         } catch(Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();

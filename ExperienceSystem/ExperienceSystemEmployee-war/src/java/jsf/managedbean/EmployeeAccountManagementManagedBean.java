@@ -19,9 +19,9 @@ import stateless.UserControllerLocal;
  *
  * @author zhangruichun
  */
-@Named(value = "accountManagementManagedBean")
+@Named(value = "employeeAccountManagementManagedBean")
 @ViewScoped
-public class AccountManagementManagedBean implements Serializable{
+public class EmployeeAccountManagementManagedBean implements Serializable{
 
     @EJB
     private UserControllerLocal userController;
@@ -32,7 +32,7 @@ public class AccountManagementManagedBean implements Serializable{
     private Employee currentEmployee;
     private Long currentEmployeeId;
     
-    public AccountManagementManagedBean() {
+    public EmployeeAccountManagementManagedBean() {
     }
     
     @PostConstruct 

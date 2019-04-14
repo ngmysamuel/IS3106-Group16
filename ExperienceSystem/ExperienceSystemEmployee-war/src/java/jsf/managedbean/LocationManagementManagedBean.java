@@ -58,6 +58,7 @@ public class LocationManagementManagedBean implements Serializable{
         try{
             
             Location lc = locationControllerLocal.createNewLocation(newLocation);
+            locations.add(lc);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New Location created successfully (Location ID: " + lc.getLocationId()+ ")", null));
         
         }catch(Exception ex){

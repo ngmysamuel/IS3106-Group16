@@ -10,12 +10,12 @@ import entity.Experience;
 import entity.ExperienceDate;
 import entity.ExperienceDateCancellationReport;
 import entity.ExperienceDatePaymentReport;
+import entity.User;
 import enumerated.StatusEnum;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
-import static java.util.Locale.filter;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -29,6 +29,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.CreateNewExperienceDateException;
 import util.exception.CreateNewExperienceException;
+import util.exception.DeleteExperienceDateException;
 import util.exception.ExperienceDateNotActiveException;
 import util.exception.ExperienceDateNotFoundException;
 import util.exception.InputDataValidationException;
@@ -56,6 +57,7 @@ public class ExperienceDateController implements ExperienceDateControllerLocal {
         validator = validatorFactory.getValidator();
     }
 
+    @Override
     public ExperienceDate createNewExperienceDate(ExperienceDate newExperienceDate) throws CreateNewExperienceDateException, InputDataValidationException {
         Set<ConstraintViolation<ExperienceDate>> constraintViolations = validator.validate(newExperienceDate);
 
@@ -63,18 +65,10 @@ public class ExperienceDateController implements ExperienceDateControllerLocal {
             try {
                 // retrieve the experience and set the bidirectional relationship
                 Experience experience = experienceControllerLocal.retrieveExperienceById(newExperienceDate.getExperience().getExperienceId());
-                boolean added = false;
-                for(ExperienceDate ed: experience.getExperienceDates()){
-                    if(ed.getStartDate().equals(newExperienceDate.getStartDate())){
-                        added = true;
-                    }
-                }
+                experience.getExperienceDates().add(newExperienceDate);
                 
-                em.persist(newExperienceDate);
+                em.persist(newExperienceDate); 
                 em.flush();
-                if(!added){
-                    experience.getExperienceDates().add(newExperienceDate);
-                }
                 return newExperienceDate;
             } catch (PersistenceException ex) {
                 if (ex.getCause() != null
@@ -91,10 +85,11 @@ public class ExperienceDateController implements ExperienceDateControllerLocal {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
-
+    
     @Override
     public ExperienceDate updateExperienceDate(ExperienceDate expDate) throws InputDataValidationException, CreateNewExperienceException{
         Set<ConstraintViolation<ExperienceDate>> constraintViolations = validator.validate(expDate);
+        
         if(constraintViolations.isEmpty()){
             try{
                 em.merge(expDate);
@@ -116,58 +111,89 @@ public class ExperienceDateController implements ExperienceDateControllerLocal {
         }
     }
     
-    @Override
-    public List<ExperienceDate> retrieveAllExperienceDates(){
-        Query query = em.createQuery("SELECT ed FROM ExperienceDate ed");
-        List<ExperienceDate> eds = query.getResultList();
-        if(eds == null || eds.isEmpty() || eds.get(0) == null){
-            return new ArrayList<>();
-        }
-        for(ExperienceDate ed: eds){
-            ed.getExperience();
-        }
-        return eds;
-    }
     
     @Override
-    public ExperienceDate retrieveExperienceDateByDateId(Long id) {
-        ExperienceDate ed = em.find(ExperienceDate.class, id);
-        for (Booking b : ed.getBookings()) {
-            b.getGuest().getUsername();
+    public ExperienceDate retrieveExperienceDateByExperienceDateId(Long experienceDateId) throws ExperienceDateNotFoundException {
+        ExperienceDate experienceDate = em.find(ExperienceDate.class, experienceDateId);
+        for (Booking booking : experienceDate.getBookings()) {
+            booking.getGuest();
         }
-        return ed;
+        return experienceDate;
     }
 
-    public ExperienceDate retrieveExperienceDateByDate(Experience experience, Date startDate) throws ExperienceDateNotFoundException {
-        List<ExperienceDate> dates = experience.getExperienceDates();
-        for (ExperienceDate date : dates) {
-            Date start = date.getStartDate();
-            if (start.equals(startDate)) {
-                return date;
-            }
-        }
-
-        throw new ExperienceDateNotFoundException("Experience Date does not exist");
-    }
-
+    @Override
     public List<ExperienceDate> retrieveExperienceDatesOfAnExperience(Experience experience) {
         Query query = em.createQuery("SELECT d FROM ExperienceDate d WHERE d.experience.experienceId = :inExperienceId");
         query.setParameter("inExperienceId", experience.getExperienceId());
-        
-        List<ExperienceDate> experienceDates = query.getResultList();
-        if(experienceDates == null || experienceDates.isEmpty() || experienceDates.get(0) == null){
-            return new ArrayList<>();
-        }
-        for(ExperienceDate ed: experienceDates){
-            ed.getBookings();
-            ed.getExperience();
-        }
-        return experienceDates;
+
+        return query.getResultList();
     }
+  
+    @Override
+    public List<ExperienceDate> retrieveAllActiveExperienceDatesByExperienceId(Long experienceId) {
+        List<ExperienceDate> activeExperienceDates = new ArrayList();
+        
+        Experience experience = em.find(Experience.class, experienceId);
+        if(experience != null) {
+            activeExperienceDates = experience.getExperienceDates();
+            ListIterator iter = activeExperienceDates.listIterator();
+            while(iter.hasNext()){
+                ExperienceDate currentExperienceDate = (ExperienceDate)iter.next();
+                if(!currentExperienceDate.isActive()) {
+                    iter.remove();
+                }
+            }
+            return activeExperienceDates;
+        } else {
+            return activeExperienceDates;
+        }
+    }
+    
+    @Override
+    public List<ExperienceDate> retrieveAllInactiveExperienceDatesByExperienceId(Long experienceId) {
+        List<ExperienceDate> inactiveExperienceDates = new ArrayList();
+        
+        Experience experience = em.find(Experience.class, experienceId);
+        if(experience != null) {
+            inactiveExperienceDates = experience.getExperienceDates();
+            ListIterator iter = inactiveExperienceDates.listIterator();
+            while(iter.hasNext()){
+                ExperienceDate currentExperienceDate = (ExperienceDate)iter.next();
+                if(currentExperienceDate.isActive()) {
+                    iter.remove();
+                } else {
+                    currentExperienceDate.getBookings().size();
+                }
+            }
+            return inactiveExperienceDates;
+        } else {
+            return inactiveExperienceDates;
+        }
+    }
+    
+    @Override
+    public List<User> retrieveAllGuestsByExperienceDateId(Long experienceDateId) {
+        System.out.println("******** ExperienceDateController: retrieveAllGuestsByExperienceDateId()");
+        List<User> guests = new ArrayList();
+        
+        ExperienceDate experienceDate = em.find(ExperienceDate.class, experienceDateId);
+        if(experienceDate != null) {
+            System.out.println("**** experience date: " + experienceDate.getExperienceDateId());
+            for(Booking booking: experienceDate.getBookings()) {
+                guests.add(booking.getGuest());
+            }
+            System.out.println("**** guest size: " + guests.size());
+        }
+        System.out.println("-----------------------------");
+        return guests;
+    }
+
+    
+
 
     // TO CHECK: whether after an experience date is cancelled, it has been automatically removed from the association for the experience
     @Override
-    public void deleteExperienceDate(Long experienceDateId, String reason) throws ExperienceDateNotActiveException {
+    public void deleteExperienceDate(Long experienceDateId, String reason) throws ExperienceDateNotActiveException, DeleteExperienceDateException {
         ExperienceDate experienceDate = em.find(ExperienceDate.class, experienceDateId);
 
         if (!experienceDate.isActive()) {
@@ -182,38 +208,16 @@ public class ExperienceDateController implements ExperienceDateControllerLocal {
                 report.setBooking(booking);
                 report.setExperienceDate(experienceDate);
                 report.setCancellationReason(reason);
-                experienceDateCancellationReportController.createNewExperienceDateCancellationReport(report);
+                try {
+                    experienceDateCancellationReportController.createNewExperienceDateCancellationReport(report);
+                } catch (InputDataValidationException ex) {
+                    throw new DeleteExperienceDateException(ex.getMessage());
+                }
+
             }
         }
     }
     
-    @Override
-    public List<ExperienceDate> retrieveAllActiveExperienceDatesByExperienceId(Long experienceId) {
-        Query query = em.createQuery("SELECT d FROM ExperienceDate d WHERE d.experience.experienceId = :inExperienceId AND d.active = :status");
-        query.setParameter("inExperienceId", experienceId);
-        query.setParameter("status", true);
-        List<ExperienceDate> experienceDates = query.getResultList();
-        if(experienceDates == null || experienceDates.isEmpty() || experienceDates.get(0) == null){
-            return new ArrayList<>();
-        }
-        for(ExperienceDate ed: experienceDates){
-            ed.getBookings();
-            ed.getExperience();
-        }
-        return experienceDates;
-    }
-
-    public List<ExperienceDateCancellationReport> retrieveAllExperienceDateCancellationReports() {
-        Query query = em.createQuery("SELECT r FROM ExperienceDateCancellationReport r ORDER BY r.cancellationReportId");
-        return query.getResultList();
-    }
-
-    public ExperienceDatePaymentReport retrieveExperienceDatePaymentReport(ExperienceDate experienceDate) {
-        Query query = em.createQuery("SELECT r FROM ExperienceDatePaymentReport r WHERE r.experienceDate.experienceDateId = :inExperienceDateId");
-        query.setParameter("inExperienceDateId", experienceDate.getExperienceDateId());
-        return (ExperienceDatePaymentReport) query.getResultList();
-    }
-
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<ExperienceDate>> constraintViolations) {
         String msg = "Input data validation error!:";
 

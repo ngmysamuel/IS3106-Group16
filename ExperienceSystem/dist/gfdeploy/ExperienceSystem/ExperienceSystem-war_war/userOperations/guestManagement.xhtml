@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #titleHeader{
+                position: relative;
+                width: 65%;
+                height: 100px;
+                margin: auto;
+                display: flex; 
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            #detailsBox{
+                position: relative;
+                width: 65%;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+            }
+
+            .dull{
+                background: whitesmoke;
+                color:lightgray;
+            }
+
+        </style>
+        
+        <p:growl id="messagesGuestManagement" redisplay="false" />
+        
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">Guest Management</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <div style="width:65%; margin: auto; position: relative;">
+
+            <p:tabView id="tabViewGuestManagement">
+
+                <p:tab title="Pending Evaluation">
+                    <h:form id="formAllPendingEvaluations">
+                        <ui:repeat value="#{guestManagementManagedBean.pendingExperienceDates}" var="pendingExperienceDate" varStatus="status">
+                            <p:accordionPanel>
+                                <p:tab title="#{pendingExperienceDate.experience.title} #{guestManagementManagedBean.convertDateToString(pendingExperienceDate.startDate)}">
+                                    <p:dataTable value="#{pendingExperienceDate.bookings}" var="pendingBooking">
+                                            <p:column headerText="Guest">
+                                                <p:commandLink action="#{guestManagementManagedBean.viewOtherUserInfo}" value="#{pendingBooking.guest.username}" >
+                                                    <f:setPropertyActionListener target="#{guestManagementManagedBean.userIdToView}" value="#{pendingBooking.guest.userId}" />
+                                                </p:commandLink>  
+                                            </p:column>
+                                            <p:column headerText="Action">
+                                                <p:commandButton value="Write Guest Review" icon="ui-icon-pencil" update="formWriteGuestReview" oncomplete="PF('dialogWriteGuestReview').show()" >                                   
+                                                    <f:setPropertyActionListener target="#{guestManagementManagedBean.pendingExperienceDateIdToWriteReview}" value="#{pendingExperienceDate.experienceDateId}" />
+                                                    <f:setPropertyActionListener target="#{guestManagementManagedBean.bookingIdToWriteReview}" value="#{pendingBooking.bookingId}" />
+                                                    <f:setPropertyActionListener target="#{guestManagementManagedBean.selectedGuest}" value="#{pendingBooking.guest}" />
+                                                </p:commandButton>
+                                            </p:column>
+                                    </p:dataTable>
+                                </p:tab> 
+                            </p:accordionPanel>
+                        </ui:repeat>
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="Past Evaluation">
+                    <h:form id="formAllPastEvaluations">
+                        <ui:repeat value="#{guestManagementManagedBean.pastExperienceDates}" var="pastExperienceDate" varStatus="status">
+                            <p:accordionPanel>
+                                <p:tab title="#{pastExperienceDate.experience.title} #{guestManagementManagedBean.convertDateToString(pastExperienceDate.startDate)}">
+                                    <p:dataTable value="#{pastExperienceDate.bookings}" var="pastBooking">
+                                            <p:column headerText="Guest">
+                                                <p:commandLink action="#{guestManagementManagedBean.viewOtherUserInfo}" value="#{pastBooking.guest.username}" >
+                                                    <f:setPropertyActionListener target="#{guestManagementManagedBean.userIdToView}" value="#{pastBooking.guest.userId}" />
+                                                </p:commandLink>  
+                                            </p:column>
+                                            <p:column headerText="Action">
+                                                <p:commandButton value="View Guest Review" icon="ui-icon-zoomin" actionListener="#{guestManagementManagedBean.viewHostReview}" update="formViewGuestReview" oncomplete="PF('dialogViewGuestReview').show()" >                                   
+                                                    <f:attribute name="bookingIdToViewReview" value="#{pastBooking.bookingId}" />
+                                                    <f:setPropertyActionListener target="#{guestManagementManagedBean.selectedGuest}" value="#{pastBooking.guest}" />
+                                                </p:commandButton>
+                                            </p:column>
+                                    </p:dataTable>
+                                </p:tab> 
+                            </p:accordionPanel>
+                        </ui:repeat>
+                    </h:form>
+                </p:tab>
+
+            </p:tabView>
+ 
+            <h:form id="formWriteGuestReview">
+                <p:growl id="messagesWriteGuestReview" redisplay="false" />
+                <p:dialog id="dialogWriteGuestReview" header="Review for #{guestManagementManagedBean.selectedGuest.username}" widgetVar="dialogWriteGuestReview">
+                    <p:ajax event="close" listener="#{guestManagementManagedBean.initializeEvaluationStatus}" />
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel style="font-weight:bold;" value="Guest rating" />
+                            </p:column>
+                            <p:column>
+                                <p:rating value="#{guestManagementManagedBean.guestRating}" >
+                                    <f:validateLongRange minimum="1" maximum="5" />
+                                </p:rating>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel style="font-weight:bold;" value="Comment" />
+                            </p:column>
+                            <p:column>
+                                <p:inputTextarea value="#{guestManagementManagedBean.comment}" placeholder="Comment"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br />
+                    <p:commandButton value="Submit guest review" actionListener="#{guestManagementManagedBean.createNewGuestReview}" 
+                                     update="@all" oncomplete="PF('dialogWriteGuestReview').show()" 
+                                     rendered="#{guestManagementManagedBean.newEvaluation.evaluationId == null}"/>
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="formViewGuestReview">
+                <p:growl id="messagesViewGuestReview" redisplay="false" />
+                <p:dialog id="dialogViewGuestReview" header="Review for #{guestManagementManagedBean.selectedGuest.username}" widgetVar="dialogViewGuestReview">
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel style="font-weight:bold;" value="Guest rating" />
+                            </p:column>
+                            <p:column>
+                                <p:rating value="#{guestManagementManagedBean.selectedEvaluationToView.score}" readonly="true" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel style="font-weight:bold;" value="Comment" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{guestManagementManagedBean.selectedEvaluationToView.remark}"/>
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel style="font-weight:bold;" value="Evaluation Time" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{guestManagementManagedBean.selectedEvaluationToView.evaluationTime}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

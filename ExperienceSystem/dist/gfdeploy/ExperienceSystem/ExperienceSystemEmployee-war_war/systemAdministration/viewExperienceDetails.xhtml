@@ -5,7 +5,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
 
     <ui:define name="content">
         <style>
@@ -27,7 +28,7 @@
                 width: 73%; 
                 height:100%;
             }
-            
+
             #titleHeader{
                 position: relative;
                 width: 65%;
@@ -37,14 +38,14 @@
                 justify-content: flex-start;
                 align-items: center;
             }
-            
+
             #detailsBox{
                 position: relative;
                 width: 65%;
                 margin: auto;
                 display: flex; 
                 justify-content: space-between;
-                
+
             }
             #leftColumn{
                 width:65%;
@@ -59,170 +60,215 @@
             #rightColumn{
                 width:30%;
             }
-            
-            #formBookExperience{
+
+            #formExperienceDateSummary{
                 border: 1px solid black;
                 padding: 15px;
                 position: sticky;
                 top: 0;
             }
-            
-            
+
+
         </style>
-        
-        <h:outputScript>
-            //<![CDATA[
-            function disableAllTheseDays(date) {
-                var disabledDays = ["4-15-2019", "4-5-2019"];
-                var m = date.getMonth(), d = date.getDate(), y = date.getFullYear();
-                for (i = 0; i < disabledDays.length; i++) {
-                    if ($.inArray((m + 1) + '-' + d + '-' + y, disabledDays) != -1) {
-                        return [false,''];
-                    }
-                }
-                return [true,''];
-            }
-            //]]>
-        </h:outputScript>
-            
+
         <div id="topBox">
             <div id="blackBox">
-                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">EXPERIENCES</p>    
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">EXPERIENCE DETAILS</p>    
             </div>
 
             <div id="topPicture">
                 <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
             </div>
         </div>
-        <h:form id="formFollowExperience">
+        <h:form>
             <div id="titleHeader">
                 <span>
-                    <p:link outcome="searchExperience.xhtml" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
+                    <p:link outcome="experienceManagement.xhtml" style="margin-right:20px; font-size: 30px; color: black;" value="Back"/>
                 </span>
                 <span>
                     <p:outputLabel value=" |    " style="font-size: 30px;"/>
                 </span>
                 <span>
-                    <p:outputLabel value="#{viewExperienceDetailsManagedBean.experience.title}" style="font-size: 30px;"/>
-                </span>
-                <span style="margin-left: 10px;">
-                    <p:commandButton id="favourateExperienceButton" value="Follow this experience" icon="ui-icon-heart"  update="@form" rendered="#{viewExperienceDetailsManagedBean.currentUser != null and !viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" actionListener="#{viewExperienceDetailsManagedBean.addFavoriteExperience}" />
-                    <p:commandButton id="unfavourateExperienceButton" value="Unfollow this experience" icon="ui-icon-closethick" update="@form" rendered="#{viewExperienceDetailsManagedBean.currentUser != null and viewExperienceDetailsManagedBean.isExperienceFavouratedByThisUser}" actionListener="#{viewExperienceDetailsManagedBean.removeFavoriteExperience}" />
+                    <p:outputLabel value="#{viewExperienceDetailsEmployeeManagedBean.experience.title}" style="font-size: 30px;"/>
                 </span>
             </div>
         </h:form> 
-        
+
         <div id="detailsBox">
             <div id="leftColumn">
-                <p:galleria value="#{viewExperienceDetailsManagedBean.images}" var="image" panelWidth="545" panelHeight="313" showCaption="false">
+                <p:galleria value="#{viewExperienceDetailsEmployeeManagedBean.images}" var="image" panelWidth="545" panelHeight="313" showCaption="false">
                     <p:graphicImage style="width:100%; height: 100%; object-fit: cover;" url="#{image}" alt="Image Description" title="image"/>
                 </p:galleria>
                 <br />
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Title" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.title}" /> 
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.title}" /> 
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Average rating" /> 
-                    <p:rating disabled="true" value="#{viewExperienceDetailsManagedBean.experience.averageScore}" rendered="#{viewExperienceDetailsManagedBean.experience.averageScore != null}" />
-                    <h:outputText value="No Rating Yet" rendered="#{viewExperienceDetailsManagedBean.experience.averageScore == null}" />                                  
+                    <p:rating disabled="true" value="#{viewExperienceDetailsEmployeeManagedBean.experience.averageScore}" rendered="#{viewExperienceDetailsEmployeeManagedBean.experience.averageScore != null}" />
+                    <h:outputText value="No Rating Yet" rendered="#{viewExperienceDetailsEmployeeManagedBean.experience.averageScore == null}" />                                  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Category" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.category.name}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.category.name}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Language" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.language.name}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.language.name}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Type" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.type.name}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.type.name}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Location" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.location.name}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.location.name}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Address" /> 
-                    <h:outputText style="width:100%;" value="#{viewExperienceDetailsManagedBean.experience.address}" />  
+                    <h:outputText style="width:100%;" value="#{viewExperienceDetailsEmployeeManagedBean.experience.address}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Description" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.description}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.description}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Items Provided" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.providingItems}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.providingItems}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Items Required" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.requiringItems}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.requiringItems}" />  
                 </p:panelGrid>
                 <br />
-                
+
                 <p:panelGrid style="width:100%;" columns="2" columnClasses="detailTitleClass,detailContentClass" layout="grid">
                     <h:outputText style="font-weight:bold;" value="Host" /> 
-                    <h:outputText value="#{viewExperienceDetailsManagedBean.experience.host.username}" />  
+                    <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.experience.host.username}" /> 
                 </p:panelGrid>
                 <br />
             </div>
-            
+
             <div id="rightColumn">
-                <h:form id="formBookExperience">
+                <h:form id="formExperienceDateSummary">
+                    <p:growl />
                     <div style="width:85%; margin:auto; border-left: 1px solid black; padding:10px;">
                         <p:outputLabel value="Average" style="font-size: 15px;" />
                         <br />
-                        <p:outputLabel value="$#{viewExperienceDetailsManagedBean.experience.averagePrice}" style="font-size: 30px;" />
+                        <p:outputLabel value="$#{viewExperienceDetailsEmployeeManagedBean.experience.averagePrice}" style="font-size: 30px;" />
                         <br />
                         <p:outputLabel value="Per Ticket" style="font-size: 15px;" />
                     </div>
                     <br />
                     <br />
                     <div style="width:85%; margin:auto;">
-                        <p:outputLabel for="bookDate" value="Experience Date" />
-                        <p:calendar id="bookDate" value="Choose a Date" showOn="button" inputStyle="width:140px;" beforeShowDay="disableAllTheseDays" />
-                        <br/>
-                        <br/>
-                        
-                        <p:outputLabel for="bookNumOfTickets" value="Number of People" />
-                        <br/>
-                        <p:spinner id="bookNumOfTickets" value="#{viewExperienceDetailsManagedBean.numOfPeople}" min="1" max="10" />
-                        <br/>
-                        <br/>
-                        
-                        <p:commandButton id="bookNow" update="growl" value="Book Now" actionListener="#" oncomplete="if(!#{viewExperienceDetailsManagedBean.availability}){PF('dialogCheckout').show()}"/>
-                        <p:growl id="growl" showDetail="true" life="5000"/>
+                        <p:outputLabel value="All Experience Dates" />
+                        <br />
+                        <p:dataTable value="#{viewExperienceDetailsEmployeeManagedBean.experience.experienceDates}" var="experienceDate">
+                            <p:column headerText="Date">
+                                <p:outputLabel value="#{experienceDate.startDate}" />
+                            </p:column>
+                            <p:column headerText="Action">
+                                <p:commandButton update="formViewExperienceDateDetails formExperienceDateSummary" actionListener="#{viewExperienceDetailsEmployeeManagedBean.doViewExperienceDateDetails}" oncomplete="PF('dialogViewExperienceDateDetails').show()" icon="ui-icon-document" title="View">
+                                    <f:attribute value="#{experienceDate.experienceDateId}" name="selectedExperienceDateIdToView" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
                     </div>
 
                 </h:form>
             </div>
-        </div>
-        
-        <h:form id="formCheckout">
-            <p:dialog id="dialogCheckout" widgetVar="dialogCheckout" header="Checkout" closable="true" width="500" blockScroll="true">
-                <p:messages id="messagesCheckout" redisplay="false" />
-                
+        </div>     
+
+        <h:form id="formViewExperienceDateDetails">
+
+            <p:dialog id="dialogViewExperienceDateDetails" widgetVar="dialogViewExperienceDateDetails" header="Experience Date Details" closable="true" blockScroll="true">
+                <div style="overflow: scroll; max-height: 100%;">
+                    <p:panelGrid style="width:100%;">
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Experience Date ID" style="font-weight:bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.experienceDateId}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Start Date" style="font-weight:bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewExperienceDetailsEmployeeManagedBean.convertDateToString(viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.startDate)}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Capacity" style="font-weight:bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.capacity}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Number of Attendees" style="font-weight:bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="#{viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.capacity - viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.spotsAvailable}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Price" style="font-weight:bold;" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="$" />
+                                <h:outputText value="#{viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.price}" style="font-size: 15px;" >
+                                    <f:convertNumber type="number" maxFractionDigits="2" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Status" style="font-weight:bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel value="Active" rendered="#{viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.active}"/>
+                                <p:outputLabel value="Inactive" rendered="#{!viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.active}" />
+                                <p:outputLabel value="Cancelled" rendered="#{viewExperienceDetailsEmployeeManagedBean.selectedExperienceDateToView.experienceDateCancellationReport != null}"/>
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+                </div>
             </p:dialog>
+
         </h:form>
+
     </ui:define>
 
 </ui:composition>

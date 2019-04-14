@@ -5,9 +5,10 @@
  */
 package stateless;
 import entity.Evaluation;
-import entity.Experience;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.CreateNewEvaluationException;
+import util.exception.InputDataValidationException;
 
 /**
  *
@@ -15,11 +16,9 @@ import javax.ejb.Local;
  */
 @Local
 public interface EvaluationControllerLocal {
-    public Evaluation retrieveEvaluationById(Long id);
-    public List<Evaluation> retrieveAllEvaluations();
-    public Evaluation create(Evaluation e);
-    public void delete(Long id);
-    public void update(Evaluation e);
-
-    public List<Evaluation> retrieveEvaluationsByBookingId(Long bookingId);
+    public Evaluation createNewEvaluationFromHost(Evaluation newEvaluation, Long bookingId) throws InputDataValidationException, CreateNewEvaluationException;
+    
+    public List<Evaluation> retrieveAllEvaluationsFromHostsByUserId(Long userId);
+    
+    public List<Evaluation> retrieveAllEvaluationsFromGuestsByUserId(Long userId);
 }

@@ -59,6 +59,8 @@ public class TypeManagementManagedBean implements Serializable{
         try{
             
             Type tp = typeControllerLocal.createNewType(newType);
+            types.add(tp);
+            
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New Type created successfully (Type ID: " + tp.getTypeId()+ ")", null));
         
         }catch(Exception ex){

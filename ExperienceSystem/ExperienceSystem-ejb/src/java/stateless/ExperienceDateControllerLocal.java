@@ -7,13 +7,12 @@ package stateless;
 
 import entity.Experience;
 import entity.ExperienceDate;
-import entity.ExperienceDateCancellationReport;
-import entity.ExperienceDatePaymentReport;
-import java.util.Date;
+import entity.User;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewExperienceDateException;
 import util.exception.CreateNewExperienceException;
+import util.exception.DeleteExperienceDateException;
 import util.exception.ExperienceDateNotActiveException;
 import util.exception.ExperienceDateNotFoundException;
 import util.exception.InputDataValidationException;
@@ -24,23 +23,17 @@ import util.exception.InputDataValidationException;
  */
 @Local
 public interface ExperienceDateControllerLocal {
-    public ExperienceDate updateExperienceDate(ExperienceDate expDate)throws InputDataValidationException, CreateNewExperienceException;
-    public ExperienceDate retrieveExperienceDateByDateId(Long id);
     
-
     public ExperienceDate createNewExperienceDate(ExperienceDate newExperienceDate) throws CreateNewExperienceDateException, InputDataValidationException;
-
-    public ExperienceDate retrieveExperienceDateByDate(Experience experience, Date startDate) throws ExperienceDateNotFoundException;
-
-    public void deleteExperienceDate(Long id, String r) throws ExperienceDateNotActiveException;
-
-    public ExperienceDatePaymentReport retrieveExperienceDatePaymentReport(ExperienceDate experienceDate);
-
-    public List<ExperienceDateCancellationReport> retrieveAllExperienceDateCancellationReports();
     
-    public List<ExperienceDate> retrieveAllActiveExperienceDatesByExperienceId(Long experienceId);
-
-    public List<ExperienceDate> retrieveAllExperienceDates();
-
+    public ExperienceDate retrieveExperienceDateByExperienceDateId(Long experienceDateId)throws ExperienceDateNotFoundException;
     public List<ExperienceDate> retrieveExperienceDatesOfAnExperience(Experience experience);
+    public List<ExperienceDate> retrieveAllActiveExperienceDatesByExperienceId(Long experienceId);
+    public List<ExperienceDate> retrieveAllInactiveExperienceDatesByExperienceId(Long experienceId);
+    public List<User> retrieveAllGuestsByExperienceDateId(Long experienceDateId);
+    
+    public ExperienceDate updateExperienceDate(ExperienceDate expDate)throws InputDataValidationException, CreateNewExperienceException;
+
+    public void deleteExperienceDate(Long id, String r) throws ExperienceDateNotActiveException, DeleteExperienceDateException;
+  
 }

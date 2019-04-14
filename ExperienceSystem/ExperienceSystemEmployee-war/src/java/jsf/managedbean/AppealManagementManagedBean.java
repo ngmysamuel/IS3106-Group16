@@ -16,6 +16,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import stateless.AppealControllerLocal;
 import stateless.EmployeeControllerLocal;
 
 /**
@@ -26,9 +27,13 @@ import stateless.EmployeeControllerLocal;
 @ViewScoped
 public class AppealManagementManagedBean implements Serializable{
 
+    @EJB(name = "AppealControllerLocal")
+    private AppealControllerLocal appealControllerLocal;
+
     @EJB(name = "EmployeeControllerLocal")
     private EmployeeControllerLocal employeeControllerLocal;
-
+    
+    
     private List<Appeal> appeals;
     private List<Appeal> filteredAppeals;
     
@@ -44,7 +49,7 @@ public class AppealManagementManagedBean implements Serializable{
     
     @PostConstruct
     public void postConstruct(){
-        appeals = employeeControllerLocal.retrieveAllAppeals();
+        appeals = appealControllerLocal.retrieveAllAppeals();
     }
     
     public void viewAppealDetails(ActionEvent event) throws IOException{
@@ -63,7 +68,7 @@ public class AppealManagementManagedBean implements Serializable{
     public void updateCategory(ActionEvent event){
         try{
             
-            employeeControllerLocal.processAppeal(selectedAppealToUpdate.getAppealId(), replyMessage, employeeId);
+            appealControllerLocal.processAppeal(selectedAppealToUpdate.getAppealId(), replyMessage, employeeId);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Appeal Reply Successfully", null));
         
         }catch(Exception ex){

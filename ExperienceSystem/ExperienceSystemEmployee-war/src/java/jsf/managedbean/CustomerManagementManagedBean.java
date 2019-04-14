@@ -62,16 +62,11 @@ public class CustomerManagementManagedBean implements Serializable{
     }
     
     public void updateCustomer(){
-        
         try{
-            
-            userControllerLocal.updatePersonalInformation(selectedUserToUpdate);
+            userControllerLocal.updateAccount(selectedUserToUpdate);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "User Updated Successfully", null));
-        
         }catch(Exception ex){
-            
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred while updating user: " + ex.getMessage(), null));
-        
         }
     }
 

@@ -89,7 +89,7 @@ public class CategoryController implements CategoryControllerLocal {
         }
         
         // check whether there's another Type with the same name
-        Query query = em.createQuery("SELECT c FROM Category c WHERE c.category = :inCategoryName");
+        Query query = em.createQuery("SELECT c FROM Category c WHERE c.name = :inCategoryName");
         query.setParameter("inCategoryName", category.getName());
         try{
             Category duplicateCategory = (Category)query.getSingleResult();

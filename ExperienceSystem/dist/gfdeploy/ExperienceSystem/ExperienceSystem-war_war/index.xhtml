@@ -4,7 +4,8 @@
                 template="./templates/defaultTemplate.xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
 
 
     <ui:define name="content">
@@ -79,47 +80,48 @@
                 }
             }
         </style>
-            <div id="slider">
-                <div id="sliderBox">
-                    <span class="slide">
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/R6wtAtN.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/slbHL1Z.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/SQiLyd4.jpg" />
-                        <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
-                    </span>
-                </div>
-                <div id="searchingBox">
-                    <h:form id="formSearchExperience">
-                        <p:growl id="messageIndexSearchExperience" />
-                        <p:outputLabel value="Book Your Experience"/>
-                        <br/>
-                        <br/>
-                        
-                        <p:outputLabel for="date" value="Date" />
-                        <br/>
-                        <p:calendar id="date" value="#{indexManagedBean.searchDate}" showOn="button" required="true" pattern="dd/MM/yyyy" mindate="#{indexManagedBean.minSearchDate}" requiredMessage="Please select a date"/>
-                        <br/>
-                        <br/>
-                        
-                        <p:outputLabel for="category" value="Category" />
-                        <br/>
-                        <p:selectOneMenu id="category" value="#{indexManagedBean.searchCategoryId}" style="width:125px" required="true" requiredMessage="Please select a category">
-                            <f:selectItem itemLabel="[Select One]" itemValue="0" noSelectionOption="true" />
-                            <f:selectItems value="#{indexManagedBean.categories}" var="category" itemLabel="#{category.name}" itemValue="#{category.categoryId}"/>
-                        </p:selectOneMenu>
-                        <br/>
-                        <br/>
-                        
-                        <p:outputLabel for="numOfPeople" value="Number of People" />
-                        <br/>
-                        <p:spinner id="numOfPeople" value="#{indexManagedBean.searchNumOfPeople}" min="1" max="10" required="true" requiredMessage="Please select the number of people"/>
-                        <br/>
-                        <br/>
-                        <p:commandButton value="Search" actionListener="#{indexManagedBean.searchExperience}" />
-                    </h:form>
-                </div>
+
+        <div id="slider">
+            <div id="sliderBox">
+                <span class="slide">
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/R6wtAtN.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/slbHL1Z.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/SQiLyd4.jpg" />
+                    <img style="width: 20%; height:100%; object-fit: cover;" src="https://i.imgur.com/2hocHvd.jpg" />
+                </span>
             </div>
+            <div id="searchingBox">
+                <h:form id="formSearchExperience">
+                    <p:growl id="messageIndexSearchExperience" />
+                    <p:outputLabel value="Book Your Experience"/>
+                    <br/>
+                    <br/>
+
+                    <p:outputLabel for="date" value="Date" />
+                    <br/>
+                    <p:calendar id="date" value="#{indexManagedBean.searchDate}" showOn="button" required="true" pattern="dd/MM/yyyy" mindate="#{indexManagedBean.minSearchDate}" requiredMessage="Please select a date"/>
+                    <br/>
+                    <br/>
+
+                    <p:outputLabel for="category" value="Category" />
+                    <br/>
+                    <p:selectOneMenu id="category" value="#{indexManagedBean.searchCategoryId}" style="width:125px" required="true" requiredMessage="Please select a category">
+                        <f:selectItem itemLabel="[Select One]" itemValue="0" noSelectionOption="true" />
+                        <f:selectItems value="#{indexManagedBean.categories}" var="category" itemLabel="#{category.name}" itemValue="#{category.categoryId}"/>
+                    </p:selectOneMenu>
+                    <br/>
+                    <br/>
+
+                    <p:outputLabel for="numOfPeople" value="Number of People" />
+                    <br/>
+                    <p:spinner id="numOfPeople" value="#{indexManagedBean.searchNumOfPeople}" min="1" max="10" required="true" requiredMessage="Please select the number of people"/>
+                    <br/>
+                    <br/>
+                    <p:commandButton value="Search" actionListener="#{indexManagedBean.searchExperience}" />
+                </h:form>
+            </div>
+        </div>
     </ui:define>
 
 
