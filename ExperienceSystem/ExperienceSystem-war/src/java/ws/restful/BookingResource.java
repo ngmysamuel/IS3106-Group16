@@ -10,7 +10,7 @@ import datamodel.ws.rest.ErrorRsp;
 import datamodel.ws.rest.RetrieveAllBookings;
 import entity.Booking;
 import entity.ExperienceDate;
-import enumerated.StatusEnum;
+import entity.User;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +18,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -50,110 +49,122 @@ public class BookingResource {
     UserControllerLocal userController = lookupUserControllerLocal();
 
     BookingControllerLocal bookingController = lookupBookingControllerLocal();
-    
+
     @Path("getAllBookingsByGuestId/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllBookingsByGuestId(@PathParam("id") Long id) {
         List<Booking> ls = bookingController.retrieveAllBookingsByGuestId(id);
         for (Booking b : ls) {
-            b.getExperienceDate().setBookings(null);
-            b.getEvaluationByGuest().setUserEvaluating(null);
-            b.getEvaluationByHost().setUserEvaluating(null);
+            b.getExperienceDate().getBookings().clear();
+            if (b.getEvaluationByGuest() != null) {
+                b.getEvaluationByGuest().setUserEvaluating(null);
+            }
+            if (b.getEvaluationByHost() != null) {
+                b.getEvaluationByHost().setUserEvaluating(null);
+            }
+            if (b.getCancellationReport() != null) {
+                    b.getCancellationReport().setBooking(null);
+                }
+            b.getGuest().setBookings(null);
         }
+        System.out.println("In booking loop of getAllBY Guest");
         return Response.status(Response.Status.OK).entity(new RetrieveAllBookings(ls)).build();
     }
-    
+
     @Path("getAllBookingsByExperienceId/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllBookings(@PathParam("id")Long id) {
-        try{
+    public Response getAllBookings(@PathParam("id") Long id) {
+        try {
             experienceController.retrieveExperienceById(id);
-            
+
             List<Booking> ls = bookingController.retrieveAllBookingsByExperienceId(id);
-            
-            for(Booking b: ls){
-               if(b.getEvaluationByGuest() != null){
-                b.getEvaluationByGuest().setBooking(null);
+
+            for (Booking b : ls) {
+                if (b.getEvaluationByGuest() != null) {
+                    b.getEvaluationByGuest().setBooking(null);
                 }
-                if(b.getEvaluationByHost() != null){
+                if (b.getEvaluationByHost() != null) {
                     b.getEvaluationByHost().setBooking(null);
                 }
-                if(b.getCancellationReport() != null){
+                if (b.getCancellationReport() != null) {
                     b.getCancellationReport().setBooking(null);
                 }
                 b.getExperienceDate().getBookings().clear();
                 b.getGuest().getBookings().clear();
             }
-            
+
             RetrieveAllBookings r = new RetrieveAllBookings(ls);
             return Response.status(Response.Status.OK).entity(r).build();
-        } catch (ExperienceNotFoundException ex){
+        } catch (ExperienceNotFoundException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("getBookingById/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBookingById(@PathParam("id")Long id) {
-        try{
+    public Response getBookingById(@PathParam("id") Long id) {
+        try {
             Booking b = bookingController.retrieveBookingByBookingId(id);
             if (b == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("No booking").build();
             }
-            if(b.getEvaluationByGuest() != null){
+            if (b.getEvaluationByGuest() != null) {
                 b.getEvaluationByGuest().setBooking(null);
             }
-            if(b.getEvaluationByHost() != null){
+            if (b.getEvaluationByHost() != null) {
                 b.getEvaluationByHost().setBooking(null);
             }
-            if(b.getCancellationReport() != null){
+            if (b.getCancellationReport() != null) {
                 b.getCancellationReport().setBooking(null);
             }
             b.getExperienceDate().getBookings().clear();
             b.getGuest().getBookings().clear();
             return Response.status(Response.Status.OK).entity(b).build();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("createBooking")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBooking(CreateNewBooking createNewBooking) throws CreateNewBookingException, InputDataValidationException{
-System.out.println("In BookingResource: createNewBooking");
-        try{
+    public Response createBooking(CreateNewBooking createNewBooking) throws CreateNewBookingException, InputDataValidationException {
+        System.out.println("In BookingResource: createNewBooking");
+        try {
             ExperienceDate ed = experienceDateController.retrieveExperienceDateByDateId(createNewBooking.getExperienceDateId());
+            User u = userController.retrieveUserById(createNewBooking.getGuestId());
             Booking newBooking = createNewBooking.getBooking();
             newBooking.setExperienceDate(ed);
             newBooking.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
             newBooking = bookingController.createNewBooking(newBooking);
+            u.getBookings().add(newBooking);
+            userController.update(u);
             return Response.status(Response.Status.OK).entity(newBooking).build();
         } catch (UserNotFoundException | CreateNewBookingException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
 //  TODO: Add all fields to the class
     @Path("updateBooking/{id}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateBooking(@PathParam("id")Long id, CreateNewBooking createNewBooking) throws  InputDataValidationException{
-        try{
+    public Response updateBooking(@PathParam("id") Long id, CreateNewBooking createNewBooking) throws InputDataValidationException {
+        try {
             ExperienceDate ed = experienceDateController.retrieveExperienceDateByDateId(createNewBooking.getExperienceDateId());
             Booking b = createNewBooking.getBooking();
             b.setExperienceDate(ed);
@@ -163,7 +174,7 @@ System.out.println("In BookingResource: createNewBooking");
         } catch (UserNotFoundException | InputDataValidationException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
@@ -208,5 +219,5 @@ System.out.println("In BookingResource: createNewBooking");
             throw new RuntimeException(ne);
         }
     }
-    
+
 }
