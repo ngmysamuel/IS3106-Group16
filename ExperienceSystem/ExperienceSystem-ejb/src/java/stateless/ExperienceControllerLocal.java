@@ -11,6 +11,7 @@ import entity.ExperienceDate;
 import entity.Language;
 import entity.Location;
 import entity.Type;
+import entity.User;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -69,5 +70,7 @@ public interface ExperienceControllerLocal {
     public List<Experience> retrieveFavoriteExperiences(Long userId);
 
     public List<Experience> retrievePastExperiences(Long userId);
+
+    public List<User> retrieveExperienceFollowers(Long experienceId);
 
 }

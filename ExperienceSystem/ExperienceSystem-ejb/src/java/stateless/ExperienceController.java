@@ -122,7 +122,7 @@ System.out.println(newExperience.getAddress());
     @Override
     public void updateExperienceInformation(Experience experience) throws UpdateEperienceInfoException {
         try {
-            Experience experienceToUpdate = retrieveExperienceById(experience.getExperienceId());
+//            Experience experienceToUpdate = retrieveExperienceById(experience.getExperienceId());
             Category category = categoryControllerLocal.retrieveCategoryById(experience.getCategory().getCategoryId());
             Type type = typeControllerLocal.retrieveTypeById(experience.getType().getTypeId());
             Language language = languageControllerLocal.retrieveLanguageById(experience.getLanguage().getLanguageId());
@@ -132,21 +132,22 @@ System.out.println(newExperience.getAddress());
                 throw new UpdateEperienceInfoException("Category/Type/Language/Location information is not provided!");
             }
 
-            experienceToUpdate.setCategory(category);
-            experienceToUpdate.setType(type);
-            experienceToUpdate.setLanguage(language);
-            experienceToUpdate.setLocation(location);
+            experience.setCategory(category);
+            experience.setType(type);
+            experience.setLanguage(language);
+            experience.setLocation(location);
 
             Set<ConstraintViolation<Experience>> constraintViolations = validator.validate(experience);
             if (constraintViolations.isEmpty()) {
-                experienceToUpdate.setTitle(experience.getTitle());
-                experienceToUpdate.setDescription(experience.getDescription());
-                experienceToUpdate.setProvidingItems(experience.getProvidingItems());
-                experienceToUpdate.setRequiringItems(experience.getRequiringItems());
+//                experienceToUpdate.setTitle(experience.getTitle());
+//                experienceToUpdate.setDescription(experience.getDescription());
+//                experienceToUpdate.setProvidingItems(experience.getProvidingItems());
+//                experienceToUpdate.setRequiringItems(experience.getRequiringItems());
+               em.merge(experience);
             } else {
                 throw new UpdateEperienceInfoException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        } catch (ExperienceNotFoundException ex) {
+        } catch (Exception ex) {
             throw new UpdateEperienceInfoException(ex.getMessage());
         }
 
@@ -376,6 +377,21 @@ System.out.println(newExperience.getAddress());
             e.getFollowers();
         }
         return exps;
+    }
+    
+    @Override
+    public List<User> retrieveExperienceFollowers(Long experienceId){
+        Query query = em.createQuery("SELECT u FROM User u WHERE u.followedExperiences.experienceId = :inExperienceId");
+        query.setParameter("inExperienceId", experienceId);
+        
+        List<User> followers = query.getResultList();
+        if(followers == null || followers.isEmpty() || followers.get(0) == null){
+            return new ArrayList<>();
+        }
+        for(User u: followers){
+            u.getEmail();
+        }
+        return followers;
     }
     
     @Override

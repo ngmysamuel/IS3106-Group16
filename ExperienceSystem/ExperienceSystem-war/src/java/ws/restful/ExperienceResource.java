@@ -39,10 +39,14 @@ import stateless.LanguageControllerLocal;
 import stateless.LocationControllerLocal;
 import stateless.TypeControllerLocal;
 import stateless.UserControllerLocal;
+import util.exception.CategoryNotFoundException;
 import util.exception.CreateNewExperienceException;
 import util.exception.DeleteExperienceException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.LanguageNotFoundException;
+import util.exception.LocationNotFoundException;
+import util.exception.TypeNotFoundException;
 import util.exception.UpdateEperienceInfoException;
 import util.exception.UserNotFoundException;
 
@@ -73,19 +77,11 @@ public class ExperienceResource {
         
         try{
             Experience newExperience = createNewExperience.getExperienceEntity();
-
+System.out.println("newExp is:"+newExperience); 
             User host = userController.login(createNewExperience.getUsername(), createNewExperience.getPassword());
             
             newExperience.setHost(host);
             
-            newExperience.setCategory(categoryController.retrieveCategoryById(createNewExperience.getCategoryId()));
-
-            newExperience.setLanguage(languageController.retrieveLanguageById(createNewExperience.getLanguageId()));
-
-            newExperience.setType(typeController.retrieveTypeById(createNewExperience.getTypeId()));
-
-            newExperience.setLocation(locationController.retrieveLocationById(createNewExperience.getLocationId()));
-        
             Experience exp = experienceController.createNewExperience(newExperience);
             
             exp.getCategory().getExperiences().clear();
@@ -128,14 +124,6 @@ public class ExperienceResource {
         
         try {
             Experience newExperience = updateExperience.getExperienceEntity();
-
-            newExperience.setCategory(categoryController.retrieveCategoryById(updateExperience.getCategoryId()));
-
-            newExperience.setLanguage(languageController.retrieveLanguageById(updateExperience.getLanguageId()));
-
-            newExperience.setType(typeController.retrieveTypeById(updateExperience.getTypeId()));
-
-            newExperience.setLocation(locationController.retrieveLocationById(updateExperience.getLocationId()));
         
             experienceController.updateExperienceInformation(newExperience);
             
@@ -171,9 +159,10 @@ public class ExperienceResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllExperiences(){
+        
         try{
             List<Experience> experiences = experienceController.retrieveAllExperiences();
-            
+            int i = 0;
             for(Experience exp: experiences){
                 
                 exp.getCategory().getExperiences().clear();
@@ -183,17 +172,17 @@ public class ExperienceResource {
                 exp.getLocation().getExperiences().clear();
                 
                 exp.getLanguage().getExperiences().clear();
-                
+                System.out.println("WAGAG");
                 for(ExperienceDate expDate: exp.getExperienceDates()){
                     expDate.setExperience(null);
                 }
                 for(User u: exp.getFollowers()){
-                    u.getFollowedExperiences().clear();
+                   u.getFollowedExperiences().clear();
                 }
                 
-                exp.getHost().getExperienceHosted().clear();
+//               exp.getHost().getExperienceHosted().clear();
             }
-            
+
             return Response.status(Status.OK).entity(new RetrieveAllExperiencesRsp(experiences)).build();
         }
         catch(Exception ex){
@@ -227,9 +216,9 @@ public class ExperienceResource {
                 for(User u: exp.getFollowers()){
                     u.getFollowedExperiences().clear();
                 }
-//                List<User> followers = exp.getFollowers();
-//                exp.getFollowers().clear();
-//                exp.setFollowers(followers);
+                List<User> followers = exp.getFollowers();
+                exp.getFollowers().clear();
+                exp.setFollowers(followers);
                 
                 exp.getHost().getExperienceHosted().clear();
             }
@@ -270,9 +259,9 @@ public class ExperienceResource {
             List<User> followers = exp.getFollowers();
             exp.getFollowers().clear();
             exp.setFollowers(followers);
-            
-            exp.getHost().getExperienceHosted().clear();
-            
+
+//            exp.getHost().getExperienceHosted().clear();
+System.out.println("WAGAG");            
             return Response.status(Response.Status.OK).entity(new RetrieveExperienceRsp(exp)).build();
         }
         catch(ExperienceNotFoundException ex){

@@ -53,7 +53,7 @@ public class BookingController implements BookingControllerLocal {
     @Override
     public Booking createNewBooking(Booking newBooking) throws CreateNewBookingException, InputDataValidationException {
         Set<ConstraintViolation<Booking>> constraintViolations = validator.validate(newBooking);
-        
+System.out.println("Validated New Booking");        
         if (constraintViolations.isEmpty()) {
             try {
                 em.persist(newBooking);
@@ -80,14 +80,14 @@ public class BookingController implements BookingControllerLocal {
     
     @Override
     public List<Booking> retrieveAllBookingsByGuestId(Long userId) {
-        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.user.userId = :inUserId ORDER BY b.bookingId DESC");
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.guest.userId = :inUserId ORDER BY b.bookingId DESC");
         query.setParameter("inUserId", userId);
         return query.getResultList();
     }
     
     @Override
     public List<Booking> retrieveAllUpcomingBookingsByGuestId(Long userId) {
-        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.user.userId = :inUserId AND b.experienceDate.startDate > :currentMoment BY b.bookingId DESC");
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.guest.userId = :inUserId AND b.experienceDate.startDate > :currentMoment BY b.bookingId DESC");
         query.setParameter("inUserId", userId);
         query.setParameter("currentMoment", new Date(), TemporalType.TIMESTAMP);
         return query.getResultList();

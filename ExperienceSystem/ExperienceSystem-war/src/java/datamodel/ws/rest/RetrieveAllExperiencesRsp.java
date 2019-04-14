@@ -19,6 +19,7 @@ public class RetrieveAllExperiencesRsp
     
     public RetrieveAllExperiencesRsp(List<Experience> experienceEntities)
     {
+System.out.println("datamodel.ws.rest.RetrieveAllExperiencesRsp.<init>()");
         this.experienceEntities = experienceEntities;
     }
 

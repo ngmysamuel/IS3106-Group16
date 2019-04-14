@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 16; color: white; font-size: 16px;">MY</p>
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 16px;">NETWORK</p>
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <br />
+        <br />
+
+        <div style="width: 65%; position:relative;margin: auto;">
+            <p:tabView>
+                <p:tab title="All My Followers">
+                    <h:form id="formAllFollowers">
+                        <p:dataGrid var="followers" value="#{viewUserNetworkManagedBean.followers}" columns="4" layout="grid"
+                                    rows="12" paginator="true" id="followers"
+                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rowsPerPageTemplate="6,12,16">
+
+                            <f:facet name="header">
+                                All My Followers
+                            </f:facet>
+
+                            <p:panel header="Username" style="text-align:center">
+                                <p:panelGrid columns="1" style="width:100%">
+                                    <p:graphicImage style="width:30px;height:30px;" url="https://img2.freepng.es/20180426/gkw/kisspng-user-computer-icons-download-person-icon-5ae1dbfbb675d7.5784016215247513557474.jpg"/> 
+
+                                    <h:outputText value="User self intro" />
+
+                                    <p:commandButton update="formUserInfo" oncomplete="PF('dialogUserInfo').show()" title="View Detail" />
+                                    <!--                                <h:outputText styleClass="pi pi-search" style="margin:0 auto;"/>
+                                                                    <f:setPropertyActionListener value="#{car}" target="#{dataGridView.selectedCar}" />
+                                                                </p:commandLink>-->
+                                    <p:commandButton style="width: 100%;" value="Block This User" action="#" >
+                                        <p:confirm header="Confirmation" message="Are you sure you want to block this user?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                </p:panelGrid>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </p:panel>
+                        </p:dataGrid>
+
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="All My Followees">
+                    <h:form id="formAllFollowees">
+                        <p:dataGrid var="followers" value="#{viewUserNetworkManagedBean.followers}" columns="4" layout="grid"
+                                    rows="12" paginator="true" id="followers"
+                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rowsPerPageTemplate="6,12,16">
+
+                            <f:facet name="header">
+                                All My Followees
+                            </f:facet>
+
+                            <p:panel header="Username" style="text-align:center">
+                                <p:panelGrid columns="1" style="width:100%">
+                                    <p:graphicImage style="width:30px;height:30px;" url="https://img2.freepng.es/20180426/gkw/kisspng-user-computer-icons-download-person-icon-5ae1dbfbb675d7.5784016215247513557474.jpg"/> 
+
+                                    <h:outputText value="User self intro" />
+
+                                    <p:commandButton update="formUserInfo" oncomplete="PF('dialogUserInfo').show()" title="View Detail" />
+                                    <p:commandButton title="Follow Back" />
+                                    <!--                                <h:outputText styleClass="pi pi-search" style="margin:0 auto;"/>
+                                                                    <f:setPropertyActionListener value="#{car}" target="#{dataGridView.selectedCar}" />
+                                                                </p:commandLink>-->
+                                    <p:commandButton style="width: 100%;" title="Block This User" action="#" >
+                                        <p:confirm header="Confirmation" message="Are you sure you want to block this user?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                </p:panelGrid>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </p:panel>
+                        </p:dataGrid>
+
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="My Blacklist">
+                    <h:form id="formAllBlockees">
+                        <p:dataGrid var="followers" value="#{viewUserNetworkManagedBean.followers}" columns="4" layout="grid"
+                                    rows="12" paginator="true" id="followers"
+                                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rowsPerPageTemplate="6,12,16">
+
+                            <f:facet name="header">
+                                My Blacklist
+                            </f:facet>
+
+                            <p:panel header="Username" style="text-align:center">
+                                <h:panelGrid columns="1" style="width:100%">
+                                    <p:graphicImage style="width:30px;height:30px;" url="https://img2.freepng.es/20180426/gkw/kisspng-user-computer-icons-download-person-icon-5ae1dbfbb675d7.5784016215247513557474.jpg"/> 
+
+                                    <h:outputText value="User self intro" />
+
+                                    <p:commandButton update="formUserInfo" oncomplete="PF('dialogUserInfo').show()" title="View Detail" />
+                                    <!--                                <h:outputText styleClass="pi pi-search" style="margin:0 auto;"/>
+                                                                    <f:setPropertyActionListener value="#{car}" target="#{dataGridView.selectedCar}" />
+                                                                </p:commandLink>-->
+                                    <p:commandButton title="Remove Blocking" />
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:dataGrid>
+
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+
+        </div>
+
+        <h:form id="formUserInfo">
+            <p:dialog header="User Info" id="dialogUserInfo" widgetVar="dialogUserInfo" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                <p:panelGrid  columns="2" >
+                    <f:facet name="header">
+                        <p:graphicImage style="width:30px;height:30px;" url="https://img2.freepng.es/20180426/gkw/kisspng-user-computer-icons-download-person-icon-5ae1dbfbb675d7.5784016215247513557474.jpg"/> 
+                    </f:facet>
+
+                    <h:outputText value="Username:" />
+                    <h:outputText value="Username" />
+
+                    <h:outputText value="Average Guest Score" />
+                    <h:outputText value="4.9/5.0" />
+
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

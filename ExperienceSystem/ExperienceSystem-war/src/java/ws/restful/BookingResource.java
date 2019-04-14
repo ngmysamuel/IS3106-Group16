@@ -51,6 +51,19 @@ public class BookingResource {
 
     BookingControllerLocal bookingController = lookupBookingControllerLocal();
     
+    @Path("getAllBookingsByGuestId/{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllBookingsByGuestId(@PathParam("id") Long id) {
+        List<Booking> ls = bookingController.retrieveAllBookingsByGuestId(id);
+        for (Booking b : ls) {
+            b.getExperienceDate().setBookings(null);
+            b.getEvaluationByGuest().setUserEvaluating(null);
+            b.getEvaluationByHost().setUserEvaluating(null);
+        }
+        return Response.status(Response.Status.OK).entity(new RetrieveAllBookings(ls)).build();
+    }
+    
     @Path("getAllBookingsByExperienceId/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -117,7 +130,7 @@ public class BookingResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createBooking(CreateNewBooking createNewBooking) throws CreateNewBookingException, InputDataValidationException{
-            
+System.out.println("In BookingResource: createNewBooking");
         try{
             ExperienceDate ed = experienceDateController.retrieveExperienceDateByDateId(createNewBooking.getExperienceDateId());
             Booking l = new Booking();
@@ -127,7 +140,9 @@ public class BookingResource {
             l.setNumberOfPeople(createNewBooking.getNumOfPeople());
             l.setTotalPrice(createNewBooking.getPrice());
             l.setStatus(StatusEnum.valueOf(createNewBooking.getStatus()));
+System.out.println("About to go into the Booking Controller");
             Booking newBooking = bookingController.createNewBooking(l);
+System.out.println("Back from the Booking Controller");
             return Response.status(Response.Status.OK).entity(newBooking).build();
         } catch (UserNotFoundException | CreateNewBookingException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());

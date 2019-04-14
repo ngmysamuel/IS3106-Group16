@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 32; color: white; font-size: 16px;">MY</p>
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 16; color: white; font-size: 16px;">PAST</p>
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 16px;">EXPERIENCES</p>
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <br />
+        <br />
+
+        <div style="width: 65%; position:relative;margin: auto;">
+            <h:form id="formAllMyPastExperiences">
+                <p:dataList value="#{viewAllHostExperiencesManagedBean.hostExperiences}" var="hostExperience" paginator="true" rows="10" styleClass="paginated">
+                    <f:facet name="header">
+                        All My Past Experiences
+                    </f:facet>
+                    <p:panel header="#{hostExperience.title}" style="text-align:center">
+                        <p:panelGrid style="width:100%">
+                             <p:row>
+                                <p:column>
+                                    <p:graphicImage style="width:200px; height:150px; object-fit:cover;" url="https://i.imgur.com/2hocHvd.jpg"/> 
+
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="Date: 03/25/2018" />
+                                </p:column>
+                            </p:row>    
+
+                            <p:row>
+                                <p:column>
+                                    <p:commandButton action="/userOperations/viewExperienceDetails.xhtml" title="View Details" />
+<!--                                <f:setPropertyActionListener value="#{experience}" target="#{viewAllHostExperiencesManagedBean.experienceToView}" />
+                            </p:commandButton>-->
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                </p:dataList>
+            </h:form>
+        </div>
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <cc:interface>
+        <cc:attribute name="pageName" required="true" />
+    </cc:interface>
+
+    <cc:implementation>
+        
+        <h:form id="formMain">
+        
+            <p:breadCrumb homeDisplay="false">
+
+                <p:menuitem icon="fa fa-home" url="/index.xhtml" style="text-decoration-line: none;" />
+
+                <p:menuitem value="Customer Office" rendered="#{cc.attrs.pageName == 'customerManagement'}" />
+
+                <p:menuitem value="Customer Management" url="/customerOfficer/customerManagement.xhtml" rendered="#{cc.attrs.pageName == 'customerManagement'}" />
+                
+                <p:menuitem value="System Administration" rendered="#{cc.attrs.pageName == 'staffManagement' ||
+                                                                        cc.attrs.pageName == 'experienceManagement' ||                                                                        
+                                                                        cc.attrs.pageName == 'locationManagement' ||
+                                                                        cc.attrs.pageName == 'languageManagement' ||
+                                                                        cc.attrs.pageName == 'typeManagement'||                                                                                      
+                                                                        cc.attrs.pageName == 'categoryManagement' ||                                                                        
+                                                                        cc.attrs.pageName == 'appealManagement'}" />
+
+                <p:menuitem value="Staff Management" url="/systemAdministration/staffManagement.xhtml" rendered="#{cc.attrs.pageName == 'staffManagement'}" />
+                <p:menuitem value="Experience Management" url="/systemAdministration/experienceManagement.xhtml" rendered="#{cc.attrs.pageName == 'experienceManagement'}" />                        
+                <p:menuitem value="Location Products by Name" url="/systemAdministration/locationManagement.xhtml" rendered="#{cc.attrs.pageName == 'locationManagement'}" />
+                <p:menuitem value="Language Products by Category" url="/systemAdministration/languageManagement.xhtml" rendered="#{cc.attrs.pageName == 'languageManagement'}" />
+                <p:menuitem value="Type Products by Tags" url="/systemAdministration/typeManagement.xhtml" rendered="#{cc.attrs.pageName == 'typeManagement'}" />
+                <p:menuitem value="Category Products by Tags" url="/systemAdministration/categoryManagement.xhtml" rendered="#{cc.attrs.pageName == 'categoryManagement'}" />
+                <p:menuitem value="Appeal Products by Tags" url="/systemAdministration/appealManagement.xhtml" rendered="#{cc.attrs.pageName == 'appealManagement'}" />
+                
+
+            </p:breadCrumb>
+        
+        </h:form>
+        
+    </cc:implementation>
+</html>

@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+            
+            #detailsBox, #titleHeader{
+                position: relative;
+                width: 65%;
+                margin: auto;
+            }
+        </style>
+        
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">MY ACCOUNT</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+        <br />
+        <div id="titleHeader">
+
+            <p:outputLabel value="My Account Info" style="font-size: 30px;"/>
+
+        </div>
+        
+        <br />
+        <br />
+        
+        <div id="detailsBox">
+            <h:form id="formAccountInfo">
+                <p:growl id="msgAccountInfo" showDetail="true" escape="false" />
+
+                <p:panelGrid style="width:100%;">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Username" /> 
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{accountManagementManagedBean.currentUser.username}" /> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Full Name" /> 
+                        </p:column>
+                        <p:column>
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.firstName != null and accountManagementManagedBean.currentUser.lastName != null}" value="#{accountManagementManagedBean.currentUser.firstName} #{accountManagementManagedBean.currentUser.lastName}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.firstName == null or accountManagementManagedBean.currentUser.lastName == null}" value=" " /> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Gender" /> 
+                        </p:column>
+                        <p:column>
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.gender != null}" value="#{accountManagementManagedBean.currentUser.gender}" />
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.gender == null}" value=" " />
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Birth Date" /> 
+                        </p:column>
+                        <p:column>
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.birthday != null}" value="#{accountManagementManagedBean.currentUser.birthday}" >
+                                <f:convertDateTime pattern="dd-MM-yyyy" />
+                            </h:outputText>
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.birthday == null}" value=" " /> 
+                        </p:column>
+                    </p:row>
+                     
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Email" /> 
+                        </p:column>
+                        <p:column>
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.email != null}" value="#{accountManagementManagedBean.currentUser.email}" />
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.email == null}" value=" "/> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Phone Number" /> 
+                        </p:column>
+                        <p:column>
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.phoneNumber != null}" value="#{accountManagementManagedBean.currentUser.phoneNumber}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.phoneNumber == null}" value=" " /> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Self Description" /> 
+                        </p:column>
+                        <p:column colspan="2">
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.selfIntro != null}" value="#{accountManagementManagedBean.currentUser.selfIntro}" /> 
+                            <h:outputText rendered="#{accountManagementManagedBean.currentUser.selfIntro == null}" value=" " /> 
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                <br />
+                
+                <p:commandButton value="Update Account Info" update="formUpdateAccountInfo" oncomplete="PF('dialogUpdateAccountInfo').show()" />
+                <p:commandButton value="Upgrade To Premium Account" action="#"/>
+            </h:form>    
+        </div>  
+        
+        <h:form id="formUpdateAccountInfo">
+            <p:dialog id="dialogUpdateAccountInfo" widgetVar="dialogUpdateAccountInfo" closable="true" resizable="false">
+                <p:messages id="msgUpdateAccountInfo" redisplay="false" />
+                
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Username" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.username}" /> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Gender" /> 
+                        </p:column>
+                        <p:column>
+                            <p:selectOneMenu value="#{accountManagementManagedBean.currentUser.gender}" >
+                                <f:selectItem itemLabel="Male" itemValue="Male" />
+                                <f:selectItem itemLabel="Female" itemValue="Female" />
+                            </p:selectOneMenu> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="First Name" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.firstName}" /> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Last Name" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.lastName}" /> 
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Phone number" /> 
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{accountManagementManagedBean.currentUser.phoneNumber}" /> 
+                        </p:column>
+                        <p:column>
+                            <p:outputLabel value="Birth Date" /> 
+                        </p:column>
+                        <p:column>
+                            <p:calendar value="#{accountManagementManagedBean.currentUser.birthday}" placeholder="Birth Date" navidator="true" inputStyle="width:140px;" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:outputLabel value="Self Introduction" /> 
+                        </p:column>
+                        <p:column colspan="2">
+                            <p:inputTextarea row="5" value="#{accountManagementManagedBean.currentUser.selfIntro}" /> 
+                        </p:column>            
+                    </p:row>
+                    <p:commandButton value="Update" update="@form formAccountInfo" oncomplete="PF('dialogUpdateAccountInfo').show()" actionListener="#{accountManagementManagedBean.updateAccountInfo}" />
+                </p:panelGrid>
+            </p:dialog>
+            
+        </h:form>
+    </ui:define>
+
+</ui:composition>

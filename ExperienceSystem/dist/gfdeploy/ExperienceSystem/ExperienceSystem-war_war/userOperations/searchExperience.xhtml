@@ -1,0 +1,197 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./../templates/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+        <style>
+            #topBox {
+                position: relative;
+                width: 65%;
+                height: 250px;
+                margin: auto;
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+            }
+            #blackBox {
+                width: 25%;
+                height: 100%;
+                background-color: black;
+            }
+            #topPicture{
+                width: 73%; 
+                height:100%;
+            }
+
+            #searchArea{
+                width: 65%;
+                margin: auto;
+            }
+            #searchInputBox, #searchResultsArea, #searchResultsDataTable {
+                width: 90%;
+                margin: auto;
+            }
+            #searchInputRow{
+                width: 100%;
+                margin: auto;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            #ui-inputgroup-addon{
+                display: inline-block;
+                text-align: center;
+                min-width: 1.5em;
+                border-width: 1px;
+                border-style: solid;
+            }
+            #numOfPeopleBox{
+                display:inline;
+            }
+            table {
+                display: table;
+                border-collapse: separate;
+                border-spacing: 2px;
+                border-color: grey;
+            }
+            .ui-dataview-list .ui-dataview-list-container {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            .ui-dataview-list .ui-dataview-row {
+                border-bottom: 1px solid #A8A8A8;
+                padding: 25px 10px;
+            }
+        </style>
+
+        <div id="topBox">
+            <div id="blackBox">
+                <p style="overflow:auto; position: absolute; left: 15px; bottom: 0; color: white; font-size: 20px;">EXPERIENCES</p>    
+            </div>
+
+            <div id="topPicture">
+                <img style="object-fit:cover; width:100%; height:100%;" src="https://i.imgur.com/2hocHvd.jpg" />
+            </div>
+        </div>
+
+        <div id="searchArea">
+
+            <div id="searchInputBox">
+                <br />
+                <hr style="border-top: 1px solid black;"/>
+                <br />
+                <h:form id="searchInputRow">
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:calendar id="searchDate" value="#{viewAllExperiencesManagedBean.selectedDate}" placeholder="Experience Date" showOn="button" inputStyle="width:150px;" >
+                                    <p:ajax event="dateSelect" process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:searchDate formSearchResults" />
+                                </p:calendar>
+                            </p:column>
+
+                            <p:column>
+                                <p:spinner id="numOfPeople" value="#{viewAllExperiencesManagedBean.numOfPeople}" min="1" max="10" style="width:150px;" suffix=" people" >
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:numOfPeople formSearchResults" />
+                                </p:spinner>
+                            </p:column>
+                            
+                            <p:column>
+                                <p:selectOneMenu id="categoryId" value="#{viewAllExperiencesManagedBean.selectedCategoryId}" style="width:150px;">
+                                    <f:selectItem itemLabel="Select Category" itemValue="0" noSelectOption="#{viewAllExperiencesManagedBean.selectedCategoryId == null}"/>
+                                    <f:selectItems value="#{viewAllExperiencesManagedBean.categories}" var="category" itemValue="#{category.categoryId}" itemLabel="#{category.name}" />
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:categoryId formSearchResults" />
+                                </p:selectOneMenu>                            
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+
+                            <p:column>
+                                <p:selectOneMenu id="typeId" value="#{viewAllExperiencesManagedBean.selectedTypeId}" style="width:150px;">
+                                    <f:selectItem itemLabel="Select Type" itemValue="0" noSelectOption="#{viewAllExperiencesManagedBean.selectedTypeId == null}"/>
+                                    <f:selectItems value="#{viewAllExperiencesManagedBean.types}" var="type" itemValue="#{type.typeId}" itemLabel="#{type.name}" />
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:typeId formSearchResults" />
+                                </p:selectOneMenu>                            
+                            </p:column>
+
+                            <p:column>
+                                <p:selectOneMenu id="locationId" value="#{viewAllExperiencesManagedBean.selectedLocationId}" style="width:150px;">
+                                    <f:selectItem itemLabel="Select Location" itemValue="0" noSelectOption="#{viewAllExperiencesManagedBean.selectedLocationId == null}"/>
+                                    <f:selectItems value="#{viewAllExperiencesManagedBean.locations}" var="location" itemValue="#{location.locationId}" itemLabel="#{location.name}" />
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:locationId formSearchResults" />
+                                </p:selectOneMenu>                            
+                            </p:column>
+
+                            <p:column>
+                                <p:selectOneMenu id="languageId" value="#{viewAllExperiencesManagedBean.selectedLanguageId}" style="width:150px;">
+                                    <f:selectItem itemLabel="Select Language" itemValue="0" noSelectOption="#{viewAllExperiencesManagedBean.selectedLanguageId == null}"/>
+                                    <f:selectItems value="#{viewAllExperiencesManagedBean.languages}" var="language" itemValue="#{language.languageId}" itemLabel="#{language.name}" />
+                                    <p:ajax process="@form" listener="#{viewAllExperiencesManagedBean.filterExperience}" update="searchInputRow:languageId formSearchResults" />
+                                </p:selectOneMenu>                            
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                    
+                    <p:commandButton type="submit" title="Search" icon="ui-icon-search" actionListener="#{viewAllExperiencesManagedBean.filterExperience}" update="@form formSearchResults" />
+
+                </h:form>
+
+                <hr style="border-top: 1px solid black;"/>
+            </div>
+
+            <div id="searchResultsDataTable">
+                <h:form id="formSearchResults">
+                    <p:dataView var="experience" value="#{viewAllExperiencesManagedBean.filteredExperiences}" rows="10" paginator="true" rowsPerPageTemplate="10,15,20"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                gridIcon="ui-icon-stop" listIcon="ui-icon-minusthick">
+
+                        <p:dataViewGridItem>
+                            <p:panel header="#{experience.title}" style="text-align:center;">
+                                <h:panelGrid columns="1" >
+                                    <p:graphicImage style="object-fit:cover; width:100%; height:150px;" url="https://i.imgur.com/2hocHvd.jpg"/> 
+
+                                    <p:outputLabel style="text-align:center; margin: auto;" value="$#{experience.averagePrice}" />
+
+                                    <p:commandButton actionListener="#{viewAllExperiencesManagedBean.viewExperienceDetails}" value="View Details" style="width:100%;">
+                                        <f:setPropertyActionListener value="#{experience}" target="#{viewAllExperiencesManagedBean.selectedExperienceToView}" />
+                                    </p:commandButton>
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:dataViewGridItem>
+
+                        <p:dataViewListItem style="width:100%">
+                            <h:panelGrid columns="3" style="width:100%" >
+                                <p:graphicImage style="object-fit:cover; width:200px; height:150px;" url="https://i.imgur.com/2hocHvd.jpg"/> 
+
+                                <p:outputPanel>
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <h:outputText value="Title:" />
+                                        <h:outputText value="#{experience.title}" style="font-weight: bold"/>
+
+                                        <h:outputText value="Description:" />
+                                        <h:outputText value="#{experience.description}" style="font-weight: bold"/>
+
+                                        <h:outputText value="Average price:" />
+                                        <h:outputText value="$#{experience.averagePrice}" style="font-weight: bold"/>
+                                    </h:panelGrid>
+                                </p:outputPanel>
+
+                                <p:commandButton actionListener="#{viewAllExperiencesManagedBean.viewExperienceDetails}" icon="ui-icon-zoomin" title="View Details" style="width:50px;">
+                                    <f:attribute name="experienceToView" value="#{experience}" />
+                                </p:commandButton>
+                            </h:panelGrid>
+                        </p:dataViewListItem>
+                    </p:dataView>
+                </h:form>
+
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>
