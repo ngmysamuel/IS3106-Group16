@@ -5,10 +5,12 @@
  */
 package datamodel.ws.rest;
 
+import entity.Booking;
 import entity.User;
 import enumerated.StatusEnum;
 import java.math.BigDecimal;
 import java.util.Date;
+import static javax.ws.rs.core.Response.status;
 
 /**
  *
@@ -16,22 +18,17 @@ import java.util.Date;
  */
 public class CreateNewBooking {
     private Long guestId, experienceDateId;
-    private Integer numOfPeople;
-    private BigDecimal price;
-    private Date date;
-    private String status;
+    private Booking booking;
 
     public CreateNewBooking() {
     }
 
-    public CreateNewBooking(Long guestId, Long experienceDateId, Integer numOfPeople, BigDecimal price, Date date, String status) {
+    public CreateNewBooking(Long guestId, Long experienceDateId, Booking booking) {
         this.guestId = guestId;
         this.experienceDateId = experienceDateId;
-        this.numOfPeople = numOfPeople;
-        this.price = price;
-        this.date = date;
-        this.status = status;
+        this.booking = booking;
     }
+
 
     public Long getGuestId() {
         return guestId;
@@ -41,36 +38,12 @@ public class CreateNewBooking {
         this.guestId = guestId;
     }
 
-    public Integer getNumOfPeople() {
-        return numOfPeople;
+    public Booking getBooking() {
+        return booking;
     }
 
-    public void setNumOfPeople(Integer numOfPeople) {
-        this.numOfPeople = numOfPeople;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     public Long getExperienceDateId() {
