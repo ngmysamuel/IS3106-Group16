@@ -64,18 +64,19 @@ public class ExperienceDateResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveExperienceDates(@PathParam("experienceId") Long experienceId){
         try{
-            Experience experience = experienceController.retrieveExperienceById(experienceId);
+//            Experience experience = experienceController.retrieveExperienceById(experienceId);
 //            
 //            List<ExperienceDate> experienceDates = experienceController.retrieveAllExperienceDates(experience);
 
-            List<ExperienceDate> experienceDates = experienceDateController.retrieveExperienceDatesOfAnExperience(experience);
+            List<ExperienceDate> experienceDates = experienceDateController.retrieveAllActiveExperienceDatesByExperienceId(experienceId);
             
             for(ExperienceDate ed: experienceDates){
                 for(Booking b: ed.getBookings()){
                     b.setExperienceDate(null);
                 }
                 
-                ed.getExperience().getExperienceDates().clear();
+//                ed.getExperience().getExperienceDates().clear();
+                ed.setExperience(null);
                 
                 if(ed.getExperienceDateCancellationReport() != null){
                     ed.getExperienceDateCancellationReport().setExperienceDate(null);
@@ -90,10 +91,10 @@ public class ExperienceDateResource {
             return Response.status(Status.OK).entity(new RetrieveAllExperienceDatesRsp(experienceDates)).build();
 //            return Response.status(Status.OK).build();
         }
-        catch(ExperienceNotFoundException ex){
-            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
-        }
+//        catch(ExperienceNotFoundException ex){
+//            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+//            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+//        }
         catch(Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
