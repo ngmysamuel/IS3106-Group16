@@ -6,11 +6,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,6 +35,9 @@ public class ExperienceDateCancellationReport implements Serializable {
     private String cancellationReason;
     @OneToOne
     private ExperienceDate experienceDate;
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date reportGenerationDateTime;
 
     public ExperienceDateCancellationReport() {
     }
@@ -67,6 +73,14 @@ public class ExperienceDateCancellationReport implements Serializable {
 
     public void setCancellationReportId(Long cancellationReportId) {
         this.cancellationReportId = cancellationReportId;
+    }
+
+    public Date getReportGenerationDateTime() {
+        return reportGenerationDateTime;
+    }
+
+    public void setReportGenerationDateTime(Date reportGenerationDateTime) {
+        this.reportGenerationDateTime = reportGenerationDateTime;
     }
 
     @Override

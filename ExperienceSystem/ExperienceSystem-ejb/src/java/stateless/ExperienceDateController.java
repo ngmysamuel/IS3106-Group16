@@ -9,7 +9,6 @@ import entity.Booking;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.ExperienceDateCancellationReport;
-import entity.ExperienceDatePaymentReport;
 import entity.User;
 import enumerated.StatusEnum;
 import java.util.ArrayList;
@@ -190,8 +189,6 @@ public class ExperienceDateController implements ExperienceDateControllerLocal {
 
     
 
-
-    // TO CHECK: whether after an experience date is cancelled, it has been automatically removed from the association for the experience
     @Override
     public void deleteExperienceDate(Long experienceDateId, String reason) throws ExperienceDateNotActiveException, DeleteExperienceDateException {
         ExperienceDate experienceDate = em.find(ExperienceDate.class, experienceDateId);
@@ -200,20 +197,34 @@ public class ExperienceDateController implements ExperienceDateControllerLocal {
             throw new ExperienceDateNotActiveException("This experienceDate is already inactive!");
         } else {
             experienceDate.setActive(false);
-            
+            // create an experience date cancellation report for all the associated bookings
             List<Booking> bookings = experienceDate.getBookings();
             for (Booking booking : bookings) {
-                booking.setStatus(StatusEnum.CANCELLED);
-                ExperienceDateCancellationReport report = new ExperienceDateCancellationReport();
-                report.setBooking(booking);
-                report.setExperienceDate(experienceDate);
-                report.setCancellationReason(reason);
-                try {
-                    experienceDateCancellationReportController.createNewExperienceDateCancellationReport(report);
-                } catch (InputDataValidationException ex) {
-                    throw new DeleteExperienceDateException(ex.getMessage());
+                if (booking.getStatus().equals(StatusEnum.ACTIVE)) {
+                    ExperienceDateCancellationReport report = new ExperienceDateCancellationReport();
+                    report.setBooking(booking);
+                    report.setExperienceDate(experienceDate);
+                    report.setCancellationReason(reason);
+                    report.setReportGenerationDateTime(new Date());
+                    booking.setStatus(StatusEnum.CANCELLED);
+                    booking.setCancellationReport(report);
+                    try {
+                        experienceDateCancellationReportController.createNewExperienceDateCancellationReport(report);
+                    } catch (InputDataValidationException ex) {
+                        throw new DeleteExperienceDateException(ex.getMessage());
+                    }
                 }
-
+            }
+            // create an experience date cancellation report for the experience date
+            ExperienceDateCancellationReport report = new ExperienceDateCancellationReport();
+            report.setExperienceDate(experienceDate);
+            report.setCancellationReason(reason);
+            report.setReportGenerationDateTime(new Date());
+            experienceDate.setExperienceDateCancellationReport(report);
+            try {
+                experienceDateCancellationReportController.createNewExperienceDateCancellationReport(report);
+            } catch (InputDataValidationException ex) {
+                throw new DeleteExperienceDateException(ex.getMessage());
             }
         }
     }

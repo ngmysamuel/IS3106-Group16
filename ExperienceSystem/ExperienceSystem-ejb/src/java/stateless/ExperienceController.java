@@ -35,7 +35,9 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.CreateNewExperienceException;
+import util.exception.DeleteExperienceDateException;
 import util.exception.DeleteExperienceException;
+import util.exception.ExperienceDateNotActiveException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UpdateEperienceInfoException;
@@ -153,7 +155,7 @@ public class ExperienceController implements ExperienceControllerLocal {
         try {
             Experience experienceToDelete = retrieveExperienceById(experienceId);
             if (!experienceToDelete.isActive()) {
-                throw new DeleteExperienceException("This experience is no longer active!");
+                throw new DeleteExperienceException("This experience is already no longer active!");
             } else {
                 experienceToDelete.setActive(false);
 
@@ -161,23 +163,13 @@ public class ExperienceController implements ExperienceControllerLocal {
                 Date current = Date.from(current1.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
                 // Force cancel the coming experience date listings
-                // Create ExperienceDateCancellationReport
-                List<ExperienceDate> experienceDates = experienceToDelete.getExperienceDates();
-                for (ExperienceDate date : experienceDates) {
-                    if (date.getStartDate().compareTo(current) > 0) {
-                        List<Booking> bookings = date.getBookings();
-                        for (Booking b : bookings) {
-                            b.setStatus(StatusEnum.CANCELLED);
-                            ExperienceDateCancellationReport rpt = new ExperienceDateCancellationReport();
-                            rpt.setBooking(b);
-                            rpt.setExperienceDate(date);
-                            rpt.setCancellationReason("The host of this experience cancels the whole experience.");
-                            try{
-                                experienceDateCancellationReportControllerLocal.createNewExperienceDateCancellationReport(rpt);
-                            }catch(InputDataValidationException ex) {
-                                throw new DeleteExperienceException(ex.getMessage());
-                            }
-                        }
+                // Create ExperienceDateCancellationReport for each experience date as well as all of its associated bookings
+                List<ExperienceDate> experienceDates = experienceDateControllerLocal.retrieveAllActiveExperienceDatesByExperienceId(experienceId);
+                for (ExperienceDate experienceDate : experienceDates) {
+                    try {
+                        experienceDateControllerLocal.deleteExperienceDate(experienceDate.getExperienceDateId(), "The host of this experience cancelled the whole experience listing.");
+                    } catch(ExperienceDateNotActiveException | DeleteExperienceDateException ex) {
+                        throw new DeleteExperienceException(ex.getMessage());
                     }
                 }
             }
@@ -196,7 +188,7 @@ public class ExperienceController implements ExperienceControllerLocal {
         System.out.println("******** ExperienceController: retrieveExperienceById");
         Experience e = em.find(Experience.class, experienceId);
         if (e == null) {
-            throw new ExperienceNotFoundException();
+            throw new ExperienceNotFoundException("Experience ID " + experienceId + " does not exist!");
         }
         System.out.println("**** this experience has " + e.getExperienceDates().size() + " experience dates");
         System.out.println("-----------------------------");
@@ -382,7 +374,7 @@ public class ExperienceController implements ExperienceControllerLocal {
                     experienceDatesMatched.add(experienceDate);
                 }
             }
-            if (experienceDatesMatched.size() == 0) {
+            if (experienceDatesMatched.isEmpty()) {
                 iterator.remove();
             } else {
                 experience.setExperienceDates(experienceDatesMatched);

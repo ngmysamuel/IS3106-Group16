@@ -267,7 +267,9 @@ public class Experience implements Serializable {
                     sum = sum.add(ed.getPrice());
                 }  
             }
-            return sum.divide(count, 2, RoundingMode.HALF_UP);
+            if(count.compareTo(new BigDecimal(0)) > 0) {
+                return sum.divide(count, 2, RoundingMode.HALF_UP);
+            }
         }
         return null;
     }
