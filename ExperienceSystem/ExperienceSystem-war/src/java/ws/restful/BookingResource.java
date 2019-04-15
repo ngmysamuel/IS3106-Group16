@@ -159,7 +159,6 @@ public class BookingResource {
             }
             newBooking.getExperienceDate().getBookings().clear();
             newBooking.getGuest().getBookings().clear();
-            System.out.println("In BookingResource: createNewBooking ERROR!!!");
             return Response.status(Response.Status.OK).entity(newBooking).build();
         } catch (UserNotFoundException | CreateNewBookingException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
@@ -179,9 +178,9 @@ public class BookingResource {
         try {
             ExperienceDate ed = experienceDateController.retrieveExperienceDateByExperienceDateId(createNewBooking.getExperienceDateId());
             Booking b = createNewBooking.getBooking();
-            if (b.getNumberOfPeople() > ed.getSpotsAvailable()) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Not enough places available. Place available are only: "+ed.getSpotsAvailable()).build();
-            }
+//            if (b.getNumberOfPeople() > ed.getSpotsAvailable()) {
+//                return Response.status(Response.Status.BAD_REQUEST).entity("Not enough places available. Place available are only: "+ed.getSpotsAvailable()).build();
+//            }
             b.setExperienceDate(ed);
             b.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
             bookingController.update(b);

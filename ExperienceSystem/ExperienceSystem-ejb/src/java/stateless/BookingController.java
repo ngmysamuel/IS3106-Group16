@@ -61,10 +61,12 @@ public class BookingController implements BookingControllerLocal {
                 System.out.println("**** this booking is made for experience date ID: " + experienceDate.getExperienceDateId());
                 if (experienceDate.getSpotsAvailable() < numOfPeople) {
                     System.out.println("**** Not enough slots available");
+System.out.println(experienceDate.getSpotsAvailable());  
                     throw new CreateNewBookingException("Not enough slots available");
                 } else {
                     System.out.println("**** setting bidirecational relationships");
                     experienceDate.setSpotsAvailable(experienceDate.getSpotsAvailable() - numOfPeople);
+System.out.println(experienceDate.getSpotsAvailable());  
                     experienceDate.getBookings().add(newBooking);
 
                     em.persist(newBooking);
@@ -119,8 +121,32 @@ public class BookingController implements BookingControllerLocal {
     public void update(Booking b) throws InputDataValidationException { 
         Set<ConstraintViolation<Booking>> constraintViolations = validator.validate(b);
         if (constraintViolations.isEmpty()) {
-            em.merge(b);
+            try {
+                //set bidirectional relationship and update experience date slots information
+                Integer numOfPeople = b.getNumberOfPeople();
+                System.out.println("**** numOfPeople: " + numOfPeople);
+                ExperienceDate experienceDate = experienceDateControllerLocal.retrieveExperienceDateByExperienceDateId(b.getExperienceDate().getExperienceDateId());
+                Booking oldB = em.find(Booking.class, b.getBookingId());
+                int oldNumOfPeople = oldB.getNumberOfPeople();
+                System.out.println("**** this booking is made for experience date ID: " + experienceDate.getExperienceDateId());
+                if (experienceDate.getSpotsAvailable()+oldNumOfPeople < numOfPeople) {
+                    System.out.println("**** Not enough slots available");
+System.out.println(experienceDate.getSpotsAvailable());  
+                    throw new CreateNewBookingException("Not enough slots available");
+                } else {
+                    System.out.println("**** setting bidirecational relationships");
+                    experienceDate.setSpotsAvailable(experienceDate.getSpotsAvailable() - numOfPeople+oldNumOfPeople);
+System.out.println(experienceDate.getSpotsAvailable());  
+
+                    em.merge(b);
+                }
+            } catch (Exception ex) {
+                System.out.println("**** unexpected error....");
+                ex.printStackTrace();
+                throw new InputDataValidationException("An unexpected error has occurred: " + ex.getMessage());
+            }
         } else {
+            System.out.println("**** InputDataValidationException");
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
