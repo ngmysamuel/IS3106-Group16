@@ -103,7 +103,7 @@ public class BookingController implements BookingControllerLocal {
     
     @Override
     public List<Booking> retrieveAllBookingsByGuestId(Long userId) {
-        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.user.userId = :inUserId ORDER BY b.bookingId DESC");
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.guest.userId = :inUserId ORDER BY b.bookingId DESC");
         query.setParameter("inUserId", userId);
         return query.getResultList();
     }
