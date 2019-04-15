@@ -171,14 +171,17 @@ public class BookingResource {
     }
 
 //  TODO: Add all fields to the class
-    @Path("updateBooking/{id}")
+    @Path("updateBooking")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateBooking(@PathParam("id") Long id, CreateNewBooking createNewBooking) throws InputDataValidationException {
+    public Response updateBooking(CreateNewBooking createNewBooking) throws InputDataValidationException {
         try {
             ExperienceDate ed = experienceDateController.retrieveExperienceDateByExperienceDateId(createNewBooking.getExperienceDateId());
             Booking b = createNewBooking.getBooking();
+            if (b.getNumberOfPeople() > ed.getSpotsAvailable()) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Not enough places available. Place available are only: "+ed.getSpotsAvailable()).build();
+            }
             b.setExperienceDate(ed);
             b.setGuest(userController.retrieveUserById(createNewBooking.getGuestId()));
             bookingController.update(b);

@@ -250,6 +250,9 @@ System.out.println("newExp is:"+newExperience);
                 
             for(ExperienceDate expDate: exp.getExperienceDates()){
                 expDate.setExperience(null);
+                expDate.getBookings().clear();
+                expDate.setExperienceDateCancellationReport(null);
+                expDate.setExperienceDatePaymentReport(null);
             }
             for(User u: exp.getFollowers()){
                 u.getFollowedExperiences().clear();
@@ -259,7 +262,7 @@ System.out.println("newExp is:"+newExperience);
             exp.setFollowers(followers);
 
 //            exp.getHost().getExperienceHosted().clear();
-System.out.println("WAGAG");            
+System.out.println("In retrieveExperience of exp with dates: "+exp.getExperienceDates().size());
             return Response.status(Response.Status.OK).entity(new RetrieveExperienceRsp(exp)).build();
         }
         catch(ExperienceNotFoundException ex){
