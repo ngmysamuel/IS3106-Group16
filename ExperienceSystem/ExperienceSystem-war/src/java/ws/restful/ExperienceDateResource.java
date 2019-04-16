@@ -8,12 +8,14 @@ package ws.restful;
 import datamodel.ws.rest.CreateExperienceDate;
 import datamodel.ws.rest.ErrorRsp;
 import datamodel.ws.rest.RetrieveAllExperienceDatesRsp;
+import datamodel.ws.rest.RetrieveAllUsersRsp;
 import datamodel.ws.rest.RetrieveExperienceDateRsp;
 import entity.Booking;
 import entity.Experience;
 import entity.ExperienceDate;
 import entity.User;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,6 +42,7 @@ import stateless.ExperienceDateControllerLocal;
 import stateless.UserControllerLocal;
 import util.exception.CreateNewExperienceDateException;
 import util.exception.ExperienceDateNotActiveException;
+import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.InvalidLoginCredentialException;
@@ -137,6 +140,51 @@ public class ExperienceDateResource {
             return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
         }
         catch(Exception ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+    
+    @Path("RetrieveExperienceDateGuestsById/{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveExperienceDateGuests(@PathParam("id") Long id){
+        try{
+            experienceDateController.retrieveExperienceDateByExperienceDateId(id);
+            List<User> guests = experienceDateController.retrieveAllGuestsByExperienceDateId(id);
+            for(User user: guests){
+                for(User u: user.getBlockers()){
+                    u.getBlocks().clear();
+                }
+
+                for(User u: user.getBlocks()){
+                    u.getBlockers().clear();
+                }
+
+                for(User u: user.getFollowers()){
+                    u.getFollows().clear();
+                }
+
+                for(User u: user.getFollows()){
+                    u.getFollowers().clear();
+                }
+
+                user.setBookings(null);
+                user.setExperienceHosted(null);
+                user.setEvaluationsForUserAsGuest(null);
+                user.setEvaluationsForUserAsHost(null);
+                user.setMessagesReplied(null);
+                user.setMessagesSent(null);
+                user.setNotifications(null);
+                user.getAppeals().clear();
+                user.setFollowedExperiences(null);
+            }
+            
+            return Response.status(Status.OK).entity(new RetrieveAllUsersRsp(guests)).build();
+        } catch(ExperienceDateNotFoundException ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+        } catch (Exception ex){
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }

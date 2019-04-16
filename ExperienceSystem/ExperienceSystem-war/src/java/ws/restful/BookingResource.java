@@ -31,6 +31,7 @@ import stateless.ExperienceControllerLocal;
 import stateless.ExperienceDateControllerLocal;
 import stateless.UserControllerLocal;
 import util.exception.CreateNewBookingException;
+import util.exception.ExperienceDateNotFoundException;
 import util.exception.ExperienceNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UserNotFoundException;
@@ -105,7 +106,7 @@ public class BookingResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-
+    
     @Path("getBookingById/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -127,6 +128,40 @@ public class BookingResource {
             b.getExperienceDate().getBookings().clear();
             b.getGuest().getBookings().clear();
             return Response.status(Response.Status.OK).entity(b).build();
+        } catch (Exception ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+    
+    @Path("retrieveAllBookingsByExperienceDateId/{expDateId}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveBookingsByExpDate(@PathParam("expDateId") Long expDateId){
+        try {
+            experienceDateController.retrieveExperienceDateByExperienceDateId(expDateId);
+            
+            List<Booking> ls = bookingController.retrieveAllBookingsByExperienceDateId(expDateId);
+
+            for (Booking b : ls) {
+                if (b.getEvaluationByGuest() != null) {
+                    b.getEvaluationByGuest().setBooking(null);
+                }
+                if (b.getEvaluationByHost() != null) {
+                    b.getEvaluationByHost().setBooking(null);
+                }
+                if (b.getCancellationReport() != null) {
+                    b.getCancellationReport().setBooking(null);
+                }
+                b.getExperienceDate().getBookings().clear();
+                b.getGuest().getBookings().clear();
+            }
+
+            RetrieveAllBookings r = new RetrieveAllBookings(ls);
+            return Response.status(Response.Status.OK).entity(r).build();
+        } catch (ExperienceDateNotFoundException ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
