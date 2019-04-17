@@ -118,6 +118,13 @@ System.out.println(experienceDate.getSpotsAvailable());
     }
     
     @Override
+    public List<Booking> retrieveAllBookingsByExperienceDateId(Long experienceDateId){
+        Query query = em.createQuery("SELECT b FROM Booking b WHERE b.experienceDate.experienceDateId = :experienceDateId ORDER BY b.bookingId DESC");
+        query.setParameter("experienceDateId", experienceDateId);
+        return query.getResultList();
+    }
+    
+    @Override
     public void update(Booking b) throws InputDataValidationException { 
         Set<ConstraintViolation<Booking>> constraintViolations = validator.validate(b);
         if (constraintViolations.isEmpty()) {

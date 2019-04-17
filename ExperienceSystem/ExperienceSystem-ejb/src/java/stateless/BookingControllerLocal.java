@@ -27,4 +27,6 @@ public interface BookingControllerLocal {
     public List<Booking> retrieveAllBookingsByExperienceId(Long experienceId);
     
     public void update(Booking b) throws InputDataValidationException;
+
+    public List<Booking> retrieveAllBookingsByExperienceDateId(Long experienceDateId);
 }
