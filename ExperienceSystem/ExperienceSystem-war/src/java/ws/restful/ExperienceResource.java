@@ -8,6 +8,7 @@ package ws.restful;
 import com.sun.org.apache.regexp.internal.RE;
 import datamodel.ws.rest.CreateNewExperience;
 import datamodel.ws.rest.ErrorRsp;
+import datamodel.ws.rest.FilterExperienceByDate;
 import entity.Experience;
 import java.util.List;
 import java.util.logging.Level;
@@ -30,6 +31,9 @@ import datamodel.ws.rest.RetrieveExperienceRsp;
 import datamodel.ws.rest.UpdateExperience;
 import entity.ExperienceDate;
 import entity.User;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.QueryParam;
@@ -68,193 +72,212 @@ public class ExperienceResource {
     TypeControllerLocal typeController = lookupTypeControllerLocal();
 
     ExperienceControllerLocal experienceController = lookupExperienceControllerLocal();
-    
+
     @Path("createExperience")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createExperience(CreateNewExperience createNewExperience) throws InputDataValidationException, CreateNewExperienceException{
-        
-        try{
+    public Response createExperience(CreateNewExperience createNewExperience) throws InputDataValidationException, CreateNewExperienceException {
+
+        try {
             Experience newExperience = createNewExperience.getExperienceEntity();
-System.out.println("newExp is:"+newExperience); 
+            System.out.println("newExp is:" + newExperience);
             User host = userController.login(createNewExperience.getUsername(), createNewExperience.getPassword());
-            
+
             newExperience.setHost(host);
-            
+
             Experience exp = experienceController.createNewExperience(newExperience);
-            
+
             exp.getCategory().getExperiences().clear();
-                
+
             exp.getType().getExperiences().clear();
 
             exp.getLocation().getExperiences().clear();
 
             exp.getLanguage().getExperiences().clear();
 
-            for(ExperienceDate expDate: exp.getExperienceDates()){
+            for (ExperienceDate expDate : exp.getExperienceDates()) {
                 expDate.setExperience(null);
             }
-            for(User u: exp.getFollowers()){
+            for (User u : exp.getFollowers()) {
                 u.getFollowedExperiences().clear();
             }
 
             exp.getHost().getExperienceHosted().clear();
-            
+
             return Response.status(Status.OK).entity(new RetrieveExperienceRsp(exp)).build();
-        } catch(InvalidLoginCredentialException ex){
+        } catch (InvalidLoginCredentialException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Status.UNAUTHORIZED).entity(errorRsp).build();
-        } 
-        catch(CreateNewExperienceException ex){
+        } catch (CreateNewExperienceException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
-        
     }
-    
+
+    @Path("filterByDate")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response filterExperienceByDate(FilterExperienceByDate fd) {
+        try {
+            Date dateToFilterBy = fd.getDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(dateToFilterBy);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            dateToFilterBy = cal.getTime();
+            List<Experience> ls = fd.getListToFilterFrom();
+            ls = experienceController.filterExperienceByDate(ls, dateToFilterBy);
+            System.out.println("******in ExperienceResource filterExperienceByDate() with ls: "+ls);
+            return Response.status(Status.OK).entity(new FilterExperienceByDate(ls, dateToFilterBy)).build();
+        } catch (Exception ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+
     @Path("updateExperience")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateExperience (UpdateExperience updateExperience) {
-        
+    public Response updateExperience(UpdateExperience updateExperience) {
+
         try {
             Experience newExperience = updateExperience.getExperienceEntity();
 
             experienceController.updateExperienceInformation(newExperience);
-            
+
             return Response.status(Response.Status.OK).entity(new RetrieveExperienceRsp(newExperience)).build();
         } catch (UpdateEperienceInfoException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        } catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
-        
+
     }
-    
+
     @Path("deleteExperience")
     @DELETE
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteExperience(@QueryParam("id")Long id) {
+    public Response deleteExperience(@QueryParam("id") Long id) {
         try {
             experienceController.deleteExperience(id);
             return Response.status(Response.Status.OK).entity("ok").build();
         } catch (DeleteExperienceException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("retrieveAllExperiences")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response retrieveAllExperiences(){
-        
-        try{
+    public Response retrieveAllExperiences() {
+
+        try {
             List<Experience> experiences = experienceController.filterExperienceByActiveState(experienceController.retrieveAllExperiences());
-            for(Experience exp: experiences){
-                
+            for (Experience exp : experiences) {
+
                 exp.getCategory().getExperiences().clear();
-                
+
                 exp.getType().getExperiences().clear();
-                
+
                 exp.getLocation().getExperiences().clear();
-                
+
                 exp.getLanguage().getExperiences().clear();
                 System.out.println("WAGAG");
-                for(ExperienceDate expDate: exp.getExperienceDates()){
+                for (ExperienceDate expDate : exp.getExperienceDates()) {
                     expDate.setExperience(null);
                 }
-                for(User u: exp.getFollowers()){
-                   u.getFollowedExperiences().clear();
+                for (User u : exp.getFollowers()) {
+                    u.getFollowedExperiences().clear();
                 }
-                
+
 //               exp.getHost().getExperienceHosted().clear();
             }
 
             return Response.status(Status.OK).entity(new RetrieveAllExperiencesRsp(experiences)).build();
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("retrieveHostExperiences")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response retrieveHostExperiences(@QueryParam("userId") Long userId){
-        try{
+    public Response retrieveHostExperiences(@QueryParam("userId") Long userId) {
+        try {
             userController.retrieveUserById(userId);
-            
+
             List<Experience> experiences = experienceController.retrieveAllHostExperiencesByHostId(userId);
-            
+
             System.out.println("RETRIEVE HOST EXPERIENCE ********");
-            
-            for(Experience exp: experiences){
-                
+
+            for (Experience exp : experiences) {
+
                 exp.getCategory().getExperiences().clear();
-                
+
                 exp.getType().getExperiences().clear();
-                
+
                 exp.getLocation().getExperiences().clear();
-                
+
                 exp.getLanguage().getExperiences().clear();
-                
-                for(ExperienceDate expDate: exp.getExperienceDates()){
+
+                for (ExperienceDate expDate : exp.getExperienceDates()) {
                     expDate.setExperience(null);
                 }
-                for(User u: exp.getFollowers()){
+                for (User u : exp.getFollowers()) {
                     u.getFollowedExperiences().clear();
                 }
-                
+
                 exp.getHost().getExperienceHosted().clear();
             }
-            
+
             return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesRsp(experiences)).build();
-        }
-        catch(UserNotFoundException ex){
+        } catch (UserNotFoundException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("retrieveExperience/{experienceId}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response retrieveExperience(@PathParam("experienceId") Long experienceId){
-        try{
+    public Response retrieveExperience(@PathParam("experienceId") Long experienceId) {
+        try {
             Experience exp = experienceController.retrieveExperienceById(experienceId);
-            
+
             exp.getCategory().getExperiences().clear();
-                
+
             exp.getType().getExperiences().clear();
-                
+
             exp.getLocation().getExperiences().clear();
-                
+
             exp.getLanguage().getExperiences().clear();
-                
-            for(ExperienceDate expDate: exp.getExperienceDates()){
+
+            for (ExperienceDate expDate : exp.getExperienceDates()) {
                 expDate.setExperience(null);
                 expDate.getBookings().clear();
                 expDate.setExperienceDateCancellationReport(null);
                 expDate.setExperienceDatePaymentReport(null);
             }
-            for(User u: exp.getFollowers()){
+            for (User u : exp.getFollowers()) {
                 u.getFollowedExperiences().clear();
             }
             List<User> followers = exp.getFollowers();
@@ -262,120 +285,114 @@ System.out.println("newExp is:"+newExperience);
             exp.setFollowers(followers);
 
 //            exp.getHost().getExperienceHosted().clear();
-System.out.println("In retrieveExperience of exp with dates: "+exp.getExperienceDates().size());
+            System.out.println("In retrieveExperience of exp with dates: " + exp.getExperienceDates().size());
             return Response.status(Response.Status.OK).entity(new RetrieveExperienceRsp(exp)).build();
-        }
-        catch(ExperienceNotFoundException ex){
+        } catch (ExperienceNotFoundException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("followExperience")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response followExperience(@QueryParam("experienceId") Long experienceId,
-                            @QueryParam("userId") Long userId){
-        try{
+            @QueryParam("userId") Long userId) {
+        try {
             experienceController.addFollowerToExperience(experienceId, userId);
             return Response.status(Response.Status.OK).build();
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("unfollowExperience")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response unfollowExperience(@QueryParam("experienceId") Long experienceId,
-                            @QueryParam("userId") Long userId){
-        try{
+            @QueryParam("userId") Long userId) {
+        try {
             experienceController.removeFollowerFromExperience(experienceId, userId);
             return Response.status(Response.Status.OK).build();
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("retrieveFavoriteExperiences")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response retrieveFavoriteExperiences(@QueryParam("userId") Long userId){
-        try{
+    public Response retrieveFavoriteExperiences(@QueryParam("userId") Long userId) {
+        try {
             List<Experience> experiences = experienceController.retrieveFavouriteExperiences(userId);
-            
-            for(Experience exp: experiences){
-                
+
+            for (Experience exp : experiences) {
+
                 exp.getCategory().getExperiences().clear();
-                
+
                 exp.getType().getExperiences().clear();
-                
+
                 exp.getLocation().getExperiences().clear();
-                
+
                 exp.getLanguage().getExperiences().clear();
-                
-                for(ExperienceDate expDate: exp.getExperienceDates()){
+
+                for (ExperienceDate expDate : exp.getExperienceDates()) {
                     expDate.setExperience(null);
                 }
-                for(User u: exp.getFollowers()){
+                for (User u : exp.getFollowers()) {
                     u.getFollowedExperiences().clear();
                 }
 //                List<User> followers = exp.getFollowers();
 //                exp.getFollowers().clear();
 //                exp.setFollowers(followers);
-                
+
                 exp.getHost().getExperienceHosted().clear();
             }
-            
+
             return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesRsp(experiences)).build();
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("retrievePastExperiences")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response retrievePastExperiences(@QueryParam("userId") Long userId){
-        try{
+    public Response retrievePastExperiences(@QueryParam("userId") Long userId) {
+        try {
             List<Experience> experiences = experienceController.retrievePastExperiences(userId);
-            
-            for(Experience exp: experiences){
-                
+
+            for (Experience exp : experiences) {
+
                 exp.getCategory().getExperiences().clear();
-                
+
                 exp.getType().getExperiences().clear();
-                
+
                 exp.getLocation().getExperiences().clear();
-                
+
                 exp.getLanguage().getExperiences().clear();
-                
-                for(ExperienceDate expDate: exp.getExperienceDates()){
+
+                for (ExperienceDate expDate : exp.getExperienceDates()) {
                     expDate.setExperience(null);
                 }
-                for(User u: exp.getFollowers()){
+                for (User u : exp.getFollowers()) {
                     u.getFollowedExperiences().clear();
                 }
                 List<User> followers = exp.getFollowers();
                 exp.getFollowers().clear();
                 exp.setFollowers(followers);
-                
+
                 exp.getHost().getExperienceHosted().clear();
             }
-            
+
             return Response.status(Response.Status.OK).entity(new RetrieveAllExperiencesRsp(experiences)).build();
-        }
-        catch(Exception ex){
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
@@ -440,5 +457,5 @@ System.out.println("In retrieveExperience of exp with dates: "+exp.getExperience
             throw new RuntimeException(ne);
         }
     }
-    
+
 }

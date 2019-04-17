@@ -370,6 +370,8 @@ public class ExperienceController implements ExperienceControllerLocal {
 
             // remove the experience if the experience does not have any active experience date whose date matches the filtering date
             for (ExperienceDate experienceDate : activeExperienceDates) {
+                System.out.println("expDate: "+experienceDate.getStartDate());
+                System.out.println("filteringDate: "+filteringDate);
                 if (experienceDate.getStartDate().compareTo(filteringDate) == 0) {
                     experienceDatesMatched.add(experienceDate);
                 }
